@@ -1,9 +1,11 @@
 import Marches.Basic
 import Marches.Kernel
 import Marches.Compose
+import Marches.Digraph
 import Marches.GaoRexford
 import Marches.GRTrace
 import Marches.GRHierarchy
 import Marches.BadGadget
 import Marches.Tropical
 import Marches.Freewheel
+import Marches.Reassembly

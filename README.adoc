@@ -93,6 +93,29 @@ here (as in Gao–Rexford 2001)
 |`Freewheel.f2_discharged` — well-typed non-empty returning trace once
 `hA` is dropped
 
+|Any strictly inflationary path algebra is a `Discipline`
+|PROVEN
+|`Reassembly.PathAlgebra.toDiscipline`, `toDiscipline_no_loop`
+
+|A finite acyclic DAG of disciplines is itself a discipline
+(reassembly = closure under composition)
+|PROVEN
+|`Reassembly.DiscSys.compose`; composites nest via
+`Reassembly.nestedComposed`
+
+|n-region composite loop-freedom under an acyclic region DAG
+|PROVEN (conditional)
+|`Reassembly.DiscSys.compose_no_loop` — consumes `Acyclic S.E`
+
+|n-region ill-typed moves (foreign local label, DAG self-edge) underivable
+|PROVEN
+|`Reassembly.DiscSys.no_foreign_local`, `no_self_cross`
+
+|Acyclic region DAG in real deployments
+|ASSUMED
+|`Marches.Acyclic` — hypothesis of `compose`, the SAME notion as the GR
+hierarchy's; never proven here
+
 |Tropical estate integration (`TropicalAdapterPath.lean`)
 |OPEN
 |rung 3
@@ -122,6 +145,8 @@ Zero dependencies; no mathlib. CI runs the same build.
 * `Marches/Kernel.lean` — single-region loop-freedom.
 * `Marches/Compose.lean` — *headline*: typed crossing, stratified order,
   `Step`/`Trace` judgments, positive and negative theorems.
+* `Marches/Digraph.lean` — `RPath` and `Acyclic`: the one explicit
+  acyclicity hypothesis shared by the GR hierarchy and the region DAG.
 * `Marches/GaoRexford.lean` — the commercial-relationship finite exhibit.
 * `Marches/GRTrace.lean` — rung 1: GR relationships as typed crossings;
   the typing judgment is the valley-freedom grammar.
@@ -132,6 +157,10 @@ Zero dependencies; no mathlib. CI runs the same build.
   is load-bearing.
 * `Marches/Tropical.lean` — (min,+) instance; seam for the estate's
   tropical work.
+* `Marches/Reassembly.lean` — *rung 2 headline*: `Discipline`, generic
+  loop-freedom, `PathAlgebra.toDiscipline`, and `DiscSys.compose` — a
+  finite acyclic DAG of disciplines is itself a discipline (reassembly
+  as closure under composition).
 
 == Licence
 

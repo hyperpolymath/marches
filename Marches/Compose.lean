@@ -34,12 +34,14 @@ inductive CLabel (A B : PathAlgebra) where
   | lb    : B.Label → CLabel A B
   | cross : CLabel A B
 
-/-- A typed interface: the crossing morphism. (Preference-preservation
-    `strict` is recorded for downstream use; the kernel theorems below
-    need only stratification, which is built into `CBetter`.) -/
+/-- A typed interface: just the crossing morphism. Order-preservation of
+    `τ` is deliberately NOT required — the kernel theorems need only
+    stratification, which is built into `CBetter`. Rung 2 confirmed this:
+    n-region composition (`Reassembly.lean`) worsens by DAG position,
+    never by any property of the crossing maps, so the former `strict`
+    field was retired rather than made load-bearing. -/
 structure Interface (A B : PathAlgebra) where
   τ : A.Carrier → B.Carrier
-  strict : ∀ {a b : A.Carrier}, A.better a b → B.better (τ a) (τ b)
 
 /-- Stratified preference on the composite. -/
 inductive CBetter (A B : PathAlgebra) : Pos A B → Pos A B → Prop where
