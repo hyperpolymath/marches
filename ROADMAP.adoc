@@ -1,0 +1,55 @@
+= ROADMAP — proof ladder
+
+One rung per session. A rung is DONE when its gates pass and STATE.adoc
+records the artifact. Do not start rung N+1 with rung N open.
+
+== Rung 0 — kernel (THIS TAG, v0.1.0) ✅
+
+Typed crossing judgment; positive theorems (worsening, empty cycles);
+negative theorems (underivability); GR finite exhibit; DISAGREE pincer;
+tropical instance. Gates: `lake build` green, zero `sorry`, `#eval orbit`
+prints the period-2 cycle. All met 2026-07-07.
+
+== Rung 1 — Gao–Rexford wired into Trace
+
+* Generalise `CLabel.cross` to the three GR relations; `Trace` becomes
+  the valley-freedom grammar.
+* Formalise the acyclic customer→provider hierarchy as an explicit
+  hypothesis; derive loop-freedom for GR *under that hypothesis*.
+* Discharge falsifier F2: a non-inflationary instance with a well-typed
+  returning trace (shows `hA`/`hB` load-bearing).
+* Cite agda-routing in every statement that goes near convergence.
+
+== Rung 2 — n regions and reassembly
+
+* Generalise two regions to a finite DAG of regions with typed
+  interfaces; prove the composite discipline from the componentwise ones
+  (the by-construction counterpart of Kirigami's cut soundness).
+* `Interface.strict` becomes load-bearing here or gets deleted.
+
+== Rung 3 — tropical/estate integration
+
+* Import the estate's fully proved `TropicalAdapterPath.lean`
+  (tropical-resource-typing) behind the `Marches/Tropical.lean` seam.
+  Do NOT paraphrase it; vendor or depend on it.
+* Path provenance as graded accumulation (echo-types bridge): what a
+  trace *carries* across an interface, not just where it may go.
+
+== Rung 4 — attestation (A2ML bridge)
+
+* Announcements as attested claims: RPKI attests origin; this layer
+  attests *policy*. `@record` anti-desync primitive for announcement
+  provenance. Design doc first; no code before the doc.
+
+== Rung 5 — deployment note + write-up
+
+* Overlay/incremental-adoption note (no flag-day), IRTF-shaped paper
+  skeleton in the consensus form; LIMITATIONS becomes the related-work
+  section, statuses become the evaluation section.
+
+== Handoff protocol (Opus and friends)
+
+Every session: read `CLAUDE.md`, then `STATE.adoc`, then the current
+rung here. Work only that rung. Before ending: update STATE.adoc
+(what changed, what discharged, what broke), commit, and if gates pass,
+tag. Statuses move only with named artifacts.

@@ -1,0 +1,48 @@
+= FALSIFIERS
+
+Each row names what would kill or narrow the claim, the test, and the
+current status. Idiom: *held* (tested, survived), *held-but-untested*
+(design answer exists, test not yet run), *open* (no answer yet).
+
+[cols="1,3,3,1"]
+|===
+|ID |Falsifier |Test / response |Status
+
+|F1
+|Prior art already makes region-crossing a typing judgment with
+unconstructibility.
+|First sweep done 2026-07-07: agda-routing (convergence, deeper),
+Kirigami (interfaces, post-hoc SMT), NetKAT (data plane), metarouting
+(algebra language) — none make the crossing judgment itself the typed,
+unconstructible object. Full systematic sweep owed.
+|held-but-untested (at depth)
+
+|F2
+|The composite theorem is vacuous: stratification (`ab`) does all the
+work and within-region strictness is decorative.
+|Construct a non-inflationary region instance and exhibit a well-typed
+returning trace, showing `hA`/`hB` are load-bearing. Scheduled rung 1.
+|held-but-untested
+
+|F3
+|Any deployment story requiring global replacement (flag-day) fails.
+|Design answer: attested overlay, RPKI-shaped — announcements carry
+typed-policy attestations; incremental adoption. Rungs 4–5.
+|held-but-untested
+
+|F4
+|Operator practice (MED games, community hacks) is non-monotone and
+unrepresentable; the discipline dies on contact with reality.
+|Doctrine: incompleteness must cost *re-expression*, not impossibility
+(five-lane gateway). Test: express one MED-style hack inside the
+discipline or prove it needs quarantine. 
+|open
+
+|F5
+|The GR strictness gap ((fromCust, c)) silently re-enters and the
+kernel theorems get applied where they do not hold.
+|`gr_not_strict` is a PROVEN negative; rung 1 must thread the
+acyclic-hierarchy assumption explicitly as a hypothesis, never
+discharge it silently.
+|held
+|===

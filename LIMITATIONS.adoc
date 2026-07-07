@@ -1,0 +1,61 @@
+= LIMITATIONS — prior art and honest boundaries
+
+Searched 2026-07-07 (web). This is a *first sweep*, not the full
+literature review; a systematic pass is still owed before any paper
+claim. Nearest neighbours, in order of proximity:
+
+== agda-routing (Daggitt, Zmigrod, van der Stoep, Griffin)
+
+The dominant occupant of "mechanised routing algebra + convergence".
+An Agda library formalising Sobrinho-style algebras, Üresin–Dubois
+asynchronous fixed-point theory (ITP 2018, JAR 2019), rate-of-convergence
+results (ICNP 2018), dynamic asynchronous iterations (JPDC 2022), and
+*formally verified convergence of policy-rich DBF protocols* (IEEE/ACM
+ToN 2023), including a safe-by-design BGPLite algebra with a verified
+simulation argument. https://github.com/MatthewDaggitt/agda-routing
+
+Consequence for marches: convergence-of-algebras is *their* ground.
+marches must not re-claim it. The residue: region-crossing as a typing
+judgment with unconstructibility, composition-as-types, and estate
+integration (attestation, grading). Rung 1+ work must cite them first.
+
+== Kirigami / NV (Alberdingk Thijm, Beckett, Gupta, Walker)
+
+Modular control-plane verification by *cutting* a network into fragments
+along user-annotated interfaces; assume-guarantee reasoning; proved sound
+and complete w.r.t. monolithic verification (ICNP 2022; ToN 2024). Built
+on NV. This occupies "regions with interface annotations, verified
+modularly" — but as *post-hoc checking of given configurations*, SMT-based.
+marches' differentiation is by-construction: the interface is a type whose
+violations are underivable, not a property checked afterwards.
+
+== Others (from training knowledge; verify citations at write-up time)
+
+* *Metarouting / Sobrinho algebras* (Griffin & Sobrinho; Sobrinho 2005) —
+  the algebraic language marches speaks; strict inflation is Sobrinho's
+  strict monotonicity. marches adds nothing at the algebra level.
+* *Gao–Rexford 2001* — the stability conditions the GR module encodes;
+  the acyclic-hierarchy assumption is theirs, and remains ASSUMED here.
+* *Griffin–Shepherd–Wilfong* — stable paths problem, DISAGREE / BAD GADGET,
+  NP-hardness of safety; source of the negative artifact.
+* *NetKAT and successors* — typed/equational reasoning for the *data plane*,
+  intra-domain; not inter-domain policy composition.
+* *SCION* — deployed clean-slate inter-domain architecture with isolation
+  domains and Isabelle/Tamarin-verified protocol components; regions exist
+  there as infrastructure, not as a typing judgment on policy traces.
+* *P4* — loop-free-by-construction data-plane programming; the
+  by-construction spirit, different plane.
+* *RINA, Nimrod, ICING* — architectural ancestors of regioned routing;
+  no mechanised typing discipline.
+
+== Known internal gaps
+
+* The stratified order (`CBetter.ab`) makes crossings worsen *by
+  definition of the interface's meaning*. That is the design stance
+  (interface = obligation), but the load-bearing role of within-region
+  strictness must be exhibited by a counterexample instance (rung 1;
+  falsifier F2).
+* `Interface.strict` is recorded but unused by the kernel theorems —
+  it is there for rung 2's n-region work; flagged so nobody mistakes
+  it for a proven dependency.
+* GR is a standalone finite exhibit, not yet wired into `Trace` (rung 1).

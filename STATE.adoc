@@ -1,0 +1,20 @@
+= STATE — cross-session log
+
+== 2026-07-07 — rung 0 built and verified (claude.ai session)
+
+* Repo scaffolded; six modules + root compile clean under Lean 4
+  v4.15.0, zero dependencies, zero `sorry`.
+* `#eval orbit` output (machine-evaluated):
+  `[(false, false), (true, true), (false, false), (true, true)]`.
+* Prior-art first sweep done; agda-routing and Kirigami found and
+  written into LIMITATIONS; claim narrowed accordingly *before* first
+  commit — no retraction debt.
+* Known deferred items: F2 counterexample (rung 1); GR↔Trace wiring
+  (rung 1); `Interface.strict` currently unused (rung 2 or delete);
+  LICENSE text TODO (copy from palimpsest-license, do not improvise).
+
+== Next action
+
+Claude Code session: unpack seed, verify gates, `git init`, first
+commit, tag `v0.1.0`, push to `github.com/hyperpolymath/marches`
+(name provisional — rename before push if desired). Then stop.

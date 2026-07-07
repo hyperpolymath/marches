@@ -1,0 +1,115 @@
+= marches
+:toc: macro
+
+*Working name — provisional.* A march is a border region defined by its
+boundary law; renaming is a maintainer decision, not a technical one.
+
+== Claim (pinned at its actual level)
+
+marches makes the *inter-region discipline of a routed network the typed
+object*: region-crossing well-formedness is a typing judgment on traces
+(`Marches.Trace`), and ill-typed crossings are *unconstructible* — they
+have no derivation — rather than detected and filtered.
+
+Machine-checked, in this repository, by `lake build` (Lean 4, v4.15.0,
+no dependencies):
+
+* Every well-typed non-empty cross-region trace strictly worsens
+  (`trace_worsens`, `Marches/Compose.lean`).
+* A well-typed trace that returns to its start is empty — no well-typed
+  routing loop exists, by construction (`wt_cycles_are_empty`).
+* The ill-typed moves — crossing back from B, firing an A-label inside B —
+  are underivable (`no_back_cross`, `no_a_label_in_B`).
+* Single-region loop-freedom under strict inflation
+  (`no_return`, `Marches/Kernel.lean`).
+* The Gao–Rexford table never improves a route; strictness fails exactly
+  at `(fromCust, c)`; the valley dies at the type level
+  (`Marches/GaoRexford.lean`, finite, by `decide`).
+* DISAGREE — the classical smallest oscillator — both violates the
+  discipline *and* demonstrably oscillates (`Marches/BadGadget.lean`;
+  the `#eval` prints the period-2 orbit). The types reject exactly the
+  policies that misbehave.
+
+== What this is NOT
+
+This is *not* a convergence proof for BGP or any deployed protocol.
+Mechanised routing algebras with full asynchronous convergence results
+already exist and are much deeper on that axis — see `LIMITATIONS.adoc`
+(agda-routing foremost). The residue claimed here is the *typing-judgment
+framing*: composition discipline as types, ill-typed states
+unconstructible, and the bridges into this estate's attestation and
+graded machinery (see `ROADMAP.adoc`).
+
+== Status table
+
+[cols="3,1,2"]
+|===
+|Claim |Status |Discharged by
+
+|Well-typed non-empty traces strictly worsen
+|PROVEN
+|`lake build` → `Compose.trace_worsens`
+
+|Well-typed returning traces are empty
+|PROVEN
+|`Compose.wt_cycles_are_empty`
+
+|Ill-typed moves underivable
+|PROVEN
+|`Compose.no_back_cross`, `Compose.no_a_label_in_B`
+
+|Single-region loop-freedom
+|PROVEN
+|`Kernel.no_return`
+
+|GR table inflationary; strictness gap at `(fromCust, c)`; valley → ⊥
+|PROVEN (finite)
+|`GaoRexford.gr_inflationary`, `gr_not_strict`, `valley_dies`
+
+|DISAGREE rejected by discipline ∧ oscillates
+|PROVEN + TESTED
+|`BadGadget.disagree_not_inflationary`, `disagree_two_cycle`, `#eval orbit`
+
+|GR convergence overall
+|ASSUMED
+|needs acyclic customer→provider hierarchy — rung 1, not formalised here
+
+|Tropical estate integration (`TropicalAdapterPath.lean`)
+|OPEN
+|rung 3
+
+|Protocol-level asynchronous convergence
+|OUT OF SCOPE
+|occupied by agda-routing — see `LIMITATIONS.adoc`
+|===
+
+Anti-Goodhart clause: a status may only be upgraded by naming the
+transcribable artifact that discharges it. `lake build` output is the
+artifact for PROVEN rows. No fabricated identifiers.
+
+== Build
+
+[source,shell]
+----
+elan default leanprover/lean4:v4.15.0   # or let lake read lean-toolchain
+lake build
+----
+
+Zero dependencies; no mathlib. CI runs the same build.
+
+== Module map
+
+* `Marches/Basic.lean` — path algebras, strict/non-strict inflation, `run`.
+* `Marches/Kernel.lean` — single-region loop-freedom.
+* `Marches/Compose.lean` — *headline*: typed crossing, stratified order,
+  `Step`/`Trace` judgments, positive and negative theorems.
+* `Marches/GaoRexford.lean` — the commercial-relationship finite exhibit.
+* `Marches/BadGadget.lean` — DISAGREE, the negative pincer.
+* `Marches/Tropical.lean` — (min,+) instance; seam for the estate's
+  tropical work.
+
+== Licence
+
+Dual MIT + Palimpsest (per estate convention; see
+`hyperpolymath/palimpsest-license`). `LICENSE` text: TODO — copy from the
+licence repo; do not improvise it.
