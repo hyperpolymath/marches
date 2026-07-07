@@ -1,5 +1,41 @@
 = STATE — cross-session log
 
+== 2026-07-07 — rung 2 built and verified (Claude Code session)
+
+* Digraph foundation lifted: `Marches/Digraph.lean` — `RPath`,
+  `RPath.snoc/trans/flip`, and `Acyclic` moved out of the GR namespace
+  into `Marches`. `GRHierarchy.lean` refactored to consume them, so the
+  customer→provider hierarchy (rung 1) and the region DAG (rung 2) are
+  the SAME `Marches.Acyclic`. GR proofs unchanged in substance.
+* Reassembly by composition: `Marches/Reassembly.lean` —
+  - `Discipline` abstracts the shared invariant (strict order + typed
+    step judgment whose every step worsens); `Discipline.no_loop`
+    proves loop-freedom ONCE, generically.
+  - `PathAlgebra.toDiscipline` — the rung-0 kernel is an instance;
+    `toDiscipline_no_loop` recovers `no_return`.
+  - `DiscSys.compose` (HEADLINE): a finite acyclic DAG of disciplines
+    is itself a `Discipline`. Composite `btrans` needs only
+    `RPath.trans`; composite `birrefl` needs EXACTLY `Acyclic S.E` (the
+    honest n-region home of the assumption); `cstep_worsens` is
+    discharged from the componentwise obligations + DAG stratification,
+    no global re-proof — the by-construction counterpart of Kirigami
+    cut soundness. Because `compose` returns a `Discipline`, composites
+    NEST: `Reassembly.nestedComposed` composes a composite as a region.
+  - Negatives: `no_foreign_local` (a region's label can't fire from
+    another region), `no_self_cross` (acyclicity ⇒ self-edge
+    unconstructible).
+  - Crossing maps `τ` are UNCONSTRAINED — worsening is by DAG position.
+* `Interface.strict` RETIRED (roadmap-sanctioned): rung 2 confirmed
+  order-preservation of crossing maps is never load-bearing, so the
+  field was deleted from `Compose.Interface` (and its provider in
+  `Freewheel.lean`) rather than kept as a proven-unused wart.
+* Gates: `lake build` → `Build completed successfully.` (14 modules,
+  zero deps); `grep -rnw sorry` empty; `#eval orbit` unchanged
+  (`[(false, false), (true, true), (false, false), (true, true)]`).
+* Claim discipline held: loop-freedom of the typed judgment is NOT
+  protocol convergence (agda-routing's ground); no convergence claim
+  added anywhere.
+
 == 2026-07-07 — rung 1 built and verified (Claude Code session)
 
 * GR wired into Trace: `Marches/GRTrace.lean` — the five legal
@@ -37,7 +73,9 @@
 
 == Next action
 
-Rung 2 (see ROADMAP.adoc): generalise two regions to a finite DAG of
-regions with typed interfaces; prove the composite discipline from the
-componentwise ones. `Interface.strict` becomes load-bearing there or
-gets deleted. One rung only.
+Rung 3 (see ROADMAP.adoc): tropical/estate integration. Import the
+estate's fully proved `TropicalAdapterPath.lean`
+(tropical-resource-typing) behind the `Marches/Tropical.lean` seam —
+vendor or depend on it, do NOT paraphrase. Path provenance as graded
+accumulation (echo-types bridge). Obtain the real file; never
+reconstruct from memory. One rung only.

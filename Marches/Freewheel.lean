@@ -45,11 +45,9 @@ theorem freewheel_inflationary : Inflationary Freewheel :=
 theorem freewheel_not_strict : ¬ StrictlyInflationary Freewheel :=
   fun h => h () ()
 
-/-- A typed interface Freewheel → Freewheel (strictness is vacuous:
-    the order is empty). -/
+/-- A typed interface Freewheel → Freewheel. -/
 def FreewheelInterface : Interface Freewheel Freewheel where
   τ := id
-  strict := fun h => h.elim
 
 /-- A well-typed, NON-EMPTY, returning trace: one within-region label
     fires and the state is unchanged. Well-typedness does not blink. -/

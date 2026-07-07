@@ -20,12 +20,16 @@ prints the period-2 cycle. All met 2026-07-07.
   returning trace (shows `hA`/`hB` load-bearing).
 * Cite agda-routing in every statement that goes near convergence.
 
-== Rung 2 — n regions and reassembly
+== Rung 2 — n regions and reassembly (TAG v0.3.0) ✅
 
-* Generalise two regions to a finite DAG of regions with typed
-  interfaces; prove the composite discipline from the componentwise ones
-  (the by-construction counterpart of Kirigami's cut soundness).
-* `Interface.strict` becomes load-bearing here or gets deleted.
+* `Discipline` abstracts the shared invariant; loop-freedom proven once
+  (`Discipline.no_loop`). `PathAlgebra.toDiscipline` makes the kernel an
+  instance. `DiscSys.compose`: a finite acyclic DAG of disciplines is a
+  discipline — composite obligation discharged from the componentwise
+  ones + `Acyclic` (the by-construction counterpart of Kirigami's cut
+  soundness); composites nest (`Reassembly.nestedComposed`).
+* `Interface.strict` DELETED — rung 2 confirmed crossing-map
+  order-preservation is never load-bearing. Met 2026-07-07.
 
 == Rung 3 — tropical/estate integration
 

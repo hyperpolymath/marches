@@ -5,9 +5,10 @@
   Gao–Rexford stability classically ASSUMES the customer→provider
   digraph is acyclic; the algebra alone cannot supply it
   (`gr_not_strict` in GaoRexford.lean is the PROVEN gap, falsifier F5).
-  This module names that assumption as an explicit hypothesis
-  (`Acyclic`) and derives loop-freedom UNDER it — the hypothesis is
-  threaded, never silently discharged.
+  This module names that assumption as an explicit hypothesis and
+  derives loop-freedom UNDER it — the hypothesis is threaded, never
+  silently discharged. The hypothesis is `Marches.Acyclic` from
+  `Digraph.lean` — the SAME notion the region DAG consumes at rung 2.
 
   Headline (PROVEN, `lake build`):
     • gr_loop_free : over any topology whose customer→provider
@@ -22,38 +23,12 @@
 -/
 
 import Marches.GRTrace
+import Marches.Digraph
 
 namespace Marches
 namespace GR
 
 variable {V : Type}
-
-/-- Non-empty paths in a relation. -/
-inductive RPath (R : V → V → Prop) : V → V → Prop where
-  | single {u v : V} : R u v → RPath R u v
-  | cons {u v w : V} : R u v → RPath R v w → RPath R u w
-
-/-- THE Gao–Rexford hypothesis, explicit and named: no non-empty cycle
-    in the relation (read: in the customer→provider hierarchy). This is
-    ASSUMED about real topologies, exactly as in Gao–Rexford 2001; it
-    is a hypothesis of `gr_loop_free`, never proven here. -/
-def Acyclic (R : V → V → Prop) : Prop := ∀ v : V, ¬ RPath R v v
-
-theorem rpath_snoc {R : V → V → Prop} :
-    ∀ {u v w : V}, RPath R u v → R v w → RPath R u w := by
-  intro u v w h
-  induction h with
-  | single h1 => intro h2; exact .cons h1 (.single h2)
-  | cons h1 _ ih => intro h2; exact .cons h1 (ih h2)
-
-/-- A cycle in the reversed relation reverses into a cycle proper:
-    acyclicity kills provider-chains as well as customer-chains. -/
-theorem rpath_flip {R : V → V → Prop} :
-    ∀ {u v : V}, RPath (fun a b => R b a) u v → RPath R v u := by
-  intro u v h
-  induction h with
-  | single h1 => exact .single h1
-  | cons h1 _ ih => exact rpath_snoc ih h1
 
 /-- An AS-level topology: `custOf u v` reads "u is a customer of v";
     `peerOf u v` reads "u and v peer" (directed as used). -/
@@ -189,7 +164,7 @@ theorem gr_loop_free {T : Topo V} (hacyc : Acyclic T.custOf)
     exfalso
     cases s with
     | c => exact hacyc v (trace_c_path h (List.cons_ne_nil _ _))
-    | p => exact hacyc v (rpath_flip (trace_p_path h (List.cons_ne_nil _ _)))
+    | p => exact hacyc v (RPath.flip (trace_p_path h (List.cons_ne_nil _ _)))
     | r =>
       cases h with
       | cons hstep htail =>
