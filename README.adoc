@@ -70,9 +70,28 @@ graded machinery (see `ROADMAP.adoc`).
 |PROVEN + TESTED
 |`BadGadget.disagree_not_inflationary`, `disagree_two_cycle`, `#eval orbit`
 
-|GR convergence overall
+|GR crossings as typing judgment ≡ valley-freedom grammar ≡ non-⊥ table
+|PROVEN
+|`GRTrace.gtrace_iff_valley_free`, `GRTrace.valley_free_iff_gwalk`
+
+|GR ill-typed moves (valley, second peer hop, from-⊥) underivable
+|PROVEN
+|`GRTrace.no_valley_step`, `no_peer_reexport_up`, `no_second_peer`,
+`no_step_from_bot`
+
+|GR (node, signature) loop-freedom under acyclic hierarchy
+|PROVEN (conditional)
+|`GRHierarchy.gr_loop_free` — consumes `Acyclic` as an explicit hypothesis
+
+|Acyclic customer→provider hierarchy in real topologies
 |ASSUMED
-|needs acyclic customer→provider hierarchy — rung 1, not formalised here
+|named `GRHierarchy.Acyclic`; hypothesis of `gr_loop_free`, never proven
+here (as in Gao–Rexford 2001)
+
+|Within-region strictness load-bearing (falsifier F2)
+|PROVEN
+|`Freewheel.f2_discharged` — well-typed non-empty returning trace once
+`hA` is dropped
 
 |Tropical estate integration (`TropicalAdapterPath.lean`)
 |OPEN
@@ -104,7 +123,13 @@ Zero dependencies; no mathlib. CI runs the same build.
 * `Marches/Compose.lean` — *headline*: typed crossing, stratified order,
   `Step`/`Trace` judgments, positive and negative theorems.
 * `Marches/GaoRexford.lean` — the commercial-relationship finite exhibit.
+* `Marches/GRTrace.lean` — rung 1: GR relationships as typed crossings;
+  the typing judgment is the valley-freedom grammar.
+* `Marches/GRHierarchy.lean` — rung 1: the acyclicity hypothesis made
+  explicit; conditional loop-freedom (`gr_loop_free`).
 * `Marches/BadGadget.lean` — DISAGREE, the negative pincer.
+* `Marches/Freewheel.lean` — rung 1: falsifier F2 discharged; strictness
+  is load-bearing.
 * `Marches/Tropical.lean` — (min,+) instance; seam for the estate's
   tropical work.
 

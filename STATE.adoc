@@ -1,5 +1,27 @@
 = STATE — cross-session log
 
+== 2026-07-07 — rung 1 built and verified (Claude Code session)
+
+* GR wired into Trace: `Marches/GRTrace.lean` — the five legal
+  (relationship, signature) moves are the constructors of `GStep`;
+  ill-typed moves (valley, second peer hop, any move from ⊥) are
+  unconstructible. Derivations from `c` are EXACTLY the valley-free
+  words (`gtrace_iff_valley_free`), and coincide with non-⊥ evaluation
+  of the rung-0 table (`valley_free_iff_gwalk`).
+* Acyclicity explicit: `Marches/GRHierarchy.lean` — `Acyclic T.custOf`
+  is a named hypothesis; `gr_loop_free` derives (node, signature)
+  state-level loop-freedom UNDER it. Never silently discharged (F5).
+  Convergence remains agda-routing's ground; not claimed anywhere.
+* F2 discharged: `Marches/Freewheel.lean` — identity-extension algebra,
+  inflationary but not strict; `f2_discharged` exhibits a well-typed
+  non-empty returning trace. `hA`/`hB` are load-bearing; stratification
+  alone is not enough. FALSIFIERS F2 → held.
+* Gates re-run: `lake build` → `Build completed successfully.`;
+  `grep -rnw sorry` empty; `#eval orbit` unchanged
+  (`[(false, false), (true, true), (false, false), (true, true)]`).
+* Deferred to rung 2 (unchanged): n-region DAG composition;
+  `Interface.strict` becomes load-bearing or is deleted.
+
 == 2026-07-07 — rung 0 built and verified (claude.ai session)
 
 * Repo scaffolded; six modules + root compile clean under Lean 4
@@ -15,6 +37,7 @@
 
 == Next action
 
-Claude Code session: unpack seed, verify gates, `git init`, first
-commit, tag `v0.1.0`, push to `github.com/hyperpolymath/marches`
-(name provisional — rename before push if desired). Then stop.
+Rung 2 (see ROADMAP.adoc): generalise two regions to a finite DAG of
+regions with typed interfaces; prove the composite discipline from the
+componentwise ones. `Interface.strict` becomes load-bearing there or
+gets deleted. One rung only.

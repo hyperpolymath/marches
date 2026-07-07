@@ -52,10 +52,15 @@ violations are underivable, not a property checked afterwards.
 
 * The stratified order (`CBetter.ab`) makes crossings worsen *by
   definition of the interface's meaning*. That is the design stance
-  (interface = obligation), but the load-bearing role of within-region
-  strictness must be exhibited by a counterexample instance (rung 1;
-  falsifier F2).
+  (interface = obligation). The load-bearing role of within-region
+  strictness is now exhibited: `Marches/Freewheel.lean` (falsifier F2,
+  discharged 2026-07-07).
 * `Interface.strict` is recorded but unused by the kernel theorems —
   it is there for rung 2's n-region work; flagged so nobody mistakes
   it for a proven dependency.
-* GR is a standalone finite exhibit, not yet wired into `Trace` (rung 1).
+* GR is wired into the trace judgment (`Marches/GRTrace.lean`,
+  `Marches/GRHierarchy.lean`, rung 1), but the acyclic
+  customer→provider hierarchy remains an ASSUMED hypothesis
+  (`GRHierarchy.Acyclic`) — `gr_loop_free` is conditional on it, and
+  loop-freedom of the typed judgment is *not* protocol convergence
+  (agda-routing's ground).

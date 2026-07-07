@@ -20,9 +20,11 @@ unconstructible object. Full systematic sweep owed.
 |F2
 |The composite theorem is vacuous: stratification (`ab`) does all the
 work and within-region strictness is decorative.
-|Construct a non-inflationary region instance and exhibit a well-typed
-returning trace, showing `hA`/`hB` are load-bearing. Scheduled rung 1.
-|held-but-untested
+|Discharged 2026-07-07: `Marches/Freewheel.lean` — the identity-extension
+algebra is inflationary but not strictly so, and `f2_discharged` exhibits
+a well-typed NON-EMPTY returning trace. Drop `hA` and
+`wt_cycles_are_empty` is false: strictness is load-bearing.
+|held
 
 |F3
 |Any deployment story requiring global replacement (flag-day) fails.
@@ -41,8 +43,10 @@ discipline or prove it needs quarantine.
 |F5
 |The GR strictness gap ((fromCust, c)) silently re-enters and the
 kernel theorems get applied where they do not hold.
-|`gr_not_strict` is a PROVEN negative; rung 1 must thread the
-acyclic-hierarchy assumption explicitly as a hypothesis, never
-discharge it silently.
+|`gr_not_strict` is a PROVEN negative; rung 1 done 2026-07-07:
+`Marches/GRHierarchy.lean` names the assumption (`Acyclic`) and
+`gr_loop_free` consumes it as an explicit hypothesis — threaded,
+never silently discharged. The hypothesis itself remains ASSUMED
+about real topologies, as in Gao–Rexford 2001.
 |held
 |===

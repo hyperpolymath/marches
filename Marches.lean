@@ -2,5 +2,8 @@ import Marches.Basic
 import Marches.Kernel
 import Marches.Compose
 import Marches.GaoRexford
+import Marches.GRTrace
+import Marches.GRHierarchy
 import Marches.BadGadget
 import Marches.Tropical
+import Marches.Freewheel
