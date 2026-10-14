@@ -1,5 +1,21 @@
 = STATE — cross-session log
 
+== 2026-10-14 — toolchain v4.34.0 → v4.34.1 (patch; review finding on #36)
+
+* CodeRabbit flagged #36 (Major, security): v4.34.1 is the patched
+  release of the 4.34 line. Verified against leanprover/lean4 rather than
+  the bot's summary: `v4.34.0..v4.34.1` adds three runtime
+  reference-count fixes (#15241 sticky counts in deletion cascades,
+  #15288 children of overflowed objects, #15307 panic instead of
+  wrapping in `sharecommon_quick_fn`), a `BitVec.ofNatClamp` backport
+  and release preparation. marches checks only its own proofs, so the
+  practical risk was low. Taking the patch keeps the soundness floor on
+  the patched build at no cost.
+* Gates on v4.34.1: `lake build` → `Build completed successfully (15 jobs).`;
+  `grep -rnw sorry Marches/ Marches.lean` empty; `#eval orbit` unchanged
+  (`[(false, false), (true, true), (false, false), (true, true)]`). The
+  v4.34.0 results below are now historical.
+
 == 2026-10-14 — toolchain moved to v4.34.0 before rung 3 (Claude Code session)
 
 * Maintainer decision (MRC-01 open question): move `lean-toolchain` from
