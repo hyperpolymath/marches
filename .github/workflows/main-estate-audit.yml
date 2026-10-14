@@ -28,4 +28,4 @@ permissions:
 
 jobs:
   estate:
-    uses: hyperpolymath/cicd-suite/.github/workflows/main-estate-audit.yml@b9d4f242f0f1e889a48023534d6fd3669cb83e79 # cicd-suite#50 head; re-pin to its merge commit
+    uses: hyperpolymath/cicd-suite/.github/workflows/main-estate-audit.yml@afa28ff81dc89ae7bd2304eead22917ec1733904 # cicd-suite#50 head; re-pin to its merge commit
