@@ -1,5 +1,25 @@
 = STATE — cross-session log
 
+== 2026-10-14 — CI: actions.lock relocked remotely (not a rung)
+
+* One root cause behind both red checks: `.github/workflows/actions.lock`
+  drifted.
+  - Dependabot (#34) bumped `lean-action` → v1.6.1 and `codeql-action` →
+    v4.38.2 but left the lock on v1.6.0 / v4.38.0, so `CI` ends in
+    `startup_failure`. dependabot-core still gates lock rewriting behind its
+    `github_actions_lockfile` experiment.
+  - The lock held `cicd-suite@main` at `5a10b72`, before cicd-suite #32 fixed
+    the Required Files Gate (`grep -v | wc -l` under `-e -o pipefail` on a
+    comment-only CODEOWNERS). That is why `estate-audit` fails. The bug is
+    already fixed upstream, so nothing needs filing.
+* `.github/workflows/actions-lock.yml` (new, no `uses:`) runs
+  `github/gh-actions-lock v0.2.0 --relock` remotely. It triggers on pushes to
+  main that change a workflow, weekly, and on dispatch. It is scoped to the
+  workflows the lock already tracks plus every workflow with no `uses:`, and opens a PR only when
+  `actions.lock` alone changes.
+* Gates: actionlint 1.7.7 (with shellcheck) clean. The run itself can only
+  be exercised on GitHub, because this sandbox cannot reach the GitHub API.
+
 == 2026-10-14 — toolchain v4.34.0 → v4.34.1 (patch; review finding on #36)
 
 * CodeRabbit flagged #36 (Major, security): v4.34.1 is the patched
