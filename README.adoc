@@ -147,6 +147,13 @@ order
 |`Tropical.TropicalGrade.seq_unitl`, `alt_idem`, `better_reverses_altLe`,
 `altLe_one`, `s3_witness`
 
+|marches' cuts and grade laws correspond to choreographic-types' K-CUT
+(`proj-cut`, `cut-projectable`, K-4)
+|ASSUMED (port-and-reprove)
+|`docs/kcut-correspondence.adoc`. A table of names, not a link. Names are
+checked at their pins by `scripts/check-correspondence.sh`. Falsifier F6
+is open and has already withdrawn one proposed pairing.
+
 |Tropical estate integration (`TropicalAdapterPath.lean`)
 |OPEN
 |rung 3
@@ -169,6 +176,11 @@ lake build
 ----
 
 Zero dependencies; no mathlib. CI runs the same build.
+
+`scripts/check-correspondence.sh` fetches the sibling proof repositories
+at their pinned commits (into `_build/dependencies`). It checks that every
+name `docs/kcut-correspondence.adoc` cites exists, and it needs network
+access.
 
 == Module map
 
