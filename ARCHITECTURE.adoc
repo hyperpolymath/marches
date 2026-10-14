@@ -9,6 +9,10 @@ exists, per the estate Required Files gate (substance over presence).
 * `.machine_readable/` — .machine_readable — repository component
 * `LICENSES/` — LICENSES — repository component
 * `Marches/` — Marches — repository component
+* `docs/` — design notes; `kcut-correspondence.adoc` pairs Lean and Agda
+  names (a table, not a link)
+* `scripts/` — shell glue: `fetch-siblings.sh` (pinned sibling clones
+  into `_build/dependencies`, git-ignored) and `check-correspondence.sh`
 
 == Data flow
 

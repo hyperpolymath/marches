@@ -49,4 +49,19 @@ kernel theorems get applied where they do not hold.
 never silently discharged. The hypothesis itself remains ASSUMED
 about real topologies, as in Gao–Rexford 2001.
 |held
+
+|F6
+|The K-CUT correspondence is nominal: Lean's cut and Agda's cut disagree
+on what `Consistent` means, so the paired names share words, not content.
+|`docs/kcut-correspondence.adoc` pairs the names; every pairing is ASSUMED
+(port-and-reprove). `scripts/check-correspondence.sh` checks that every
+cited name exists at its pin (negative control: fabricated names
+refused). It cannot check meaning. Read at choreographic-types `edb784a`
+(2026-10-14), the falsifier already FIRES on one proposed row: Agda's
+`Consistent p c` is a party-indexed merge condition at choices, while
+marches has no parties, and its cut condition (downward closure,
+`Cut.closed`) is what Agda's `Cut` has by construction. The
+`Acyclic ↔ Consistent` pairing is withdrawn (KC-3). The rest stand
+ASSUMED until a port re-proves them.
+|open (narrowed)
 |===
