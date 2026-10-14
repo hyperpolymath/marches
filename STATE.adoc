@@ -19,12 +19,14 @@
     `actions.lock`, a pure removal of its entry and of the three
     dependencies only it reached (`cicd-suite@main`, `deed-ecosystem`,
     `k9-ecosystem`). Onboarded, a cross-repo reusable call startup-fails
-    under `sha_pinning_required`. The relock workflow proposed in #41 scopes
+    under `sha_pinning_required`. The relock workflow from #41 scopes
     itself to tracked workflows plus those with no `uses:`, so it leaves the
     caller out.
   - `.github/workflows/track-estate-audit.yml` (no `uses:`) opens a PR each
     week that moves the pin to cicd-suite HEAD. That PR's own audit run is
     the check. It needs `AUTOMATION_TOKEN`.
+* The workflow and lock changes reached main through #41, which carried a
+  byte-identical port of them. This PR (#44) adds this record.
 * Pin: `afa28ff`, the head of cicd-suite#50, so that this PR's
   pull_request run exercises the cross-repo call for real. Merge
   cicd-suite#50 first, then re-pin here to its merge commit.
@@ -36,6 +38,43 @@
   0. Negative control: with the gates at `5a10b72`, the same harness fails
   required-files, which reproduces the original failure. The pull_request
   run of the caller is the authoritative check.
+
+== 2026-10-14 — CI: actions.lock relocked remotely (not a rung)
+
+* One root cause behind both red checks: `.github/workflows/actions.lock`
+  drifted.
+  - Dependabot (#34) bumped `lean-action` → v1.6.1 and `codeql-action` →
+    v4.38.2 but left the lock on v1.6.0 / v4.38.0, so `CI` ends in
+    `startup_failure`. dependabot-core still gates lock rewriting behind its
+    `github_actions_lockfile` experiment.
+  - The lock held `cicd-suite@main` at `5a10b72`, before cicd-suite #32 fixed
+    the Required Files Gate (`grep -v | wc -l` under `-e -o pipefail` on a
+    comment-only CODEOWNERS). That is why `estate-audit` fails. The bug is
+    already fixed upstream, so nothing needs filing.
+* `.github/workflows/actions-lock.yml` (new, no `uses:`) runs
+  `github/gh-actions-lock v0.2.0 --relock` remotely. It triggers on pushes to
+  main that change a workflow, weekly, and on dispatch. It is scoped to the
+  workflows the lock already tracks plus every workflow with no `uses:`, and
+  opens a PR only when `actions.lock` alone changes.
+* Track latest (maintainer preference: everything updated and checked
+  against latest). Two weekly workflows, neither with `uses:`; Lean comes
+  from elan's installer.
+  - `track-lean.yml`: tries the latest stable Lean and runs the three gates.
+    Green → a PR (toolchain, README, STATE entry); red → an issue. Dry run
+    here on v4.35.0: `Build completed successfully (15 jobs).`, `sorry`
+    grep empty, `#eval orbit` unchanged, so the first run opens a v4.35.0
+    PR.
+  - `track-siblings.yml`: runs `check-correspondence.sh` against each
+    sibling's HEAD. Green → one re-pin commit per sibling in one PR; a
+    missing name → an issue, pin unchanged. Dry run here:
+    choreographic-types `edb784a`→`ec08c7a` PASS, resource-algebra
+    `cf9235c`→`638dd3e` PASS, tropical-types current. Names only; F6 still
+    needs the diff read.
+  - Lean headers now point at `scripts/fetch-siblings.sh` instead of naming
+    a pin, so a re-pin leaves no stale SHA in prose.
+* 3d decided: depend on tropical-types, tracking latest (ROADMAP).
+* Gates: actionlint 1.7.7 (with shellcheck) clean. The run itself can only
+  be exercised on GitHub, because this sandbox cannot reach the GitHub API.
 
 == 2026-10-14 — toolchain v4.34.0 → v4.34.1 (patch; review finding on #36)
 

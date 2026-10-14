@@ -12,7 +12,7 @@
   import: OPEN (rung 3 in ROADMAP.adoc). Nothing here fabricates or
   depends on that file's contents.
 
-  The cross-prover bridge is resource-algebra's M-2 (pinned at cf9235c):
+  The cross-prover bridge is resource-algebra's M-2 (pinned in scripts/fetch-siblings.sh):
   Agda `MaxPlus` vs tropical-types' Lean `CommSemiring Tropical`, OPEN,
   port-and-reprove, with no mechanical link. `TropicalNat` below is
   min-plus, not max-plus, so it is not one of M-2's two objects; see
@@ -46,7 +46,7 @@ theorem tropical_no_return (l : Nat) (ls : List Nat) (a : Nat) :
   `TropicalNat` read as a (min, +) grade, in the path algebra's own terms:
   alternatives keep the cheaper route (`better` is `<`), sequencing adds
   costs, and the unit of sequencing is cost `0`, the grade of the empty
-  word. choreographic-types (pinned at edb784a) records that K-CUT-LOSS
+  word. choreographic-types (pinned in scripts/fetch-siblings.sh) records that K-CUT-LOSS
   uses exactly two laws, `𝟙 ⊗ x ≡ x` and `x ⊕ x ≡ x` (K-4, TESTED there
   by `scripts/minimal-laws.sh`). Both hold here. Whether this reading
   agrees with any Agda instance is a cross-prover question: ASSUMED,
@@ -80,9 +80,9 @@ theorem label_cost_ne_one (w : Nat) : w + 1 ≠ one := fun h => Nat.noConfusion 
 theorem alt_of_better {a b : Nat} (h : TropicalNat.better a b) : alt a b = a :=
   Nat.min_eq_left (Nat.le_of_lt h)
 
-/-- The order `alt` induces, in resource-algebra's convention at cf9235c
-    (`a ≼ b` when `b` absorbs `a`). It is defined here for marches' own
-    grade; it is NOT the Agda `_≼_`, and no link between them is claimed. -/
+/-- The order `alt` induces, in resource-algebra's convention (read at
+    cf9235c, 2026-10-14: `a ≼ b` when `b` absorbs `a`). It is defined here for
+    marches' own grade; it is NOT the Agda `_≼_`, and no link between them is claimed. -/
 def altLe (a b : Nat) : Prop := alt a b = b
 
 /-- S-3 inside marches: `better` runs WITH cost, the induced order runs

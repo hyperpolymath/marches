@@ -61,9 +61,12 @@ are refused
 |met 2026-10-14 (names only; F6 open)
 
 |3d. Import the estate's fully proved `TropicalAdapterPath.lean` behind
-the `Marches/Tropical.lean` seam. Do NOT paraphrase it; vendor or depend
-on it. It lives in hyperpolymath/tropical-types (lake package
-`tropical-resource-typing`) at `e172f8a`, on Lean v4.13.0.
+the `Marches/Tropical.lean` seam. Do NOT paraphrase it. It lives in
+hyperpolymath/tropical-types (lake package `tropical-resource-typing`) at
+`e172f8a`, on Lean v4.13.0. Decided 2026-10-14: *depend, tracking latest*.
+`lakefile` requires tropical-types at a pinned commit, and the weekly
+re-pin bot keeps that commit current. Prerequisite, upstream in
+tropical-types: build on marches' toolchain.
 |—
 |it builds inside this repo on the pinned toolchain, unparaphrased
 |OPEN
