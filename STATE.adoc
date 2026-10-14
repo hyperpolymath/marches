@@ -25,7 +25,7 @@
   - `.github/workflows/track-estate-audit.yml` (no `uses:`) opens a PR each
     week that moves the pin to cicd-suite HEAD. That PR's own audit run is
     the check. It needs `AUTOMATION_TOKEN`.
-* Pin: `b9d4f24`, the head of cicd-suite#50, so that this PR's
+* Pin: `afa28ff`, the head of cicd-suite#50, so that this PR's
   pull_request run exercises the cross-repo call for real. Merge
   cicd-suite#50 first, then re-pin here to its merge commit.
 * Gates: actionlint 1.7.7 clean on both workflows. `lake build` →
