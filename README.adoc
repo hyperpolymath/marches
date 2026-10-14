@@ -14,7 +14,7 @@ object*: region-crossing well-formedness is a typing judgment on traces
 (`Marches.Trace`), and ill-typed crossings are *unconstructible* — they
 have no derivation — rather than detected and filtered.
 
-Machine-checked, in this repository, by `lake build` (Lean 4, v4.34.0,
+Machine-checked, in this repository, by `lake build` (Lean 4, v4.34.1,
 no dependencies):
 
 * Every well-typed non-empty cross-region trace strictly worsens
@@ -171,7 +171,7 @@ artifact for PROVEN rows. No fabricated identifiers.
 
 [source,shell]
 ----
-elan default leanprover/lean4:v4.34.0   # or let lake read lean-toolchain
+elan default leanprover/lean4:v4.34.1   # or let lake read lean-toolchain
 lake build
 ----
 

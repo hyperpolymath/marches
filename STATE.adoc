@@ -1,5 +1,21 @@
 = STATE — cross-session log
 
+== 2026-10-14 — toolchain v4.34.0 → v4.34.1 (patch; review finding on #36)
+
+* CodeRabbit flagged #36 (Major, security): v4.34.1 is the patched
+  release of the 4.34 line. Verified against leanprover/lean4 rather than
+  the bot's summary: `v4.34.0..v4.34.1` adds three runtime
+  reference-count fixes (leanprover/lean4 #15241 sticky counts in
+  deletion cascades, #15288 children of overflowed objects, #15307 panic
+  instead of wrapping in `sharecommon_quick_fn`), a `BitVec.ofNatClamp`
+  backport and release preparation. marches checks only its own proofs, so the
+  practical risk was low. Taking the patch keeps the soundness floor on
+  the patched build at no cost.
+* Gates on v4.34.1: `lake build` → `Build completed successfully (15 jobs).`;
+  `grep -rnw sorry Marches/ Marches.lean` empty; `#eval orbit` unchanged
+  (`[(false, false), (true, true), (false, false), (true, true)]`). The
+  v4.34.0 results below are now historical.
+
 == 2026-10-14 — rung 3, items 3a–3c: a region crossing is a cut (Claude Code session, MRC-01)
 
 * `Marches/Cut.lean` (3a). A cut is a predecessor-closed set of regions.
@@ -154,7 +170,7 @@ Rung 3 (see ROADMAP.adoc), the remaining items. 3d: import the estate's
 fully proved `TropicalAdapterPath.lean` (hyperpolymath/tropical-types,
 lake package `tropical-resource-typing`, pinned `e172f8a`, Lean v4.13.0)
 behind the `Marches/Tropical.lean` seam — vendor or depend on it, do NOT
-paraphrase, and expect toolchain friction against v4.34.0. 3e: path
+paraphrase, and expect toolchain friction against v4.34.1. 3e: path
 provenance as graded accumulation (echo-types bridge). 3f: file the
 postern cross-issue once that repository exists. Obtain the real files;
 never reconstruct from memory. One rung only.
