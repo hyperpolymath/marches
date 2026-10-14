@@ -31,13 +31,54 @@ prints the period-2 cycle. All met 2026-07-07.
 * `Interface.strict` DELETED — rung 2 confirmed crossing-map
   order-preservation is never load-bearing. Met 2026-07-07.
 
-== Rung 3 — tropical/estate integration
+== Rung 3 — tropical/estate integration (OPEN)
 
-* Import the estate's fully proved `TropicalAdapterPath.lean`
-  (tropical-resource-typing) behind the `Marches/Tropical.lean` seam.
-  Do NOT paraphrase it; vendor or depend on it.
-* Path provenance as graded accumulation (echo-types bridge): what a
-  trace *carries* across an interface, not just where it may go.
+Each item is marked by its gate, not by prose. The rung is DONE when every
+row's gate passes. Shared gates for Lean rows: `lake build` green,
+`grep -rnw sorry Marches/ Marches.lean` empty, `#eval orbit` unchanged.
+
+[cols="3,3,3,1",options="header"]
+|===
+|Item |Artefact |Gate |Status
+
+|3a. A region crossing is a cut (MRC-01): every crossing crosses a cut;
+no re-entry; `compose` restricted to a cut prefix is a discipline
+|`Marches/Cut.lean`
+|shared Lean gates; `#print axioms` on the new declarations reports none
+|met 2026-10-14
+
+|3b. The grade at the crossing: the two K-4 laws over `TropicalNat`; S-3
+direction recorded
+|`Marches/Tropical.lean` (`TropicalGrade`)
+|shared Lean gates
+|met 2026-10-14
+
+|3c. K-CUT correspondence as a table of names (rows ASSUMED, M-2 idiom);
+falsifier F6 added
+|`docs/kcut-correspondence.adoc`, `FALSIFIERS.adoc` F6
+|`scripts/check-correspondence.sh` prints PASS, and both negative controls
+are refused
+|met 2026-10-14 (names only; F6 open)
+
+|3d. Import the estate's fully proved `TropicalAdapterPath.lean` behind
+the `Marches/Tropical.lean` seam. Do NOT paraphrase it; vendor or depend
+on it. It lives in hyperpolymath/tropical-types (lake package
+`tropical-resource-typing`) at `e172f8a`, on Lean v4.13.0.
+|—
+|it builds inside this repo on the pinned toolchain, unparaphrased
+|OPEN
+
+|3e. Path provenance as graded accumulation (echo-types bridge): what a
+trace *carries* across an interface, not just where it may go.
+|—
+|—
+|OPEN
+
+|3f. postern consumes `no_back_cross` (cross-issue)
+|import plan in `docs/kcut-correspondence.adoc`
+|issue filed on postern
+|OPEN — postern not reachable 2026-10-14
+|===
 
 == Rung 4 — attestation (A2ML bridge)
 
