@@ -1,5 +1,44 @@
 = STATE — cross-session log
 
+== 2026-10-14 — CI: the estate audit becomes a thin caller of cicd-suite (not a rung)
+
+* `Central Estate CI/CD Audit / estate-audit` failed after 8s for three
+  reasons:
+  - The 26-step copy of cicd-suite's workflow held here was frozen by
+    `actions.lock` at `cicd-suite@5a10b72`. That commit predates cicd-suite
+    #32, which fixed the Required Files Gate.
+  - All 26 gates ran in one job, so the first failure hid the rest.
+  - Two of the steps (`prat`, `semantic-audit`) were stubs that could not
+    fail.
+* The fix is in hyperpolymath/cicd-suite#50 and here:
+  - `.github/workflows/main-estate-audit.yml` is now a ten-line caller of
+    cicd-suite's reusable audit, pinned at a full SHA. The reusable reports
+    five checks (governance, hygiene, manifests, languages, advisory), and
+    each runs every gate even after one fails. It no longer runs the stubs.
+  - cicd-suite's `scripts/deonboard-estate-audit.sh` removed the caller from
+    `actions.lock`, a pure removal of its entry and of the three
+    dependencies only it reached (`cicd-suite@main`, `deed-ecosystem`,
+    `k9-ecosystem`). Onboarded, a cross-repo reusable call startup-fails
+    under `sha_pinning_required`. The relock workflow from #41 scopes
+    itself to tracked workflows plus those with no `uses:`, so it leaves the
+    caller out.
+  - `.github/workflows/track-estate-audit.yml` (no `uses:`) opens a PR each
+    week that moves the pin to cicd-suite HEAD. That PR's own audit run is
+    the check. It needs `AUTOMATION_TOKEN`.
+* The workflow and lock changes reached main through #41, which carried a
+  byte-identical port of them. This PR (#44) adds this record.
+* Pin: `afa28ff`, the head of cicd-suite#50, so that this PR's
+  pull_request run exercises the cross-repo call for real. Merge
+  cicd-suite#50 first, then re-pin here to its merge commit.
+* Gates: actionlint 1.7.7 clean on both workflows. `lake build` →
+  `Build completed successfully (15 jobs).`; `grep -rnw sorry` empty;
+  `#eval orbit` unchanged. No Lean file changed.
+* Local harness: cicd-suite's 24 composite gates at `1aa6bfb` were run as
+  composite steps (`bash -e -o pipefail`) against this commit. All 24 exit
+  0. Negative control: with the gates at `5a10b72`, the same harness fails
+  required-files, which reproduces the original failure. The pull_request
+  run of the caller is the authoritative check.
+
 == 2026-10-14 — CI: actions.lock relocked remotely (not a rung)
 
 * One root cause behind both red checks: `.github/workflows/actions.lock`
