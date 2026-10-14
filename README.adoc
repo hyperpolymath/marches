@@ -182,6 +182,15 @@ at their pinned commits (into `_build/dependencies`). It checks that every
 name `docs/kcut-correspondence.adoc` cites exists, and it needs network
 access.
 
+Pins track latest, weekly, through reviewed PRs:
+
+* `actions-lock.yml` relocks `.github/workflows/actions.lock`.
+* `track-lean.yml` tries the newest stable Lean against the three gates.
+* `track-siblings.yml` re-checks the correspondence against each sibling's
+  HEAD and re-pins when every name still exists.
+
+A red result opens an issue instead of a PR.
+
 == Module map
 
 * `Marches/Basic.lean` — path algebras, strict/non-strict inflation, `run`.
