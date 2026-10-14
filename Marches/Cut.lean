@@ -34,7 +34,7 @@
                                      `Interface` of `Compose.lean` (the
                                      2-node DAG `Reassembly.boolUp`).
 
-  Provenance. choreographic-types (pinned at edb784a) proves the cut side
+  Provenance. choreographic-types (pinned in scripts/fetch-siblings.sh) proves the cut side
   for global choreographies in Agda: `Choreographic.Global.Cut`,
   `KCut.proj-cut`, `KCut.cut-projectable`. The relation between those
   names and these is a table, not a link (docs/kcut-correspondence.adoc).

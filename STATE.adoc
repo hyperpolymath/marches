@@ -15,8 +15,25 @@
 * `.github/workflows/actions-lock.yml` (new, no `uses:`) runs
   `github/gh-actions-lock v0.2.0 --relock` remotely. It triggers on pushes to
   main that change a workflow, weekly, and on dispatch. It is scoped to the
-  workflows the lock already tracks plus every workflow with no `uses:`, and opens a PR only when
-  `actions.lock` alone changes.
+  workflows the lock already tracks plus every workflow with no `uses:`, and
+  opens a PR only when `actions.lock` alone changes.
+* Track latest (maintainer preference: everything updated and checked
+  against latest). Two weekly workflows, neither with `uses:`; Lean comes
+  from elan's installer.
+  - `track-lean.yml`: tries the latest stable Lean and runs the three gates.
+    Green → a PR (toolchain, README, STATE entry); red → an issue. Dry run
+    here on v4.35.0: `Build completed successfully (15 jobs).`, `sorry`
+    grep empty, `#eval orbit` unchanged, so the first run opens a v4.35.0
+    PR.
+  - `track-siblings.yml`: runs `check-correspondence.sh` against each
+    sibling's HEAD. Green → one re-pin commit per sibling in one PR; a
+    missing name → an issue, pin unchanged. Dry run here:
+    choreographic-types `edb784a`→`ec08c7a` PASS, resource-algebra
+    `cf9235c`→`638dd3e` PASS, tropical-types current. Names only; F6 still
+    needs the diff read.
+  - Lean headers now point at `scripts/fetch-siblings.sh` instead of naming
+    a pin, so a re-pin leaves no stale SHA in prose.
+* 3d decided: depend on tropical-types, tracking latest (ROADMAP).
 * Gates: actionlint 1.7.7 (with shellcheck) clean. The run itself can only
   be exercised on GitHub, because this sandbox cannot reach the GitHub API.
 

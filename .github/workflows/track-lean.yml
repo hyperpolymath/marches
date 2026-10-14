@@ -1,0 +1,109 @@
+# SPDX-License-Identifier: MPL-2.0
+name: Track latest Lean
+
+# Weekly: is there a newer stable Lean than lean-toolchain pins? If so, build
+# marches on it and run every gate. Green → a PR that bumps lean-toolchain and
+# README's two version mentions and records the gate output in STATE.adoc.
+# Red → an issue carrying the failing output. Either way a person merges or
+# decides; nothing lands on main unreviewed.
+#
+# "Stable" means a vMAJOR.MINOR.PATCH tag of leanprover/lean4 (no -rc).
+#
+# ⚠ NO `uses:` (see labels.yml): Lean comes from elan's installer, so this
+# workflow needs no action and no actions.lock entry beyond [].
+#
+# Token: AUTOMATION_TOKEN if set (see actions-lock.yml), else GITHUB_TOKEN.
+
+on:
+  schedule:
+    - cron: "11 7 * * 1"   # weekly, Monday
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: track-lean
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+      BASE: main
+      BRANCH: ci/track-lean
+      ORBIT: "[(false, false), (true, true), (false, false), (true, true)]"
+    steps:
+      - name: Try the latest stable Lean and open a PR or an issue
+        run: |
+          set -euo pipefail
+          gh auth setup-git
+          gh repo clone "$GITHUB_REPOSITORY" repo -- --quiet --depth 1 --branch "$BASE"
+          cd repo
+
+          current=$(sed -n 's|^leanprover/lean4:||p' lean-toolchain)
+          latest=$(git ls-remote --tags --refs https://github.com/leanprover/lean4 \
+                     | sed -n 's|.*refs/tags/\(v[0-9]*\.[0-9]*\.[0-9]*\)$|\1|p' | sort -V | tail -1)
+          echo "pinned: $current   latest stable: $latest"
+          if [ "$(printf '%s\n%s\n' "$current" "$latest" | sort -V | tail -1)" = "$current" ]; then
+            echo "lean-toolchain is already at the latest stable release."
+            exit 0
+          fi
+
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none --no-modify-path
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "leanprover/lean4:$latest" > lean-toolchain
+          sed -i "s/${current//./\\.}/$latest/g" README.adoc
+
+          # The three gates (CLAUDE.md), each recorded verbatim.
+          log=$(mktemp)
+          build_ok=0; sorry_ok=0; orbit_ok=0
+          if lake build >"$log" 2>&1; then build_ok=1; fi
+          build_line=$(tail -n 1 "$log")
+          if ! grep -rnw sorry Marches/ Marches.lean >/dev/null; then sorry_ok=1; fi
+          orbit=$(lake env lean Marches/BadGadget.lean 2>&1 || true)
+          # shellcheck disable=SC2153  # ORBIT is set in the job env:
+          if [ "$orbit" = "$ORBIT" ]; then orbit_ok=1; fi
+          gates=$(printf '%s\n' \
+            "\$ lake build" "$build_line" \
+            "\$ grep -rnw sorry Marches/ Marches.lean  # $([ "$sorry_ok" = 1 ] && echo empty || echo FOUND)" \
+            "\$ lake env lean Marches/BadGadget.lean" "$orbit")
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+          if [ "$build_ok$sorry_ok$orbit_ok" != 111 ]; then
+            title="Lean $latest breaks marches"
+            # shellcheck disable=SC2016  # literal Markdown backticks
+            body=$(printf 'Weekly check (%s) built marches on Lean %s (pinned: %s). At least one gate failed.\n\n```\n%s\n```\n\nLast 60 lines of `lake build`:\n\n```\n%s\n```\n' \
+              "$run_url" "$latest" "$current" "$gates" "$(tail -n 60 "$log")")
+            existing=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')
+            if [ -n "$existing" ]; then gh issue comment "$existing" --body "$body"
+            else gh issue create --title "$title" --body "$body"; fi
+            exit 1
+          fi
+
+          today=$(date -u +%F)
+          entry=$(printf '== %s — toolchain %s → %s (weekly track-lean bot)\n\n* Gates on %s, verbatim:\n+\n----\n%s\n----\n' \
+            "$today" "$current" "$latest" "$latest" "$gates")
+          ENTRY="$entry" awk 'NR==2 && !done { print; print ENVIRON["ENTRY"]; print ""; done=1; next } { print }' \
+            STATE.adoc > STATE.new && mv STATE.new STATE.adoc
+
+          git switch --quiet -c "$BRANCH"
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898583+github-actions[bot]@users.noreply.github.com' \
+              commit --quiet -am "chore(toolchain): track Lean $latest" \
+              -m "Weekly track-lean run: $run_url. All three gates pass on $latest."
+          git push --quiet --force origin "$BRANCH"
+          # shellcheck disable=SC2016  # literal Markdown backticks
+          body=$(printf 'Lean %s is the latest stable release; marches pins %s. Built and gated on %s by %s:\n\n```\n%s\n```\n' \
+            "$latest" "$current" "$latest" "$run_url" "$gates")
+          if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr edit "$BRANCH" --title "chore(toolchain): track Lean $latest" --body "$body"
+          else
+            gh pr create --base "$BASE" --head "$BRANCH" --title "chore(toolchain): track Lean $latest" --body "$body"
+          fi

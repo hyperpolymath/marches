@@ -1,0 +1,103 @@
+# SPDX-License-Identifier: MPL-2.0
+name: Track latest siblings
+
+# Weekly: for each sibling proof repository pinned in scripts/fetch-siblings.sh
+# (choreographic-types, resource-algebra, tropical-types), check
+# docs/kcut-correspondence.adoc against the sibling's current HEAD.
+#
+# - Every cited name still exists at HEAD → re-pin: one commit per sibling,
+#   updating the pin in fetch-siblings.sh and the doc's pin table together,
+#   re-checked with scripts/check-correspondence.sh, in one PR.
+# - A cited name is gone at HEAD → an issue with the check's output; the pin
+#   stays put.
+#
+# Names only. Whether a re-pinned name still MEANS the same thing is falsifier
+# F6, and no script decides it: the PR asks for the sibling diff to be read.
+#
+# ⚠ NO `uses:` (see labels.yml): Lean comes from elan's installer.
+# Token: AUTOMATION_TOKEN if set (see actions-lock.yml), else GITHUB_TOKEN.
+
+on:
+  schedule:
+    - cron: "17 7 * * 1"   # weekly, Monday
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: track-siblings
+  cancel-in-progress: false
+
+jobs:
+  repin:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+      BASE: main
+      BRANCH: ci/track-siblings
+    steps:
+      - name: Check the correspondence against sibling HEADs and re-pin
+        run: |
+          set -euo pipefail
+          gh auth setup-git
+          gh repo clone "$GITHUB_REPOSITORY" repo -- --quiet --depth 1 --branch "$BASE"
+          cd repo
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none --no-modify-path
+          export PATH="$HOME/.elan/bin:$PATH"
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          git switch --quiet -c "$BRANCH"
+
+          repinned=(); broken=()
+          for spec in choreographic-types:CHOREOGRAPHIC_TYPES_COMMIT \
+                      resource-algebra:RESOURCE_ALGEBRA_COMMIT \
+                      tropical-types:TROPICAL_TYPES_COMMIT; do
+            repo="${spec%%:*}"; var="${spec#*:}"
+            pinned=$(grep -E "^${var}=" scripts/fetch-siblings.sh | grep -oE '[0-9a-f]{40}')
+            head=$(git ls-remote "https://github.com/hyperpolymath/$repo.git" HEAD | cut -f1)
+            echo "$repo: pinned ${pinned:0:7}, HEAD ${head:0:7}"
+            [ "$pinned" = "$head" ] && continue
+
+            out=$(mktemp)
+            if env "$var=$head" scripts/check-correspondence.sh >"$out" 2>&1; then
+              sed -i "s/$pinned/$head/g" scripts/fetch-siblings.sh docs/kcut-correspondence.adoc
+              if ! scripts/check-correspondence.sh >"$out" 2>&1; then
+                echo "::error::$repo re-pin did not re-check"; cat "$out"; exit 1
+              fi
+              git -c user.name='github-actions[bot]' \
+                  -c user.email='41898583+github-actions[bot]@users.noreply.github.com' \
+                  commit --quiet -am "chore(siblings): re-pin $repo to ${head:0:7}" \
+                  -m "Weekly track-siblings run: $run_url. $(tail -n 1 "$out")"
+              repinned+=("$repo ${pinned:0:7} → ${head:0:7} (https://github.com/hyperpolymath/$repo/compare/$pinned...$head)")
+            else
+              title="Sibling $repo at HEAD breaks the K-CUT correspondence names"
+              # shellcheck disable=SC2016  # literal Markdown backticks
+              body=$(printf 'Weekly check (%s): docs/kcut-correspondence.adoc against hyperpolymath/%s HEAD `%s` (pinned: `%s`). The pin stays put.\n\n```\n%s\n```\n' \
+                "$run_url" "$repo" "$head" "$pinned" "$(tail -n 40 "$out")")
+              existing=$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')
+              if [ -n "$existing" ]; then gh issue comment "$existing" --body "$body"
+              else gh issue create --title "$title" --body "$body"; fi
+              broken+=("$repo")
+            fi
+          done
+
+          if [ "${#repinned[@]}" -gt 0 ]; then
+            git push --quiet --force origin "$BRANCH"
+            # shellcheck disable=SC2016  # literal Markdown backticks
+            body=$(printf 'Weekly re-pin (%s). Every name docs/kcut-correspondence.adoc cites still exists at the new pins, and both negative controls are refused (`scripts/check-correspondence.sh`).\n\n%s\n\n**Names only.** Read each sibling diff above before merging: whether a name still means the same thing is falsifier F6.\n' \
+              "$run_url" "$(printf -- '- %s\n' "${repinned[@]}")")
+            if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+              gh pr edit "$BRANCH" --body "$body"
+            else
+              gh pr create --base "$BASE" --head "$BRANCH" --title "chore(siblings): re-pin to latest" --body "$body"
+            fi
+          fi
+          if [ "${#broken[@]}" -gt 0 ]; then
+            echo "::error::names broken at HEAD for: ${broken[*]} (issues filed)"
+            exit 1
+          fi
