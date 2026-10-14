@@ -1,5 +1,15 @@
 = STATE — cross-session log
 
+== 2026-10-14 — CI: estate audit pinned to cicd-suite main (not a rung)
+
+* hyperpolymath/cicd-suite#50 merged as `376898b`. Its tree is identical to
+  `afa28ff`, the PR head marches has called since #44 (`git diff --stat
+  afa28ff 376898b` is empty). So this changes only the pin, from a PR-branch
+  commit to a commit on cicd-suite's `main`.
+* `track-estate-audit.yml` now has a `main` commit to compare against, and
+  will move the pin forward weekly by PR.
+* Gates: actionlint 1.7.7 clean on the caller. No Lean file changed.
+
 == 2026-10-14 — CI: the estate audit becomes a thin caller of cicd-suite (not a rung)
 
 * `Central Estate CI/CD Audit / estate-audit` failed after 8s for three
