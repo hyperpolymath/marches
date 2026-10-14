@@ -1,5 +1,18 @@
 = STATE — cross-session log
 
+== 2026-10-14 — toolchain moved to v4.34.0 before rung 3 (Claude Code session)
+
+* Maintainer decision (MRC-01 open question): move `lean-toolchain` from
+  `v4.15.0` to the estate's `v4.34.0` floor (F-11) *before* any rung-3
+  module is added, as its own change.
+* No source change was needed: the tree at `ea1920a` was built on both
+  toolchains first, and both gave `Build completed successfully` with no
+  warnings and the same `#eval orbit`.
+* Gates on v4.34.0: `lake build` → `Build completed successfully (14 jobs).`;
+  `grep -rnw sorry Marches/ Marches.lean` empty; `#eval orbit` unchanged
+  (`[(false, false), (true, true), (false, false), (true, true)]`).
+* Rung 3 still OPEN; nothing else moved.
+
 == 2026-07-07 — rung 2 built and verified (Claude Code session)
 
 * Digraph foundation lifted: `Marches/Digraph.lean` — `RPath`,
