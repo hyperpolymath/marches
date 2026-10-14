@@ -32,6 +32,10 @@ no dependencies):
   discipline *and* demonstrably oscillates (`Marches/BadGadget.lean`;
   the `#eval` prints the period-2 orbit). The types reject exactly the
   policies that misbehave.
+* A region crossing is a cut: in an acyclic region DAG every crossing in
+  a well-typed trace leaves a cut and never re-enters it, and the
+  composite restricted to a cut prefix is itself a discipline whose traces
+  are exactly those ending in the prefix (`Marches/Cut.lean`).
 
 == What this is NOT
 
@@ -119,6 +123,30 @@ here (as in Gao–Rexford 2001)
 |`Marches.Acyclic` — hypothesis of `compose`, the SAME notion as the GR
 hierarchy's; never proven here
 
+|Every DAG edge crosses the principal cut of its source; an edge on a
+cycle crosses no cut
+|PROVEN (conditional)
+|`Cut.edge_crosses_past` — consumes `Acyclic`; `Cut.path_back_crosses_no_cut`
+
+|Every crossing in a well-typed trace crosses a cut that holds the trace's
+start and not its end; a trace that leaves a cut never re-enters it
+|PROVEN (conditional)
+|`Cut.DiscSys.trace_cross_crosses_cut`, `DiscSys.no_reentry`; two-region
+`Interface`: `trace_cross_crosses_cut`, `trace_stays_in_B`
+
+|`compose` restricted to a cut prefix is a discipline; its traces are
+exactly the composite's traces that end in the prefix
+|PROVEN (conditional)
+|`Cut.DiscSys.composeCut`, `composeCut_trace_embed`,
+`composeCut_trace_reflect`
+
+|`TropicalNat` as a (min,+) grade satisfies `𝟙 ⊗ x = x` and `x ⊕ x = x`
+(the two laws K-CUT-LOSS uses); its `better` runs against its ⊕-induced
+order
+|PROVEN
+|`Tropical.TropicalGrade.seq_unitl`, `alt_idem`, `better_reverses_altLe`,
+`altLe_one`, `s3_witness`
+
 |Tropical estate integration (`TropicalAdapterPath.lean`)
 |OPEN
 |rung 3
@@ -158,12 +186,16 @@ Zero dependencies; no mathlib. CI runs the same build.
 * `Marches/BadGadget.lean` — DISAGREE, the negative pincer.
 * `Marches/Freewheel.lean` — rung 1: falsifier F2 discharged; strictness
   is load-bearing.
-* `Marches/Tropical.lean` — (min,+) instance; seam for the estate's
-  tropical work.
+* `Marches/Tropical.lean` — (min,+) instance and its grade reading (the
+  two K-4 laws, the S-3 order direction); seam for the estate's tropical
+  work.
 * `Marches/Reassembly.lean` — *rung 2 headline*: `Discipline`, generic
   loop-freedom, `PathAlgebra.toDiscipline`, and `DiscSys.compose` — a
   finite acyclic DAG of disciplines is itself a discipline (reassembly
   as closure under composition).
+* `Marches/Cut.lean` — rung 3: cuts of the region DAG; every crossing
+  crosses a cut, traces never re-enter a cut they have left, and
+  `compose` restricted to a cut prefix is a discipline (prefix-closure).
 
 == Licence
 
