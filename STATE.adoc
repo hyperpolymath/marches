@@ -15,7 +15,7 @@
 * `.github/workflows/actions-lock.yml` (new, no `uses:`) runs
   `github/gh-actions-lock v0.2.0 --relock` remotely. It triggers on pushes to
   main that change a workflow, weekly, and on dispatch. It is scoped to the
-  workflows the lock already tracks plus itself, and opens a PR only when
+  workflows the lock already tracks plus every workflow with no `uses:`, and opens a PR only when
   `actions.lock` alone changes.
 * Gates: actionlint 1.7.7 (with shellcheck) clean. The run itself can only
   be exercised on GitHub, because this sandbox cannot reach the GitHub API.
