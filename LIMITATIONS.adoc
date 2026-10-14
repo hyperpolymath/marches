@@ -68,6 +68,11 @@ violations are underivable, not a property checked afterwards.
   (`Marches.Acyclic`) — `gr_loop_free` is conditional on it, and
   loop-freedom of the typed judgment is *not* protocol convergence
   (agda-routing's ground).
+* The K-CUT correspondence (rung 3, `docs/kcut-correspondence.adoc`)
+  pairs marches' Lean names with choreographic-types' Agda names. It is
+  a table, not a link: every pairing is ASSUMED (port-and-reprove), and
+  only name existence is checked mechanically. Falsifier F6 has already
+  withdrawn the proposed `Acyclic ↔ Consistent` pairing.
 * The region DAG (rung 2, `DiscSys.compose`) consumes the SAME
   `Marches.Acyclic` as the GR hierarchy: an acyclic region DAG is an
   ASSUMED property of a deployment, never proven here. Composite

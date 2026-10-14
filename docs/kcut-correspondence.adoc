@@ -1,0 +1,163 @@
+= K-CUT correspondence — a table of names, not a link
+:revdate: 2026-10-14
+
+marches (Lean 4, kept as provenance) proves that a region crossing is a
+cut (`Marches/Cut.lean`). choreographic-types (Agda, the proof kernel)
+proves the cut side of K-CUT for global choreographies. This page pairs
+the names. It does not link the proofs: no row is more than ASSUMED, in
+the idiom of resource-algebra's M-2 — cross-prover, port-and-reprove, a
+named obligation, no mechanical link exists or is claimed.
+
+What IS mechanical: `scripts/check-correspondence.sh` fetches the
+siblings at the pins below and checks that every name cited on this page
+exists — Lean names in this build, sibling names at their pinned commits —
+and that every pin appears here. A fabricated Lean name and a fabricated
+Agda name are run through the same checks as a negative control and must
+be refused. The script checks names only. Whether two paired names mean
+the same thing is falsifier F6 (`FALSIFIERS.adoc`), and one proposed row
+below already fails it.
+
+Delimitation: nothing here is a convergence claim; agda-routing owns that
+ground (`LIMITATIONS.adoc`).
+
+== Pins
+
+[cols="2,3,3",options="header"]
+|===
+|Repository |Commit |Read for
+
+|hyperpolymath/choreographic-types
+|`edb784a7d26c276c2abfa8399b773d346dbb101e`
+|`Cut`, `_↾_`, `Consistent`, `proj-cut`, `cut-projectable`, K-4 minimal laws, `Bound`, T-2
+
+|hyperpolymath/resource-algebra
+|`cf9235c532712a783a404c359a1055f40134794a`
+|`_≼_` convention, `Loss`, `MaxPlus`, S-3 witnesses, M-2 status
+
+|hyperpolymath/tropical-types
+|`e172f8abefd50fc40def4368fa60a155d130ff47`
+|`TropicalAdapterPath.lean`, `TropicalSessionTypes.lean` (the Lean side of M-2)
+|===
+
+`scripts/fetch-siblings.sh` holds the same three commits. Re-pin one
+commit per change and update this table in the same commit.
+
+== The table
+
+Every Lean name below is PROVEN by `lake build` in this repository, and
+every Agda name has the status its own repository gives it. The *Status*
+column is the status of the PAIRING.
+
+[cols="1,3,3,4,2",options="header"]
+|===
+|ID |marches (Lean) |sibling (Agda, at pin) |Reading |Status of the pairing
+
+|KC-1
+|`Marches.Cut`
+|`choreographic-types:src/Choreographic/Global.agda:Cut`, `choreographic-types:src/Choreographic/Global.agda:_↾_`
+|Both are frontiers whose inside is a prefix. Lean: a predecessor-closed
+set of regions of a DAG. Agda: a frontier through a finite global type;
+`G ↾ c` is the prefix.
+|ASSUMED (port-and-reprove)
+
+|KC-2
+|`Marches.Cut.closed`
+|`choreographic-types:src/Choreographic/Global.agda:Cut`
+|Downward closure is marches' cut condition and must be stated. In Agda it
+holds by construction: a `Cut G` is built along the tree (`stop`,
+`cont-msg`, `cont-choice`) and cannot skip a node.
+|ASSUMED (port-and-reprove)
+
+|KC-3
+|`Marches.Acyclic` (as proposed in MRC-01)
+|`choreographic-types:src/Choreographic/Projection.agda:Consistent` (as proposed)
+|*Fails on reading* (F6). `Consistent p c` is indexed by a party: at each
+choice `p` takes no part in, the two truncated branches must merge for
+`p`. marches has no parties and no choices. Its `Acyclic` is a hypothesis
+on the region relation; Agda needs none, because `Global` is an inductive
+tree. Neither name has a counterpart on the other side.
+|OPEN — no counterpart; the proposed pairing is withdrawn
+
+|KC-4
+|`Marches.DiscSys.composeCut_trace_reflect`, `Marches.DiscSys.trace_mem_back`, `Marches.DiscSys.no_reentry`, `Marches.no_back_cross`
+|`choreographic-types:src/Choreographic/KCut.agda:cut-projectable` (K-5)
+|"What happens after the frontier is irrelevant." Lean: a trace that ends
+in the prefix lies in it throughout and is a trace of the prefix alone;
+a trace that leaves a cut never returns. `no_back_cross` (one interface)
+is the special case. Agda: `Consistent p c` alone makes the prefix
+projectable. MRC-01 paired `no_back_cross` with K-5. The closer Lean
+statement is `composeCut_trace_reflect`, and `no_back_cross` /
+`no_reentry` are the ingredient it rests on.
+|ASSUMED (port-and-reprove)
+
+|KC-5
+|`Marches.DiscSys.composeCut`, `Marches.DiscSys.composeCut_trace_embed`
+|`choreographic-types:src/Choreographic/KCut.agda:proj-cut` (K-2)
+|An operation commutes with cutting. Agda: projecting then cutting equals
+cutting then projecting, with no side-conditions. Lean: composing the
+cut prefix gives exactly the composite's traces that end in the prefix
+(embed + reflect). The operations differ (projection vs composition);
+only the commuting shape is shared.
+|ASSUMED (port-and-reprove)
+
+|KC-6
+|`Marches.TropicalGrade.seq_unitl`, `Marches.TropicalGrade.alt_idem`
+|`choreographic-types:tests/minimal-laws/ResourceAlgebra/Core.agda:unitˡ`, `choreographic-types:tests/minimal-laws/ResourceAlgebra/Core.agda:idem`, `choreographic-types:scripts/minimal-laws.sh`
+|K-4 (TESTED there): K-CUT-LOSS uses only `𝟙 ⊗ x ≡ x` and `x ⊕ x ≡ x`.
+Both hold for marches' (min,+) reading of `TropicalNat`.
+|ASSUMED (port-and-reprove)
+
+|KC-7
+|`Marches.TropicalGrade.better_reverses_altLe`, `Marches.TropicalGrade.altLe_one`, `Marches.TropicalGrade.s3_witness`
+|`resource-algebra:src/ResourceAlgebra/Separation.agda:loss-order-reversed`, `resource-algebra:src/ResourceAlgebra/Instances/Loss.agda:Loss`, `choreographic-types:src/Choreographic/Bound.agda:grade-≼↾`
+|S-3 and W-4. marches' `better` runs with cost, and its ⊕-induced order
+runs against cost with `𝟙` on top, as in `Loss` (`fin 2 ≼ fin 1`, same
+numbers). So a ported K-CUT-WARRANT bound would take the `grade-≼↾`
+(upper) form, not `grade↾-≼`. Any port must re-check the direction.
+|ASSUMED (port-and-reprove)
+
+|KC-8
+|`Marches.TropicalNat`
+|`resource-algebra:src/ResourceAlgebra/Instances/MaxPlus.agda:MaxPlus`, `tropical-types:TropicalSessionTypes.lean`
+|M-2 pairs `MaxPlus` with tropical-types' Lean `CommSemiring Tropical`,
+and it is OPEN there. marches' `TropicalNat` is min-plus on `Nat`, not
+max-plus: by KC-7 it sits with `Loss`, not with `MaxPlus`. No pairing
+with M-2's objects is proposed.
+|OPEN — not paired (order runs opposite)
+|===
+
+== Transport, for postern
+
+T-2 (choreographic-types, PROVEN for the synchronous fragment): receiving
+is knowing (`choreographic-types:src/Choreographic/Instances.agda:receiver-knows`);
+synchronously, so is sending
+(`choreographic-types:src/Choreographic/Instances.agda:sender-knows`). Both
+instantiate the generic
+`choreographic-types:src/Choreographic/Transport.agda:knows-local-cut`.
+MRC-01 cited `Transport.agda` for the two named lemmas. At the pin they
+are in `Instances.agda`. Under asynchrony, `sender-knows` is expected to
+FAIL (PROOF-STATUS, "Open: Asynchrony"). That is OPEN, and it is the
+property an ACK-based containment boundary relies on: a sender without
+receipt cannot know.
+
+== postern import plan (not filed)
+
+postern was not reachable on 2026-10-14 (not found, or no access, from
+this account), so no cross-issue was filed and nothing here describes
+postern's code. When the repository exists, the plan from MRC-01 is:
+
+. State the containment boundary as an `Interface` and import
+  `Marches.no_back_cross`. The crossing map never returns.
+. Model TCP-ACK-as-proof as a `Trace` whose well-typedness is the ACK.
+. Model `guardEmit` as unconstructibility of emission before the ACK.
+. Cite the sender's ignorance under asynchrony as OPEN on
+  choreographic-types (above). Do not claim it.
+
+== As the proofs progress
+
+* M-2 closes, or an Agda port of `Marches/Cut.lean` lands. Then KC-1, KC-2,
+  KC-4, KC-5 and KC-6 can each move from ASSUMED to a named port with its
+  own check.
+* Asynchronous K-CUT lands. Then postern's handshake is typed against the
+  asynchronous fragment.
+* Rung 4 attestation lands. Then announcements carry the cut they were made at.

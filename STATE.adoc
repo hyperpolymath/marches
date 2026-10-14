@@ -1,5 +1,69 @@
 = STATE — cross-session log
 
+== 2026-10-14 — rung 3, items 3a–3c: a region crossing is a cut (Claude Code session, MRC-01)
+
+* `Marches/Cut.lean` (3a). A cut is a predecessor-closed set of regions.
+  - `Cut.edge_crosses_past`: in an acyclic graph every edge leaves the
+    principal cut of its source.
+  - `Cut.path_back_crosses_no_cut`: an edge on a cycle crosses no cut, so
+    `Acyclic` is load-bearing.
+  - `DiscSys.trace_cross_crosses_cut`: every crossing in a well-typed trace
+    crosses a cut holding the start, not the end.
+  - `DiscSys.trace_mem_back`, `trace_inside`, `no_reentry`: no re-entry,
+    i.e. `no_back_cross` lifted to every cut.
+  - `DiscSys.composeCut`: prefix-closure. Its traces are exactly the
+    composite's traces that end in the prefix
+    (`composeCut_trace_embed` / `_reflect`).
+  - The two-region `Interface` versions are `trace_cross_crosses_cut` and
+    `trace_stays_in_B`. `CutExhibit` holds a concrete trace and a negative
+    control.
+* `Marches/Tropical.lean` `TropicalGrade` (3b). K-4's two laws over
+  `TropicalNat` (`seq_unitl`, `alt_idem`). S-3 inside marches:
+  `better_reverses_altLe`, `altLe_one` (𝟙 on top, as Loss), `s3_witness`.
+* `docs/kcut-correspondence.adoc` + `scripts/check-correspondence.sh` (3c).
+  Lean ↔ Agda names, each pairing ASSUMED (M-2 idiom). The script fetches
+  siblings at pins (`scripts/fetch-siblings.sh`, `_build/dependencies`)
+  and checks names only. Pins: choreographic-types `edb784a`,
+  resource-algebra `cf9235c`, tropical-types `e172f8a`.
+* F6 added (`FALSIFIERS.adoc`), and it FIRED on reading. MRC-01's proposed
+  `Acyclic ↔ Consistent` pairing is withdrawn: Agda's `Consistent p c` is a
+  party-indexed merge condition, and marches has no parties. F6 stays open
+  (narrowed).
+* Citation corrections found while reading the pins:
+  - T-2's `receiver-knows` / `sender-knows` are in `Instances.agda`, not
+    `Transport.agda`.
+  - `TropicalAdapterPath.lean` is in hyperpolymath/tropical-types, whose
+    lake package is `tropical-resource-typing`, on Lean v4.13.0.
+  - marches' `TropicalNat` is min-plus, so it is not one of M-2's two
+    (max-plus) objects.
+* Gates:
+  - `lake build` → `Build completed successfully (15 jobs).`
+  - `grep -rnw sorry Marches/ Marches.lean` is empty.
+  - `#eval orbit` is unchanged
+    (`[(false, false), (true, true), (false, false), (true, true)]`).
+  - `#print axioms`: every declaration added in 3a/3b depends on no axioms.
+  - `scripts/check-correspondence.sh` → `PASS: 15 Lean names and 16
+    sibling names exist at the pins; both negative controls refused`. A
+    mutation test (one bad Lean name, one bad Agda name, one wrong pin)
+    → `FAIL`, as it should.
+* CI anomalies, pre-existing on `main`, not caused by this rung:
+  - `CI` has ended in `startup_failure` since #34. Dependabot moved
+    `lean-action` to v1.6.1 and `codeql-action` to v4.38.2 without
+    relocking `actions.lock`. Fix: `gh actions-lock`, as in #25.
+  - `estate-audit` fails at cicd-suite's Required Files Gate. Under
+    `-e -o pipefail`, a comment-only CODEOWNERS makes `grep -v | wc -l`
+    exit 1 silently. The fix belongs in cicd-suite.
+* postern was not reachable (`add_repo`: not found or no access; no
+  `list_repos` match). No cross-issue was filed. The import plan is kept in
+  the correspondence doc.
+* Status rows moved:
+  - New PROVEN rows (README) for 3a/3b.
+  - One ASSUMED row for the K-CUT correspondence.
+  - No convergence claim (`grep -ni converg` on new files hits only the
+    disclaimers).
+* Rung 3 stays OPEN: 3d (TropicalAdapterPath import), 3e (echo-types
+  bridge) and 3f (postern) are not done. No tag.
+
 == 2026-10-14 — toolchain moved to v4.34.0 before rung 3 (Claude Code session)
 
 * Maintainer decision (MRC-01 open question): move `lean-toolchain` from
@@ -86,9 +150,11 @@
 
 == Next action
 
-Rung 3 (see ROADMAP.adoc): tropical/estate integration. Import the
-estate's fully proved `TropicalAdapterPath.lean`
-(tropical-resource-typing) behind the `Marches/Tropical.lean` seam —
-vendor or depend on it, do NOT paraphrase. Path provenance as graded
-accumulation (echo-types bridge). Obtain the real file; never
-reconstruct from memory. One rung only.
+Rung 3 (see ROADMAP.adoc), the remaining items. 3d: import the estate's
+fully proved `TropicalAdapterPath.lean` (hyperpolymath/tropical-types,
+lake package `tropical-resource-typing`, pinned `e172f8a`, Lean v4.13.0)
+behind the `Marches/Tropical.lean` seam — vendor or depend on it, do NOT
+paraphrase, and expect toolchain friction against v4.34.0. 3e: path
+provenance as graded accumulation (echo-types bridge). 3f: file the
+postern cross-issue once that repository exists. Obtain the real files;
+never reconstruct from memory. One rung only.
