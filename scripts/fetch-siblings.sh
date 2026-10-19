@@ -12,6 +12,11 @@ CHOREOGRAPHIC_TYPES_COMMIT="${CHOREOGRAPHIC_TYPES_COMMIT:-f5a41772c2ca2345bd5357
 RESOURCE_ALGEBRA_COMMIT="${RESOURCE_ALGEBRA_COMMIT:-e9482657aa791678e1d99996a18fb3e126e0d3c2}"
 TROPICAL_TYPES_COMMIT="${TROPICAL_TYPES_COMMIT:-e172f8abefd50fc40def4368fa60a155d130ff47}"
 
+# Fetch a sibling repository and check out its pinned commit.
+# Arguments: $1 is the repository name under hyperpolymath; $2 is the commit.
+# Clone into _build/dependencies/$1 if absent, refresh origin, then check out
+# the commit and print the repository name and short HEAD. Git failures cause
+# the script to exit via set -e.
 fetch() {
   local name="$1" commit="$2" dir="_build/dependencies/$1"
   if [ ! -d "$dir" ]; then
