@@ -1,5 +1,17 @@
 = STATE — cross-session log
 
+== 2026-10-19 — toolchain v4.34.1 → v4.35.0 (weekly track-lean bot)
+
+* Gates on v4.35.0, verbatim:
++
+----
+$ lake build
+Build completed successfully (15 jobs).
+$ grep -rnw sorry Marches/ Marches.lean  # empty
+$ lake env lean Marches/BadGadget.lean
+[(false, false), (true, true), (false, false), (true, true)]
+----
+
 == 2026-10-14 — CI: estate audit pinned to cicd-suite main (not a rung)
 
 * hyperpolymath/cicd-suite#50 merged as `376898b`. Its tree is identical to
