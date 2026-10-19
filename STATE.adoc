@@ -268,7 +268,8 @@ Rung 3 (see ROADMAP.adoc), the remaining items. 3d: import the estate's
 fully proved `TropicalAdapterPath.lean` (hyperpolymath/tropical-types,
 lake package `tropical-resource-typing`, pinned `e172f8a`, Lean v4.13.0)
 behind the `Marches/Tropical.lean` seam — vendor or depend on it, do NOT
-paraphrase, and expect toolchain friction against v4.34.1. 3e: path
-provenance as graded accumulation (echo-types bridge). 3f: file the
-postern cross-issue once that repository exists. Obtain the real files;
-never reconstruct from memory. One rung only.
+paraphrase, and expect toolchain friction against the Lean marches pins
+(`lean-toolchain`; named there, not here, so a weekly bump cannot make
+this line stale). 3e: path provenance as graded accumulation (echo-types
+bridge). 3f: file the postern cross-issue once that repository exists.
+Obtain the real files; never reconstruct from memory. One rung only.
