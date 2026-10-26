@@ -31,7 +31,7 @@ ground (`LIMITATIONS.adoc`).
 |`Cut`, `_↾_`, `Consistent`, `proj-cut`, `cut-projectable`, K-4 minimal laws, `Bound`, T-2
 
 |hyperpolymath/resource-algebra
-|`e9482657aa791678e1d99996a18fb3e126e0d3c2`
+|`bd3129c141d5f978ea8336966a932d5d76e97421`
 |`_≼_` convention, `Loss`, `MaxPlus`, S-3 witnesses, M-2 status
 
 |hyperpolymath/tropical-types
