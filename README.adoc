@@ -179,9 +179,18 @@ echo-types' `Echo` and provenance theorems
 checked at their pins by `scripts/check-correspondence.sh`. Falsifier F6
 is open and has already withdrawn one proposed pairing.
 
-|Tropical estate integration (`TropicalAdapterPath.lean`)
-|OPEN
-|rung 3
+|Tropical estate integration: tropical-types' `TropicalAdapterPath.lean`
+builds inside this repo, unparaphrased, and its `pathCost` is marches'
+grade accumulation under the bottleneck grade
+|PROVEN
+|`lake build` with the `lakefile.toml` `require`;
+`TropicalAdapter.pathCost_eq_accum`, `pathCost_append_via_accum`,
+`carried_floor`, `bottleneck_carries_unit`
+
+|The bottleneck grade gives no loop-freedom: a non-empty path can carry
+the unit
+|PROVEN (finite)
+|`TropicalAdapter.bottleneck_carries_unit`
 
 |Protocol-level asynchronous convergence
 |OUT OF SCOPE
@@ -247,6 +256,9 @@ A red result opens an issue instead of a PR.
   start `⊗` carried; a crossing trace is A-word, crossing, B-word, and
   carries the A-signature into the fibre of `τ`; in the DAG the grade
   reaching a cut or a crossing is accumulated inside the prefix.
+* `Marches/TropicalAdapter.lean` — rung 3d: imports tropical-types'
+  `TropicalAdapterPath` unparaphrased (a lake `require`); its min-max `⊗`
+  is a marches `Grade`, and its `pathCost` is that grade's accumulation.
 
 == Licence
 
