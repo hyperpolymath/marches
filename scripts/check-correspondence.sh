@@ -59,7 +59,7 @@ done < <(grep -oE '`Marches\.[A-Za-z0-9_.'"'"']+`' "$doc" | tr -d '`' | sort -u)
 while IFS= read -r ref; do
   nsib=$((nsib + 1))
   if ! sibling_exists "$ref"; then echo "MISSING (sibling): $ref"; fail=1; fi
-done < <(grep -oE '`(choreographic-types|resource-algebra|tropical-types):[^`]+`' "$doc" \
+done < <(grep -oE '`(choreographic-types|resource-algebra|tropical-types|echo-types):[^`]+`' "$doc" \
            | tr -d '`' | sort -u)
 
 while IFS= read -r pin; do

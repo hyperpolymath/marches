@@ -73,9 +73,11 @@ tropical-types: build on marches' toolchain.
 
 |3e. Path provenance as graded accumulation (echo-types bridge): what a
 trace *carries* across an interface, not just where it may go.
-|—
-|—
-|OPEN
+|`Marches/Provenance.lean`; `docs/kcut-correspondence.adoc` KC-9 to KC-12;
+echo-types pinned in `scripts/fetch-siblings.sh`
+|shared Lean gates; `#print axioms` on the new declarations reports none;
+`scripts/check-correspondence.sh` prints PASS with the echo-types pin
+|met 2026-10-27 (bridge rows ASSUMED; F6 open)
 
 |3f. postern consumes `no_back_cross` (cross-issue)
 |import plan in `docs/kcut-correspondence.adoc`

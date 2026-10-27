@@ -62,6 +62,11 @@ refused). It cannot check meaning. Read at choreographic-types `edb784a`
 marches has no parties, and its cut condition (downward closure,
 `Cut.closed`) is what Agda's `Cut` has by construction. The
 `Acyclic ↔ Consistent` pairing is withdrawn (KC-3). The rest stand
-ASSUMED until a port re-proves them.
+ASSUMED until a port re-proves them. Rung 3e (2026-10-27) adds the
+echo-types rows KC-9 and KC-10: `Echo` is the preimage fibre on both
+sides, so the shared content is small by construction, and echo-types'
+own claim (taxonomy, separation, residues on top of the fibre) is not
+paired. KC-12 records that accumulation needs the `⊗`-monoid, which K-4
+does not supply: a different law set, not a disagreement.
 |open (narrowed)
 |===
