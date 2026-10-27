@@ -35,8 +35,8 @@ ground (`LIMITATIONS.adoc`).
 |`_≼_` convention, `Loss`, `MaxPlus`, S-3 witnesses, M-2 status
 
 |hyperpolymath/tropical-types
-|`e172f8abefd50fc40def4368fa60a155d130ff47`
-|`TropicalAdapterPath.lean`, `TropicalSessionTypes.lean` (the Lean side of M-2)
+|`226c9e191e0ab966f094a6394f0958cdc28254e0`
+|`TropicalAdapterPath.lean` (also IMPORTED: the lake `require` in `lakefile.toml` is at this same commit), `TropicalSessionTypes.lean` (the Lean side of M-2)
 
 |hyperpolymath/echo-types
 |`1073d600004d13f1aec7363baa0ee2e38d91568e`
@@ -177,6 +177,18 @@ discharges all three for (min, +). A different law set for a different
 theorem, not a disagreement; no counterpart is proposed for `seq_assoc`
 or `seq_unitr`.
 |ASSUMED for `seq_unitl ↔ unitˡ` (as KC-6); the other two laws unpaired
+
+|KC-13
+|`Marches.TropicalAdapter.bottleneck`, `Marches.TropicalAdapter.pathCost_eq_accum`, `Marches.TropicalAdapter.carried_floor`, `Marches.TropicalAdapter.bottleneck_carries_unit`
+|`tropical-types:TropicalAdapterPath.lean`
+|Not a table row but a LINK, the only one here: both sides are Lean, and
+`Marches/TropicalAdapter.lean` imports the file, so `lake build` checks
+every use. Upstream's min-max `⊗` (`tcMul`, unit `tcOne`) is a marches
+`Grade` by upstream's own laws; upstream's `pathCost` is that grade's
+accumulation; `hub_ceiling` floors it. It is NOT `TropicalNat` (min-plus,
+KC-8) and NOT M-2's max-plus: a non-empty path can carry `𝟙`, so it gives no
+loop-freedom.
+|PROVEN (imported; `lake build`)
 |===
 
 == Transport, for postern

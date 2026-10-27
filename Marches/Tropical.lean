@@ -6,11 +6,12 @@
   extension adds weight + 1 (positive weights ⇒ strictness).
 
   This file is the seam for integrating the estate's existing
-  fully proved tropical work. Read 2026-10-14: `TropicalAdapterPath.lean`
-  lives in hyperpolymath/tropical-types (whose lake package is named
-  `tropical-resource-typing`) at e172f8a, on Lean v4.13.0. Status of the
-  import: OPEN (rung 3 in ROADMAP.adoc). Nothing here fabricates or
-  depends on that file's contents.
+  fully proved tropical work. `TropicalAdapterPath.lean` lives in
+  hyperpolymath/tropical-types (lake package `tropical-resource-typing`),
+  required in lakefile.toml at a pinned commit and imported unparaphrased
+  by `Marches/TropicalAdapter.lean` (rung 3d). Nothing in THIS file
+  depends on it: `TropicalNat` (min-plus) is not upstream's min-max
+  transport semiring.
 
   The cross-prover bridge is resource-algebra's M-2 (pinned in scripts/fetch-siblings.sh):
   Agda `MaxPlus` vs tropical-types' Lean `CommSemiring Tropical`, OPEN,

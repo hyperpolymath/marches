@@ -2,15 +2,18 @@
 # SPDX-License-Identifier: MPL-2.0
 # Fetch the sibling proof repositories marches cites, each at a pinned
 # commit, into _build/dependencies (pattern: choreographic-types,
-# residual-evidence-types). Nothing here is imported into the Lean build:
-# the siblings are read, never re-declared. Re-pin deliberately, one
-# commit per pin, and update docs/kcut-correspondence.adoc to match.
+# residual-evidence-types). The siblings are read, never re-declared. One is
+# also imported: tropical-types is a lake `require` in lakefile.toml at the
+# SAME commit as TROPICAL_TYPES_COMMIT below (rung 3d), and
+# .github/workflows/track-siblings.yml moves both pins together. Re-pin
+# deliberately, one commit per pin, and update docs/kcut-correspondence.adoc
+# to match.
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
 CHOREOGRAPHIC_TYPES_COMMIT="${CHOREOGRAPHIC_TYPES_COMMIT:-f5a41772c2ca2345bd53579b73f064f4a3ab7ed7}"
 RESOURCE_ALGEBRA_COMMIT="${RESOURCE_ALGEBRA_COMMIT:-e9482657aa791678e1d99996a18fb3e126e0d3c2}"
-TROPICAL_TYPES_COMMIT="${TROPICAL_TYPES_COMMIT:-e172f8abefd50fc40def4368fa60a155d130ff47}"
+TROPICAL_TYPES_COMMIT="${TROPICAL_TYPES_COMMIT:-226c9e191e0ab966f094a6394f0958cdc28254e0}"
 ECHO_TYPES_COMMIT="${ECHO_TYPES_COMMIT:-1073d600004d13f1aec7363baa0ee2e38d91568e}"
 
 # Fetch a sibling repository and check out its pinned commit.

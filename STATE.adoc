@@ -1,5 +1,56 @@
 = STATE — cross-session log
 
+== 2026-10-27 — rung 3d: TropicalAdapterPath imported, unparaphrased
+
+* Upstream prerequisite: hyperpolymath/tropical-types#65 moves that
+  package from Lean v4.13.0 to v4.35.0. No statement changes; seven proof
+  edits for core-API drift (implicit arguments of `List.not_mem_nil`,
+  `List.mem_cons_self`, `List.mem_map_of_mem`; `Nat.max_def` now unfolds to
+  an `if`; new core `add_max_add_*`/`add_min_add_*` simp lemmas made four
+  `simp [.., helper]` calls loop). There: `lake build` → 20 jobs green, and
+  its own `lean.yml` axiom audit, run verbatim, passes; only `hub_ceiling`
+  moved (`propext` → `propext, Quot.sound`, from core `simp`).
+* Here: `lakefile.toml` requires `tropical-resource-typing` at a full
+  commit, pinned for now to #65's head `226c9e1` so this PR's CI exercises
+  the real dependency. `scripts/fetch-siblings.sh` pins the same commit.
+  Re-pin both to #65's merge commit before merging this.
+* New `Marches/TropicalAdapter.lean` imports `TropicalAdapterPath` and
+  re-states none of it. `bottleneck` (upstream's min-max `⊗` as a marches
+  `Grade`, by upstream's laws); `pathCost_eq_accum` (upstream's `pathCost`
+  is `Grade.accum`); `pathCost_append_via_accum`; `carried_floor`
+  (`hub_ceiling` read as provenance); `bottleneck_carries_unit` (a
+  non-empty path carries `𝟙`: no loop-freedom from this grade).
+* `track-siblings.yml`: a tropical-types re-pin now also moves
+  `lakefile.toml` and `lake-manifest.json`, so the re-check builds marches
+  against the new HEAD. A failed re-check restores the pins and files an
+  issue (before, it exited red with no issue). Negative control run here:
+  pointing the lake pin at `e172f8a` (v4.13-only) re-materialises that
+  commit and fails the build (`TropicalAdapterPath.lean:132:12`, omega);
+  restoring it builds green.
+* KC-13: the one LINK in the correspondence table (both sides Lean,
+  imported). README rows PROVEN / PROVEN (finite).
+* Gates on v4.35.0, verbatim:
++
+----
+$ lake build
+Build completed successfully (19 jobs).
+$ grep -rnw sorry Marches/ Marches.lean  # empty
+$ lake env lean Marches/BadGadget.lean
+[(false, false), (true, true), (false, false), (true, true)]
+$ scripts/check-correspondence.sh
+PASS: 28 Lean names and 22 sibling names exist at the pins; both negative controls refused
+----
++
+`#print axioms` on the five new declarations: `propext` and/or
+`Quot.sound`, each exactly the footprint of the upstream lemma it
+consumes (`pathCost_cons`, `hub_ceiling`, `tcMul_one_left`). marches adds
+none. The 20 rung-3e declarations still report none.
+* actionlint 1.7.7 and shellcheck clean (workflow run block extracted and
+  checked too); Asciidoctor warning counts unchanged from `main`.
+* ROADMAP 3d: met on the PR-head pin; the merge-commit re-pin closes it.
+  Rung 3 then stays OPEN only on 3f: postern still not found
+  (`list_repos` query `postern`: no match, 2026-10-27). No tag.
+
 == 2026-10-27 — rung 3e: path provenance as graded accumulation (echo-types bridge)
 
 * New `Marches/Provenance.lean`, imported from `Marches.lean`. `Cut.lean`
@@ -338,12 +389,11 @@ $ lake env lean Marches/BadGadget.lean
 
 == Next action
 
-Rung 3 (see ROADMAP.adoc), the remaining items. 3d: import the estate's
-fully proved `TropicalAdapterPath.lean` (hyperpolymath/tropical-types,
-lake package `tropical-resource-typing`, pinned `e172f8a`, Lean v4.13.0)
-behind the `Marches/Tropical.lean` seam — vendor or depend on it, do NOT
-paraphrase, and expect toolchain friction against the Lean marches pins
-(`lean-toolchain`; named there, not here, so a weekly bump cannot make
-this line stale). 3e: met 2026-10-27 (`Marches/Provenance.lean`). 3f:
-file the postern cross-issue once that repository exists.
-Obtain the real files; never reconstruct from memory. One rung only.
+Rung 3 (see ROADMAP.adoc), the remaining items. 3d: once
+hyperpolymath/tropical-types#65 merges, re-pin `lakefile.toml`,
+`lake-manifest.json`, `scripts/fetch-siblings.sh` and the correspondence
+pin table to its merge commit (one sed of the SHA; then `lake build` and
+`scripts/check-correspondence.sh`). 3e: met 2026-10-27
+(`Marches/Provenance.lean`). 3f: file the postern cross-issue once that
+repository exists. Obtain the real files; never reconstruct from memory.
+One rung only.

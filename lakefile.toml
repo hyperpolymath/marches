@@ -4,3 +4,11 @@ defaultTargets = ["Marches"]
 
 [[lean_lib]]
 name = "Marches"
+
+# Rung 3d: the estate's tropical proofs, imported unparaphrased. Pinned to a
+# full commit; scripts/fetch-siblings.sh pins the same commit, and
+# .github/workflows/track-siblings.yml moves both together.
+[[require]]
+name = "tropical-resource-typing"
+git = "https://github.com/hyperpolymath/tropical-types"
+rev = "226c9e191e0ab966f094a6394f0958cdc28254e0"
