@@ -147,8 +147,33 @@ order
 |`Tropical.TropicalGrade.seq_unitl`, `alt_idem`, `better_reverses_altLe`,
 `altLe_one`, `s3_witness`
 
+|In one tropical region the end signature of a run is the start `⊗` the
+grade its word carried, and a non-empty word carries a non-unit grade
+|PROVEN
+|`Provenance.TropicalGrade.run_eq_seq_carried`, `carried_cons_ne_one`,
+`no_return_of_carried`
+
+|A well-typed two-region trace that crosses is an A-word, the crossing,
+then a B-word; what crosses is the A-signature at the crossing, which B
+sees only through `τ` (its fibre is `Interface.fibre`)
+|PROVEN
+|`Provenance.trace_cross_shape`, `Interface.carried`, `trace_cross_lands`
+
+|In the region DAG, the grade reaching a point inside a cut, or a crossing
+out of `↓r`, is accumulated by a trace of the cut prefix alone
+|PROVEN (conditional)
+|`Provenance.DiscSys.carried_in_cut`, `carried_to_cross_in_past`;
+conditional on `Acyclic`, as every `compose` theorem is
+
+|A collapsing crossing forgets the A-grade, and the fibre over the landing
+point still tells two such traces apart
+|PROVEN (finite)
+|`Provenance.ProvenanceExhibit.zero_forgets`, `zero_fibre_distinguishes`,
+`collapse₀`, `collapse₁`; `id_carries` for the identity crossing
+
 |marches' cuts and grade laws correspond to choreographic-types' K-CUT
-(`proj-cut`, `cut-projectable`, K-4)
+(`proj-cut`, `cut-projectable`, K-4), and its crossing fibre to
+echo-types' `Echo` and provenance theorems
 |ASSUMED (port-and-reprove)
 |`docs/kcut-correspondence.adoc`. A table of names, not a link. Names are
 checked at their pins by `scripts/check-correspondence.sh`. Falsifier F6
@@ -217,6 +242,11 @@ A red result opens an issue instead of a PR.
 * `Marches/Cut.lean` — rung 3: cuts of the region DAG; every crossing
   crosses a cut, traces never re-enter a cut they have left, and
   `compose` restricted to a cut prefix is a discipline (prefix-closure).
+* `Marches/Provenance.lean` — rung 3e: what a trace carries. Words
+  accumulate a grade (a monoid homomorphism); a tropical run ends at
+  start `⊗` carried; a crossing trace is A-word, crossing, B-word, and
+  carries the A-signature into the fibre of `τ`; in the DAG the grade
+  reaching a cut or a crossing is accumulated inside the prefix.
 
 == Licence
 

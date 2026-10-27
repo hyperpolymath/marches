@@ -11,6 +11,7 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 CHOREOGRAPHIC_TYPES_COMMIT="${CHOREOGRAPHIC_TYPES_COMMIT:-f5a41772c2ca2345bd53579b73f064f4a3ab7ed7}"
 RESOURCE_ALGEBRA_COMMIT="${RESOURCE_ALGEBRA_COMMIT:-e9482657aa791678e1d99996a18fb3e126e0d3c2}"
 TROPICAL_TYPES_COMMIT="${TROPICAL_TYPES_COMMIT:-e172f8abefd50fc40def4368fa60a155d130ff47}"
+ECHO_TYPES_COMMIT="${ECHO_TYPES_COMMIT:-1073d600004d13f1aec7363baa0ee2e38d91568e}"
 
 # Fetch a sibling repository and check out its pinned commit.
 # Arguments: $1 is the repository name under hyperpolymath; $2 is the commit.
@@ -31,3 +32,4 @@ mkdir -p _build/dependencies
 fetch choreographic-types "$CHOREOGRAPHIC_TYPES_COMMIT"
 fetch resource-algebra "$RESOURCE_ALGEBRA_COMMIT"
 fetch tropical-types "$TROPICAL_TYPES_COMMIT"
+fetch echo-types "$ECHO_TYPES_COMMIT"

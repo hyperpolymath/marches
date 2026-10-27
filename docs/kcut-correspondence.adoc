@@ -37,9 +37,14 @@ ground (`LIMITATIONS.adoc`).
 |hyperpolymath/tropical-types
 |`e172f8abefd50fc40def4368fa60a155d130ff47`
 |`TropicalAdapterPath.lean`, `TropicalSessionTypes.lean` (the Lean side of M-2)
+
+|hyperpolymath/echo-types
+|`1073d600004d13f1aec7363baa0ee2e38d91568e`
+|`Echo`, `echo-intro` (the fibre); `Provenance`, `provenance-collapses-at`,
+`echoes-distinguish-tag` (the audience-facing provenance theorems)
 |===
 
-`scripts/fetch-siblings.sh` holds the same three commits. Re-pin one
+`scripts/fetch-siblings.sh` holds the same four commits. Re-pin one
 commit per change and update this table in the same commit.
 
 == The table
@@ -124,6 +129,54 @@ and it is OPEN there. marches' `TropicalNat` is min-plus on `Nat`, not
 max-plus: by KC-7 it sits with `Loss`, not with `MaxPlus`. No pairing
 with M-2's objects is proposed.
 |OPEN — not paired (order runs opposite)
+
+|KC-9
+|`Marches.Interface.fibre`, `Marches.Interface.carried`
+|`echo-types:proofs/agda/Echo.agda:Echo`, `echo-types:proofs/agda/Echo.agda:echo-intro`
+|Both are the preimage fibre of a map, `Σ x, f x ≡ y`, with its canonical
+inhabitant `(x, refl)`. Lean: the map is the crossing `τ` and the
+inhabitant is the A-signature a crossing trace carries (`run A as a₀`,
+by `trace_cross_shape`). Agda: any `f`; echo-types itself calls `Echo`
+"the standard preimage fiber, not a new construction". What marches adds
+is which map and which inhabitant. What echo-types adds on top of the
+fibre (its loss taxonomy, separation proofs, residues) is not paired.
+|ASSUMED (port-and-reprove)
+
+|KC-10
+|`Marches.ProvenanceExhibit.zero_forgets`, `Marches.ProvenanceExhibit.zero_fibre_distinguishes`
+|`echo-types:proofs/agda/EchoProvenance.agda:Provenance`, `echo-types:proofs/agda/EchoProvenance.agda:provenance-collapses-at`, `echo-types:proofs/agda/EchoProvenance.agda:echoes-distinguish-tag`
+|A forgetful map collapses two inputs that differ in what it forgets, and
+the fibre still tells them apart. Agda: the map is
+`project : Payload × Tag → Payload`, the two inputs differ in `Tag`,
+parametric in a `Provenance` record. Lean: the map is a collapsing
+crossing (`zeroI.τ`, every cost to `0`), the two inputs are the
+A-signatures of the traces `collapse₀` and `collapse₁`, whose words `[0]`
+and `[1]` carry grades `1` and `2`. The Agda is parametric; the Lean is one
+instance over `TropicalNat`, with no `Tag` type: the whole A-signature is
+what is forgotten.
+|ASSUMED (port-and-reprove)
+
+|KC-11
+|`Marches.DiscSys.carried_in_cut`, `Marches.DiscSys.carried_to_cross_in_past`
+|`choreographic-types:src/Choreographic/KCut.agda:cut-projectable` (K-5)
+|KC-4 again, for what a trace carries rather than where it goes: the grade
+reaching a point inside a cut, or a crossing out of `↓r`, is accumulated
+by a trace of the prefix alone. Agda's `cut-projectable` is about
+projectability of the prefix, not about a grade. The shared shape is
+cut-locality; the content differs.
+|ASSUMED (port-and-reprove)
+
+|KC-12
+|`Marches.Grade`, `Marches.Grade.accum_append`, `Marches.TropicalGrade.grade`
+|`choreographic-types:tests/minimal-laws/ResourceAlgebra/Core.agda:unitˡ`, `choreographic-types:tests/minimal-laws/ResourceAlgebra/Core.agda:idem`
+|KC-6 extended. Accumulation along a word is a monoid homomorphism and
+uses `⊗`-associativity and BOTH units. K-4's two laws (`unitˡ`, `idem`)
+supply neither associativity nor the right unit, so provenance by
+accumulation rests on more than K-CUT-LOSS needs. `TropicalGrade.grade`
+discharges all three for (min, +). A different law set for a different
+theorem, not a disagreement; no counterpart is proposed for `seq_assoc`
+or `seq_unitr`.
+|ASSUMED for `seq_unitl ↔ unitˡ` (as KC-6); the other two laws unpaired
 |===
 
 == Transport, for postern
@@ -160,4 +213,7 @@ postern's code. When the repository exists, the plan from MRC-01 is:
   own check.
 * Asynchronous K-CUT lands. Then postern's handshake is typed against the
   asynchronous fragment.
+* An Agda port of `Marches/Provenance.lean`'s fibre statements, or a Lean
+  port of `EchoProvenance`, lands. Then KC-9 and KC-10 move from ASSUMED to
+  a named port with its own check.
 * Rung 4 attestation lands. Then announcements carry the cut they were made at.

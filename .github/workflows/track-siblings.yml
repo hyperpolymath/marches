@@ -2,7 +2,7 @@
 name: Track latest siblings
 
 # Weekly: for each sibling proof repository pinned in scripts/fetch-siblings.sh
-# (choreographic-types, resource-algebra, tropical-types), check
+# (choreographic-types, resource-algebra, tropical-types, echo-types), check
 # docs/kcut-correspondence.adoc against the sibling's current HEAD.
 #
 # - Every cited name still exists at HEAD → re-pin: one commit per sibling,
@@ -56,7 +56,8 @@ jobs:
           repinned=(); broken=()
           for spec in choreographic-types:CHOREOGRAPHIC_TYPES_COMMIT \
                       resource-algebra:RESOURCE_ALGEBRA_COMMIT \
-                      tropical-types:TROPICAL_TYPES_COMMIT; do
+                      tropical-types:TROPICAL_TYPES_COMMIT \
+                      echo-types:ECHO_TYPES_COMMIT; do
             repo="${spec%%:*}"; var="${spec#*:}"
             pinned=$(grep -E "^${var}=" scripts/fetch-siblings.sh | grep -oE '[0-9a-f]{40}')
             head=$(git ls-remote "https://github.com/hyperpolymath/$repo.git" HEAD | cut -f1)

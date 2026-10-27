@@ -1,5 +1,66 @@
 = STATE — cross-session log
 
+== 2026-10-27 — rung 3e: path provenance as graded accumulation (echo-types bridge)
+
+* New `Marches/Provenance.lean`, imported from `Marches.lean`. `Cut.lean`
+  said where a well-typed trace may go; this says what it carries.
+  - `Grade` (a `⊗`-monoid: associativity and both units) and
+    `Grade.accum`, the grade a word of labels accumulates. `accum_append`
+    (a monoid homomorphism from label words) and `accum_map` (reads
+    through a relabelling).
+  - One region, `TropicalGrade`: `run_eq_seq_carried`, the end signature
+    of a run is the start `⊗` the grade its word carried;
+    `carried_cons_ne_one`, a non-empty word carries a non-unit grade;
+    `no_return_of_carried` recovers `tropical_no_return` through the grade.
+  - Across the interface: `trace_cross_shape`, a well-typed two-region
+    trace that crosses is an A-word from an A-start, the crossing, a B-word
+    (typing alone; no strictness used). `Interface.fibre` is the preimage
+    fibre of `τ`; `Interface.carried` is the A-signature at the crossing as
+    a point of it; `trace_cross_lands`.
+  - Region DAG: `DiscSys.carried_in_cut` and `carried_to_cross_in_past`,
+    the grade reaching a point inside a cut, or a crossing out of `↓r`, is
+    accumulated by a trace of the cut prefix alone (conditional on
+    `Acyclic`, as every `compose` theorem is).
+  - Exhibits: `id_carries` (the identity crossing carries the grade
+    intact); `zero_forgets`, `zero_fibre_distinguishes`, `collapse₀`,
+    `collapse₁` (a collapsing crossing forgets the A-grade, and the fibre
+    still tells the two traces apart); `trace₀` of `Cut.lean` graded to 4.
+* echo-types read at `1073d60` (its HEAD on 2026-10-27, shallow clone). Its
+  `Echo f y := Σ x, f x ≡ y` is "the standard preimage fiber" by its own
+  README; `EchoProvenance.agda` gives the collapse and distinguish
+  theorems. Pinned in `scripts/fetch-siblings.sh` (`ECHO_TYPES_COMMIT`);
+  `check-correspondence.sh` now greps `echo-types:` refs too (a fabricated
+  echo-types name was run through it and refused); `track-siblings.yml`
+  re-pins it weekly. Nothing Agda is imported or re-declared.
+* `docs/kcut-correspondence.adoc`: KC-9 (fibre ↔ `Echo`, `echo-intro`),
+  KC-10 (the collapse exhibit ↔ `provenance-collapses-at`,
+  `echoes-distinguish-tag`), KC-11 (graded cut-locality, KC-4 again),
+  KC-12 (accumulation needs the `⊗`-monoid; K-4's two laws supply neither
+  associativity nor the right unit). All ASSUMED. F6 row updated.
+* Gates on v4.35.0, verbatim:
++
+----
+$ lake build
+Build completed successfully (16 jobs).
+$ grep -rnw sorry Marches/ Marches.lean  # empty
+$ lake env lean Marches/BadGadget.lean
+[(false, false), (true, true), (false, false), (true, true)]
+$ lake env lean Axioms.lean   # #print axioms, the 20 new declarations
+'Marches.Grade.accum_append' does not depend on any axioms
+  (all 20 lines read "does not depend on any axioms")
+$ scripts/check-correspondence.sh
+PASS: 24 Lean names and 21 sibling names exist at the pins; both negative controls refused
+----
++
+A first proof of `no_return_of_carried` through `Nat.add_left_cancel`
+picked up `propext`; it was reproved from `a < a + carried` and is
+axiom-free.
+* actionlint 1.7.7 clean on `track-siblings.yml`; shellcheck clean on both
+  scripts; Asciidoctor renders the edited `.adoc` files without warnings.
+  `grep -ni converg Marches/Provenance.lean` hits only the delimitation.
+* ROADMAP 3e: met 2026-10-27. Rung 3 stays OPEN: 3d and 3f are not done.
+  No tag.
+
 == 2026-10-19 — CI: estate audit pinned to cicd-suite b17ec1a (not a rung)
 
 * hyperpolymath/cicd-suite#55 merged as `b17ec1a`; the caller's pin moves
@@ -283,6 +344,6 @@ lake package `tropical-resource-typing`, pinned `e172f8a`, Lean v4.13.0)
 behind the `Marches/Tropical.lean` seam — vendor or depend on it, do NOT
 paraphrase, and expect toolchain friction against the Lean marches pins
 (`lean-toolchain`; named there, not here, so a weekly bump cannot make
-this line stale). 3e: path provenance as graded accumulation (echo-types
-bridge). 3f: file the postern cross-issue once that repository exists.
+this line stale). 3e: met 2026-10-27 (`Marches/Provenance.lean`). 3f:
+file the postern cross-issue once that repository exists.
 Obtain the real files; never reconstruct from memory. One rung only.
