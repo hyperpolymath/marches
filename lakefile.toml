@@ -11,4 +11,4 @@ name = "Marches"
 [[require]]
 name = "tropical-resource-typing"
 git = "https://github.com/hyperpolymath/tropical-types"
-rev = "226c9e191e0ab966f094a6394f0958cdc28254e0"
+rev = "168f09d1df8bc239d41bc0f9d9d18575b2c9c9d5"

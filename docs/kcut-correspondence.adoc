@@ -35,7 +35,7 @@ ground (`LIMITATIONS.adoc`).
 |`_≼_` convention, `Loss`, `MaxPlus`, S-3 witnesses, M-2 status
 
 |hyperpolymath/tropical-types
-|`226c9e191e0ab966f094a6394f0958cdc28254e0`
+|`168f09d1df8bc239d41bc0f9d9d18575b2c9c9d5`
 |`TropicalAdapterPath.lean` (also IMPORTED: the lake `require` in `lakefile.toml` is at this same commit), `TropicalSessionTypes.lean` (the Lean side of M-2)
 
 |hyperpolymath/echo-types
