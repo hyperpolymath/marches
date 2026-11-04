@@ -35,11 +35,11 @@ ground (`LIMITATIONS.adoc`).
 |`_≼_` convention, `Loss`, `MaxPlus`, S-3 witnesses, M-2 status
 
 |hyperpolymath/tropical-types
-|`226c9e191e0ab966f094a6394f0958cdc28254e0`
+|`168f09d1df8bc239d41bc0f9d9d18575b2c9c9d5`
 |`TropicalAdapterPath.lean` (also IMPORTED: the lake `require` in `lakefile.toml` is at this same commit), `TropicalSessionTypes.lean` (the Lean side of M-2)
 
 |hyperpolymath/echo-types
-|`1073d600004d13f1aec7363baa0ee2e38d91568e`
+|`b0982c44f36133acd2d0e1d4e03cf031fff7a470`
 |`Echo`, `echo-intro` (the fibre); `Provenance`, `provenance-collapses-at`,
 `echoes-distinguish-tag` (the audience-facing provenance theorems)
 |===
