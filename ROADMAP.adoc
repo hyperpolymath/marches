@@ -70,8 +70,8 @@ tropical-types: build on marches' toolchain (hyperpolymath/tropical-types#65).
 |`lakefile.toml` `require`; `Marches/TropicalAdapter.lean`;
 `track-siblings.yml` moves the lake pin with the sibling pin
 |it builds inside this repo on the pinned toolchain, unparaphrased
-|met on a PR-head pin 2026-10-27; re-pin to the tropical-types#65 merge
-commit closes it
+|met 2026-11-04 (pinned to tropical-types `168f09d`, the #65 merge
+commit)
 
 |3e. Path provenance as graded accumulation (echo-types bridge): what a
 trace *carries* across an interface, not just where it may go.

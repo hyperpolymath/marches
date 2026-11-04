@@ -1,5 +1,48 @@
 = STATE — cross-session log
 
+== 2026-11-04 — rung 3d closed: tropical-types re-pinned to the #65 merge commit
+
+* #52 merged before hyperpolymath/tropical-types#65, so `main` kept the
+  PR-head pin `226c9e1`. #65 squash-merged as `168f09d` and its branch was
+  deleted; `226c9e1` is then on no branch, and a fresh clone's
+  `git fetch origin` never brings it in. Reproduced:
+  `TROPICAL_TYPES_COMMIT=226c9e1… scripts/fetch-siblings.sh` on an empty
+  `_build/dependencies` → `fatal: reference is not a tree: 226c9e1…`.
+* That is why the 2026-11-02 `track-siblings` run filed #54
+  (choreographic-types) and #55 (resource-algebra): both checks died on
+  the tropical-types fetch, not on a lost name. With the fixed pin, both
+  siblings at their current HEADs (`8751c7d`, `e25d35d`) give PASS. The
+  next weekly run re-pins them.
+* The same run had already committed the right re-pins on
+  `ci/track-siblings` (tropical-types → `168f09d`, echo-types → `b0982c4`)
+  and failed only at `gh pr create` (Actions may not open PRs without
+  `AUTOMATION_TOKEN`). Those two commits are cherry-picked here with `-x`,
+  authorship kept. `168f09d` and `226c9e1` have identical Lean trees
+  (`git diff --stat` over `*.lean`, `lean-toolchain`, `lakefile.lean` is
+  empty).
+* F6, echo-types `1073d60..b0982c4`: one commit, and it touches neither
+  `proofs/agda/Echo.agda` nor `proofs/agda/EchoProvenance.agda`.
+* #52's squash also carries CodeRabbit's autofix of `track-siblings.yml`
+  (its Major finding: build candidate pins without the write token). Read
+  after the fact: a read-only `check` job builds and passes patches and
+  JSON as data; `publish` holds the token, applies only patches touching
+  the four pin files, and still exits red on broken names. shellcheck on
+  both extracted run blocks: clean except SC2153 (info, `BASE` comes from
+  `env:`), which actionlint 1.7.7 also reports.
+* Gates on v4.35.0 at `168f09d`, from an empty `_build/dependencies`:
++
+----
+$ lake build
+Build completed successfully (19 jobs).
+$ grep -rnw sorry Marches/ Marches.lean  # empty
+$ lake env lean Marches/BadGadget.lean
+[(false, false), (true, true), (false, false), (true, true)]
+$ scripts/check-correspondence.sh
+PASS: 28 Lean names and 22 sibling names exist at the pins; both negative controls refused
+----
+* ROADMAP 3d: met. Rung 3 stays OPEN on 3f only (postern: `list_repos`
+  query `postern` empty). No tag.
+
 == 2026-10-27 — rung 3d: TropicalAdapterPath imported, unparaphrased
 
 * Upstream prerequisite: hyperpolymath/tropical-types#65 moves that
@@ -389,11 +432,6 @@ $ lake env lean Marches/BadGadget.lean
 
 == Next action
 
-Rung 3 (see ROADMAP.adoc), the remaining items. 3d: once
-hyperpolymath/tropical-types#65 merges, re-pin `lakefile.toml`,
-`lake-manifest.json`, `scripts/fetch-siblings.sh` and the correspondence
-pin table to its merge commit (one sed of the SHA; then `lake build` and
-`scripts/check-correspondence.sh`). 3e: met 2026-10-27
-(`Marches/Provenance.lean`). 3f: file the postern cross-issue once that
-repository exists. Obtain the real files; never reconstruct from memory.
-One rung only.
+Rung 3 (see ROADMAP.adoc): only 3f remains. File the postern cross-issue
+once that repository exists (not found 2026-11-04). 3d and 3e are met.
+Obtain the real files; never reconstruct from memory. One rung only.
