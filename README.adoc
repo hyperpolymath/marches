@@ -49,6 +49,11 @@ graded machinery (see `ROADMAP.adoc`).
 
 == Status table
 
+`PROVEN` in this table means the Lean kernel accepted the proof. Under the
+estate proof policy marches is theory, so Agda is the source of truth and no
+theorem here is graded yet: `PROOF-STATUS.adoc` records each witness leg,
+the axiom census, and the plan for the Agda port.
+
 [cols="3,1,2"]
 |===
 |Claim |Status |Discharged by

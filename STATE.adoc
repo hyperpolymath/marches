@@ -1,5 +1,27 @@
 = STATE — cross-session log
 
+== 2026-11-09 — proof status under the estate proof policy (not a rung)
+
+* New `PROOF-STATUS.adoc`, as `standards` `3-practice/PROOF-POLICY.adoc`
+  §8.5 asks. marches is theory (§1), so Agda is the source of truth; its
+  Lean files are target-only evidence (§3). Every theorem: Agda `OPEN`,
+  Rocq `OPEN`, `ungraded`. Owner decision: record now, port to Agda next
+  (new ROADMAP section, ahead of rung 4).
+* Lean leg receipt on `abe636a`, v4.35.0: `lake build` 19 jobs; no
+  `sorry`, `admit`, `axiom`, `native_decide`, `extern`. `Lean.collectAxioms`
+  over all 446 `Marches` declarations: 402 none, 41 `propext`, 3
+  `propext, Quot.sound`; none on `sorryAx` or `Classical.choice`. The
+  `propext` cases are generated `injEq` lemmas, the Gao–Rexford `gext`
+  match, and the tropical-types lemmas the adapter consumes. Groups that
+  rest on them are recorded `PROVEN-WITH-AXIOMS`, naming them (the policy
+  does not yet rule on Lean's built-ins).
+* `CLAUDE.md` said "Lean 4 for proofs"; it now defers to the estate policy.
+  `README.adoc`'s status table now says its `PROVEN` means Lean-kernel
+  accepted, not graded.
+* Every theorem name in `PROOF-STATUS.adoc` was checked with `#check`
+  (all resolve). Issues #54 and #55 closed as false alarms (the stale
+  tropical-types pin, fixed by #57).
+
 == 2026-11-04 — rung 3d closed: tropical-types re-pinned to the #65 merge commit
 
 * #52 merged before hyperpolymath/tropical-types#65, so `main` kept the

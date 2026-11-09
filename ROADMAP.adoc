@@ -88,6 +88,17 @@ echo-types pinned in `scripts/fetch-siblings.sh`
 |OPEN — postern not reachable 2026-10-14
 |===
 
+== Agda source of truth (estate proof policy) — OPEN, next
+
+Owner decision 2026-11-09. The estate policy makes Agda the source for
+theory; marches' Lean development is target-only evidence until each group
+has an Agda proof and the two statements are reconciled. Port rungs 0–3 to
+Agda in this repository group by group (`--safe --without-K`, no
+postulates), recording each in `PROOF-STATUS.adoc`: Agda `PROVEN` is
+`PWG-3`, the reconciled Lean leg makes it `PWG-2i`, a Rocq leg `PWG-2ii`.
+Gate per group: the Agda check passes under the canonical invocation and
+the statement comparison is written down. Takes precedence over rung 4.
+
 == Rung 4 — attestation (A2ML bridge)
 
 * Announcements as attested claims: RPKI attests origin; this layer
