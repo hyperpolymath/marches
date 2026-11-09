@@ -15,6 +15,8 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'actions/deploy-pages@v5.0.1'
         - 'actions/upload-pages-artifact@v5.0.0'
+    '.github/workflows/secret-scanner.yml':
+        - 'actions/checkout@v7.0.1'
 dependencies:
     'actions/cache@caa296126883cff596d87d8935842f9db880ef25':
         ref: 'v5.1.0'

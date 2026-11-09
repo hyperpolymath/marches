@@ -21,6 +21,17 @@
 * Every theorem name in `PROOF-STATUS.adoc` was checked with `#check`
   (all resolve). Issues #54 and #55 closed as false alarms (the stale
   tropical-types pin, fixed by #57).
+* `secret-scanner.yml` had failed at startup, zero jobs, on every run since
+  #33 (a job-level call to a remote reusable). Replaced by the template's
+  inline scanner (rsr-template-repo `2be7b88`, its #295): three jobs,
+  `scan / gitleaks`, `scan / rust-secrets`, `scan / shell-secrets`, job
+  bodies unchanged; checkout pinned by marches' tag (`v7.0.1`, which the
+  lock resolves to the template's commit `3d3c42e`). Lock entry added by
+  hand in the generator's shape (no new dependency; the relock bot needs
+  `AUTOMATION_TOKEN`). Run locally first: gitleaks 8.18.4 (checksum OK)
+  with the estate baseline at standards `e064539`, working tree and full
+  68-commit history: no leaks; shell job: none detected; rust job: skips
+  (no `Cargo.toml`). actionlint clean.
 
 == 2026-11-04 — rung 3d closed: tropical-types re-pinned to the #65 merge commit
 
