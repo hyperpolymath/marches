@@ -14,8 +14,9 @@ object*: region-crossing well-formedness is a typing judgment on traces
 (`Marches.Trace`), and ill-typed crossings are *unconstructible* — they
 have no derivation — rather than detected and filtered.
 
-Machine-checked, in this repository, by `lake build` (Lean 4, v4.35.0,
-no dependencies):
+Accepted by the Lean kernel through `lake build` (Lean 4, v4.35.0, no
+Mathlib; one dependency, tropical-types). This is Lean-leg evidence only;
+`PROOF-STATUS.adoc` gives the receipt and its scope:
 
 * Every well-typed non-empty cross-region trace strictly worsens
   (`trace_worsens`, `Marches/Compose.lean`).
@@ -49,10 +50,12 @@ graded machinery (see `ROADMAP.adoc`).
 
 == Status table
 
-`PROVEN` in this table means the Lean kernel accepted the proof. Under the
-estate proof policy marches is theory, so Agda is the source of truth and no
-theorem here is graded yet: `PROOF-STATUS.adoc` records each witness leg,
-the axiom census, and the plan for the Agda port.
+`PROVEN` in this table means the Lean kernel accepted the proof and it uses
+no axioms. `PROVEN-WITH-AXIOMS` means the kernel accepted it and it rests on
+the Lean built-in axioms named in the row. Under the estate proof policy
+marches is theory, so Agda is the source of truth and no theorem here is
+graded yet. `PROOF-STATUS.adoc` records each witness leg, the axiom census,
+the scope of the Lean receipt, and the plan for the Agda port.
 
 [cols="3,1,2"]
 |===
@@ -75,7 +78,7 @@ the axiom census, and the plan for the Agda port.
 |`Kernel.no_return`
 
 |GR table inflationary; strictness gap at `(fromCust, c)`; valley → ⊥
-|PROVEN (finite)
+|PROVEN-WITH-AXIOMS (finite; `propext`)
 |`GaoRexford.gr_inflationary`, `gr_not_strict`, `valley_dies`
 
 |DISAGREE rejected by discipline ∧ oscillates
@@ -83,7 +86,7 @@ the axiom census, and the plan for the Agda port.
 |`BadGadget.disagree_not_inflationary`, `disagree_two_cycle`, `#eval orbit`
 
 |GR crossings as typing judgment ≡ valley-freedom grammar ≡ non-⊥ table
-|PROVEN
+|PROVEN; PROVEN-WITH-AXIOMS (`propext`) for `valley_free_iff_gwalk`
 |`GRTrace.gtrace_iff_valley_free`, `GRTrace.valley_free_iff_gwalk`
 
 |GR ill-typed moves (valley, second peer hop, from-⊥) underivable
@@ -187,14 +190,14 @@ is open and has already withdrawn one proposed pairing.
 |Tropical estate integration: tropical-types' `TropicalAdapterPath.lean`
 builds inside this repo, unparaphrased, and its `pathCost` is marches'
 grade accumulation under the bottleneck grade
-|PROVEN
+|PROVEN-WITH-AXIOMS (`propext`, `Quot.sound`)
 |`lake build` with the `lakefile.toml` `require`;
 `TropicalAdapter.pathCost_eq_accum`, `pathCost_append_via_accum`,
 `carried_floor`, `bottleneck_carries_unit`
 
 |The bottleneck grade gives no loop-freedom: a non-empty path can carry
 the unit
-|PROVEN (finite)
+|PROVEN-WITH-AXIOMS (finite; `propext`)
 |`TropicalAdapter.bottleneck_carries_unit`
 
 |Protocol-level asynchronous convergence
@@ -214,7 +217,8 @@ elan default leanprover/lean4:v4.35.0   # or let lake read lean-toolchain
 lake build
 ----
 
-Zero dependencies; no mathlib. CI runs the same build.
+No Mathlib; the one dependency is tropical-types, pinned in
+`lakefile.toml`. CI runs the same build.
 
 `scripts/check-correspondence.sh` fetches the sibling proof repositories
 at their pinned commits (into `_build/dependencies`). It checks that every

@@ -28,8 +28,11 @@ recorded (`RECONCILED`). Until then every Agda row is `OPEN`.
 
 Every theorem below is *`ungraded`*: no Agda witness exists, so not even
 `PWG-3` applies (§8.2). `foundation_diverse` is false throughout.
-Denominator: 446 declarations in the `Marches` namespace on `abe636a`, of
-which 0 are graded.
+
+Grade census (§8.4), denominator 211 theorems in the `Marches` namespace:
+`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 0, `PWG-3` 0, `ungraded` 211. The 235
+definitions in the same namespace are not proof obligations and are not
+counted; the axiom census below covers both kinds.
 
 [cols="1,1,1,1",options="header"]
 |===
@@ -53,8 +56,14 @@ which 0 are graded.
 
 == Lean leg receipt
 
-Taken 2026-11-09 on `main` at `abe636a`, Lean `v4.35.0` (`lean-toolchain`),
-no Mathlib (the only dependency is tropical-types, core Lean).
+Taken 2026-11-09 on `main` at `abe636aaba3f36eebee7f40b0707ef6bb090715e`,
+Lean `v4.35.0` (`lean-toolchain`), no Mathlib (the only dependency is
+tropical-types, core Lean, at the `lake-manifest.json` pin). Input digest:
+the git tree of `Marches/` at that commit is
+`7ef83e438a687872157fcb4187bd99f242641f8a`. The run was repeated on
+2026-11-09 at `6db6c0a`, whose Lean inputs (`Marches/`, `Marches.lean`,
+`lakefile.toml`, `lake-manifest.json`, `lean-toolchain`) are unchanged from
+`abe636a`, with the same result.
 
 ----
 $ lake build
@@ -69,15 +78,23 @@ Axiom census, `Lean.collectAxioms` over every theorem and definition in the
 `Marches` namespace:
 
 ----
-declarations audited: 446
-  402 × axioms: none
-   41 × axioms: propext
-    3 × axioms: Quot.sound, propext
+declarations audited: 446 (211 theorems, 235 definitions)
+  171 theorems,   231 definitions × axioms: none
+   37 theorems,     4 definitions × axioms: propext
+    3 theorems,     0 definitions × axioms: Quot.sound, propext
 ----
 
-No declaration depends on `sorryAx` or `Classical.choice`. This receipt is a
-local run, not a pinned headless CI receipt, so it does not support
-`PWG-1` (§8.2) even once the other legs exist.
+No declaration depends on `sorryAx` or `Classical.choice`.
+
+*Scope of this receipt.* It is historical evidence for the Lean inputs
+named above, from a local run. It is not the current, pinned, isolated
+receipt that §8.4 ("claims need receipts") and §8.2 (`PWG-1`) require, so
+nothing in this repository may be described as verified *through* Lean
+on the strength of it. CI's `lake build` runs on every commit with the
+toolchain and actions pinned, but it records no axioms and no input digest.
+A CI job that emits a full §8.2 receipt per commit is `OPEN` (see the
+plan below). When the Lean inputs change, this receipt is superseded and
+must be retaken.
 
 == Theorem groups
 
@@ -86,7 +103,9 @@ local run, not a pinned headless CI receipt, so it does not support
 `Quot.sound`, named in the row. The policy does not yet rule on whether
 those two built-ins count as "necessary axioms" (§5,
 `TRUSTED-BASE-REDUCTION-POLICY.adoc`); this file takes the cautious reading
-and names them.
+and names them. The constructor lemmas Lean generates for structures and
+inductives (`*.injEq`) use `propext` in every module that has them. They
+are not headline theorems and no row below depends on them.
 
 [cols="2,3,2,1",options="header"]
 |===
@@ -99,7 +118,7 @@ and names them.
 
 |Two-region composition (`Compose`)
 |`trace_worsens`, `wt_cycles_are_empty`, `no_back_cross`, `no_a_label_in_B`
-|`PROVEN` (the generated `Pos.*.injEq`, `CLabel.*.injEq` use `propext`)
+|`PROVEN`
 |`OPEN`
 
 |Gao–Rexford table (`GaoRexford`, namespace `GR`)
@@ -179,13 +198,22 @@ next body of work.
 by group in ROADMAP order. Each group moves from `OPEN` to `PROVEN` with an
 Agda receipt; that is `PWG-3`.
 . *Lean leg.* Compare each Lean statement with its Agda statement and record
-the comparison here. The existing Lean file then counts as the `re-proved`
-Lean leg, `RECONCILED`: `PWG-2i`.
+the comparison here. The existing Lean file is then the `re-proved` Lean
+leg, `RECONCILED`. It counts towards `PWG-2i` only when, in addition, each
+axiom it rests on is admissible under disposition (c) of
+`TRUSTED-BASE-REDUCTION-POLICY.adoc` (§8.4, "axioms travel with the
+grade"). For the `PROVEN-WITH-AXIOMS` groups that means `propext`, and
+`Quot.sound` for the tropical adapter, each with its `docs/proof-debt.md`
+entry, or a standards ruling on Lean's built-in axioms. A `PROVEN` group
+needs no such step.
 . *Rocq leg.* Dedukti transport first, hand re-proof as fallback (§2): this
-is `PWG-2ii`.
-. *Receipts.* A pinned headless checker run per commit for each witness:
-`PWG-1`.
+is `PWG-2ii`, under the same axiom rule (`Print Assumptions`).
+. *Receipts.* A pinned headless checker run per commit for each witness,
+recording the fields §8.2 lists (checker and version, invocation, input
+digest, result, axioms, full commit): `PWG-1`. For the Lean leg this is a
+CI job around `lake build` and the axiom census; it is `OPEN`.
 
 Until step 1 lands for a group, nothing in this repository may be called
-graded, and "PROVEN" in `README.adoc` means "accepted by the Lean kernel",
-not "discharged under the estate policy".
+graded. `PROVEN` and `PROVEN-WITH-AXIOMS` in `README.adoc` mean "accepted by
+the Lean kernel", without or with the named axioms, not "discharged under
+the estate policy".

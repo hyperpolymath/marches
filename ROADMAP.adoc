@@ -95,7 +95,10 @@ theory; marches' Lean development is target-only evidence until each group
 has an Agda proof and the two statements are reconciled. Port rungs 0–3 to
 Agda in this repository group by group (`--safe --without-K`, no
 postulates), recording each in `PROOF-STATUS.adoc`: Agda `PROVEN` is
-`PWG-3`, the reconciled Lean leg makes it `PWG-2i`, a Rocq leg `PWG-2ii`.
+`PWG-3`. The reconciled Lean leg makes it `PWG-2i` once each Lean axiom it
+rests on (`propext`, `Quot.sound`) is admissible under disposition (c) of
+`TRUSTED-BASE-REDUCTION-POLICY.adoc`. A Rocq leg under the same rule makes
+it `PWG-2ii`.
 Gate per group: the Agda check passes under the canonical invocation and
 the statement comparison is written down. Takes precedence over rung 4.
 
