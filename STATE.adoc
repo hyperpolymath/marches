@@ -1,5 +1,55 @@
 = STATE — cross-session log
 
+== 2026-11-09 — proof status under the estate proof policy (not a rung)
+
+* New `PROOF-STATUS.adoc`, as `standards` `3-practice/PROOF-POLICY.adoc`
+  §8.5 asks. marches is theory (§1), so Agda is the source of truth; its
+  Lean files are target-only evidence (§3). Every theorem: Agda `OPEN`,
+  Rocq `OPEN`, `ungraded`. Owner decision: record now, port to Agda next
+  (new ROADMAP section, ahead of rung 4).
+* Lean leg receipt on `abe636a`, v4.35.0: `lake build` 19 jobs; no
+  `sorry`, `admit`, `axiom`, `native_decide`, `extern`. `Lean.collectAxioms`
+  over all 446 `Marches` declarations: 402 none, 41 `propext`, 3
+  `propext, Quot.sound`; none on `sorryAx` or `Classical.choice`. The
+  `propext` cases are generated `injEq` lemmas, the Gao–Rexford `gext`
+  match, and the tropical-types lemmas the adapter consumes. Groups that
+  rest on them are recorded `PROVEN-WITH-AXIOMS`, naming them (the policy
+  does not yet rule on Lean's built-ins).
+* `CLAUDE.md` said "Lean 4 for proofs"; it now defers to the estate policy.
+  `README.adoc`'s status table now says its `PROVEN` means Lean-kernel
+  accepted, not graded.
+* Every theorem name in `PROOF-STATUS.adoc` was checked with `#check`
+  (all resolve). Issues #54 and #55 closed as false alarms (the stale
+  tropical-types pin, fixed by #57).
+* `secret-scanner.yml` had failed at startup, zero jobs, on every run since
+  #33 (a job-level call to a remote reusable). Replaced by the template's
+  inline scanner (rsr-template-repo `2be7b88`, its #295): three jobs,
+  `scan / gitleaks`, `scan / rust-secrets`, `scan / shell-secrets`, job
+  bodies unchanged; checkout pinned by marches' tag (`v7.0.1`, which the
+  lock resolves to the template's commit `3d3c42e`). Lock entry added by
+  hand in the generator's shape (no new dependency; the relock bot needs
+  `AUTOMATION_TOKEN`). Run locally first: gitleaks 8.18.4 (checksum OK)
+  with the estate baseline at standards `e064539`, working tree and full
+  68-commit history: no leaks; shell job: none detected; rust job: skips
+  (no `Cargo.toml`). actionlint clean.
+* Review round (CodeRabbit on #59), each checked against PROOF-POLICY
+  §8.2–§8.4 at standards `d036da3`:
+** The grade census uses 211 theorems as the denominator; the 235
+   definitions are not obligations. By kind: 171 theorems and 231
+   definitions use no axioms, 37 and 4 use `propext`, 3 and 0 use
+   `propext, Quot.sound`.
+** The Lean receipt now gives the full commit and the `Marches/` tree
+   digest. It is re-run at `6db6c0a` (Lean inputs unchanged) and scoped as
+   historical, not a §8.4 current receipt. A CI receipt job is `OPEN`.
+** `PWG-2i` and `PWG-2ii` now also require each Lean or Rocq axiom to be
+   admissible under disposition (c).
+** In the README, the Gao–Rexford table, `valley_free_iff_gwalk` and both
+   tropical-adapter rows are `PROVEN-WITH-AXIOMS`, naming their axioms;
+   this is per-name `#print axioms`, and only `GR.*` and
+   `TropicalAdapter.*` headline names use any. The README's
+   "no dependencies" claims were stale (tropical-types) and are corrected.
+** The next action below is the Agda port; 3f is deferred.
+
 == 2026-11-04 — rung 3d closed: tropical-types re-pinned to the #65 merge commit
 
 * #52 merged before hyperpolymath/tropical-types#65, so `main` kept the
@@ -432,6 +482,10 @@ $ lake env lean Marches/BadGadget.lean
 
 == Next action
 
-Rung 3 (see ROADMAP.adoc): only 3f remains. File the postern cross-issue
-once that repository exists (not found 2026-11-04). 3d and 3e are met.
+The Agda port (ROADMAP.adoc, "Agda source of truth"; owner decision
+2026-11-09), group by group, each recorded in `PROOF-STATUS.adoc`. It takes
+precedence over rung 4.
+
+Deferred, not the next action: rung 3f, the postern cross-issue. It waits
+on hyperpolymath/postern existing (not found 2026-11-09); 3d and 3e are met.
 Obtain the real files; never reconstruct from memory. One rung only.

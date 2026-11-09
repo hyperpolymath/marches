@@ -1,0 +1,219 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= marches — Proof Status
+:toc:
+:sectnums:
+
+[abstract]
+The proof-status file the estate proof policy asks of every home repository
+(`hyperpolymath/standards` `3-practice/PROOF-POLICY.adoc` §2 and §8.5). It
+records, per theorem group, each witness leg with its route, status token
+(§5), correspondence state (§2.2) and receipt, and the Proof Witness Grade
+derived from them. It claims nothing the receipts below do not show.
+
+== Classification
+
+marches is *theory* under policy §1: its statements (disciplines, region
+DAGs, cuts, path grades) would be true of any implementation and name no
+type, function or wire format of one system. Theory has *Agda* as its source
+of truth, rechecked in *Rocq* and *Lean* (§2), with no Mathlib.
+
+marches was written in Lean 4 from 2026-07, before the 2026-10-26 ruling.
+By §3 its Lean files keep their value but are *target-only evidence*: they
+count as the Lean leg only once an Agda proof of the same statement is
+`PROVEN` and the two statements have been compared and the comparison
+recorded (`RECONCILED`). Until then every Agda row is `OPEN`.
+
+== Grades
+
+Every theorem below is *`ungraded`*: no Agda witness exists, so not even
+`PWG-3` applies (§8.2). `foundation_diverse` is false throughout.
+
+Grade census (§8.4), denominator 211 theorems in the `Marches` namespace:
+`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 0, `PWG-3` 0, `ungraded` 211. The 235
+definitions in the same namespace are not proof obligations and are not
+counted; the axiom census below covers both kinds.
+
+[cols="1,1,1,1",options="header"]
+|===
+|Leg |Route |Status token |§2.2 state
+
+|Agda (source)
+|—
+|`OPEN` (no Agda development yet)
+|—
+
+|Lean
+|`re-proved` (written directly in Lean; no Agda to transport from)
+|`PROVEN` or `PROVEN-WITH-AXIOMS`, per group below; target-only evidence (§3)
+|not `RECONCILED`: no Agda statement to compare against
+
+|Rocq
+|—
+|`OPEN`
+|—
+|===
+
+== Lean leg receipt
+
+Taken 2026-11-09 on `main` at `abe636aaba3f36eebee7f40b0707ef6bb090715e`,
+Lean `v4.35.0` (`lean-toolchain`), no Mathlib (the only dependency is
+tropical-types, core Lean, at the `lake-manifest.json` pin). Input digest:
+the git tree of `Marches/` at that commit is
+`7ef83e438a687872157fcb4187bd99f242641f8a`. The run was repeated on
+2026-11-09 at `6db6c0a`, whose Lean inputs (`Marches/`, `Marches.lean`,
+`lakefile.toml`, `lake-manifest.json`, `lean-toolchain`) are unchanged from
+`abe636a`, with the same result.
+
+----
+$ lake build
+Build completed successfully (19 jobs).
+$ grep -rnw sorry Marches/ Marches.lean          # empty
+$ grep -rnwE 'admit|axiom|native_decide|implemented_by|extern' Marches/ Marches.lean   # empty
+$ lake env lean Marches/BadGadget.lean
+[(false, false), (true, true), (false, false), (true, true)]
+----
+
+Axiom census, `Lean.collectAxioms` over every theorem and definition in the
+`Marches` namespace:
+
+----
+declarations audited: 446 (211 theorems, 235 definitions)
+  171 theorems,   231 definitions × axioms: none
+   37 theorems,     4 definitions × axioms: propext
+    3 theorems,     0 definitions × axioms: Quot.sound, propext
+----
+
+No declaration depends on `sorryAx` or `Classical.choice`.
+
+*Scope of this receipt.* It is historical evidence for the Lean inputs
+named above, from a local run. It is not the current, pinned, isolated
+receipt that §8.4 ("claims need receipts") and §8.2 (`PWG-1`) require, so
+nothing in this repository may be described as verified *through* Lean
+on the strength of it. CI's `lake build` runs on every commit with the
+toolchain and actions pinned, but it records no axioms and no input digest.
+A CI job that emits a full §8.2 receipt per commit is `OPEN` (see the
+plan below). When the Lean inputs change, this receipt is superseded and
+must be retaken.
+
+== Theorem groups
+
+`PROVEN` here means the Lean kernel accepted the term with no axioms.
+`PROVEN-WITH-AXIOMS` means it rests on Lean's built-in `propext` and/or
+`Quot.sound`, named in the row. The policy does not yet rule on whether
+those two built-ins count as "necessary axioms" (§5,
+`TRUSTED-BASE-REDUCTION-POLICY.adoc`); this file takes the cautious reading
+and names them. The constructor lemmas Lean generates for structures and
+inductives (`*.injEq`) use `propext` in every module that has them. They
+are not headline theorems and no row below depends on them.
+
+[cols="2,3,2,1",options="header"]
+|===
+|Group (module) |Headline theorems |Lean leg |Agda
+
+|Kernel: single-region loop-freedom (`Kernel`, `Basic`)
+|`run_worsens`, `no_return`, `strict_implies_inflationary`
+|`PROVEN`
+|`OPEN`
+
+|Two-region composition (`Compose`)
+|`trace_worsens`, `wt_cycles_are_empty`, `no_back_cross`, `no_a_label_in_B`
+|`PROVEN`
+|`OPEN`
+
+|Gao–Rexford table (`GaoRexford`, namespace `GR`)
+|`gr_inflationary`, `gr_not_strict`, `valley_dies`, `peer_route_not_upward`
+|`PROVEN-WITH-AXIOMS` (`propext`, from the `gext` match)
+|`OPEN`
+
+|Gao–Rexford as a typing judgment (`GRTrace`, namespace `GR`)
+|`gtrace_iff_valley_free` (`PROVEN`); `valley_free_iff_gwalk`
+(`PROVEN-WITH-AXIOMS`, `propext`); `no_valley_step`, `no_peer_reexport_up`,
+`no_second_peer`, `no_step_from_bot` (`PROVEN`)
+|mixed, as listed
+|`OPEN`
+
+|Hierarchy loop-freedom (`GRHierarchy`, `Digraph`)
+|`gr_loop_free` (conditional on `Acyclic`, which stays `ASSUMED`)
+|`PROVEN`
+|`OPEN`
+
+|DISAGREE exhibit (`BadGadget`, namespace `Disagree`)
+|`disagree_not_inflationary`, `disagree_two_cycle`; `#eval orbit` is `TESTED`
+|`PROVEN`
+|`OPEN`
+
+|Falsifier F2 (`Freewheel`)
+|`f2_discharged`, `freewheel_not_strict`
+|`PROVEN`
+|`OPEN`
+
+|Tropical instance and grade laws (`Tropical`)
+|`tropical_strict`, `seq_unitl`, `alt_idem`, `better_reverses_altLe`,
+`altLe_one`, `s3_witness`
+|`PROVEN`
+|`OPEN`
+
+|Reassembly (`Reassembly`)
+|`Discipline.no_loop`, `PathAlgebra.toDiscipline`, `DiscSys.compose`,
+`compose_no_loop` (conditional on `Acyclic`), `no_foreign_local`,
+`no_self_cross`
+|`PROVEN`
+|`OPEN`
+
+|Cuts (`Cut`)
+|`edge_crosses_past`, `path_back_crosses_no_cut`, `trace_cross_crosses_cut`,
+`no_reentry`, `composeCut`, `composeCut_trace_embed`,
+`composeCut_trace_reflect`
+|`PROVEN`
+|`OPEN`
+
+|Provenance (`Provenance`)
+|`accum_append`, `run_eq_seq_carried`, `carried_cons_ne_one`,
+`no_return_of_carried`, `trace_cross_shape`, `carried_in_cut`,
+`carried_to_cross_in_past`
+|`PROVEN`
+|`OPEN`
+
+|Tropical adapter (`TropicalAdapter`, imports tropical-types)
+|`pathCost_eq_accum`, `pathCost_append_via_accum`, `carried_floor`
+(`propext`, `Quot.sound`); `bottleneck`, `bottleneck_carries_unit`
+(`propext`); every axiom inherited from the upstream lemma used
+|`PROVEN-WITH-AXIOMS`
+|`OPEN`
+|===
+
+Stated hypotheses stay `ASSUMED` whatever the legs: `Marches.Acyclic` for
+real topologies and real region DAGs, and every row of
+`docs/kcut-correspondence.adoc` except KC-13. KC-13 is a Lean-to-Lean
+import, checked by `lake build`, but it inherits the same `OPEN` Agda status.
+
+== Plan: closing the Agda gap
+
+Owner decision 2026-11-09: record the gap here now; the Agda port is the
+next body of work.
+
+. *Agda source.* Port the groups above to Agda in this repository
+(`--safe --without-K`, no postulates, the §2.1 canonical invocation), group
+by group in ROADMAP order. Each group moves from `OPEN` to `PROVEN` with an
+Agda receipt; that is `PWG-3`.
+. *Lean leg.* Compare each Lean statement with its Agda statement and record
+the comparison here. The existing Lean file is then the `re-proved` Lean
+leg, `RECONCILED`. It counts towards `PWG-2i` only when, in addition, each
+axiom it rests on is admissible under disposition (c) of
+`TRUSTED-BASE-REDUCTION-POLICY.adoc` (§8.4, "axioms travel with the
+grade"). For the `PROVEN-WITH-AXIOMS` groups that means `propext`, and
+`Quot.sound` for the tropical adapter, each with its `docs/proof-debt.md`
+entry, or a standards ruling on Lean's built-in axioms. A `PROVEN` group
+needs no such step.
+. *Rocq leg.* Dedukti transport first, hand re-proof as fallback (§2): this
+is `PWG-2ii`, under the same axiom rule (`Print Assumptions`).
+. *Receipts.* A pinned headless checker run per commit for each witness,
+recording the fields §8.2 lists (checker and version, invocation, input
+digest, result, axioms, full commit): `PWG-1`. For the Lean leg this is a
+CI job around `lake build` and the axiom census; it is `OPEN`.
+
+Until step 1 lands for a group, nothing in this repository may be called
+graded. `PROVEN` and `PROVEN-WITH-AXIOMS` in `README.adoc` mean "accepted by
+the Lean kernel", without or with the named axioms, not "discharged under
+the estate policy".
