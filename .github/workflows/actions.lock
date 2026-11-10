@@ -5,10 +5,10 @@ version: 'v0.0.3'
 workflows:
     '.github/workflows/ci.yml':
         - 'actions/checkout@v7.0.1'
-        - 'leanprover/lean-action@v1.7.0'
+        - 'leanprover/lean-action@v1.7.1'
     '.github/workflows/codeql.yml':
         - 'actions/checkout@v7.0.1'
-        - 'github/codeql-action@v4.39.1'
+        - 'github/codeql-action@v4.39.3'
     '.github/workflows/label-triage.yml': []
     '.github/workflows/labels.yml': []
     '.github/workflows/pages.yml':
@@ -45,14 +45,14 @@ dependencies:
         repo_id: 496012378
         uses:
             - 'actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f'
-    'github/codeql-action@v4.39.1':
-        ref: 'v4.39.1'
-        commit: 'sha1-9b3254085494b55a0f7c4c2b3d2d52cc712ce370'
+    'github/codeql-action@v4.39.3':
+        ref: 'v4.39.3'
+        commit: 'sha1-33d7b85da1a04171e211befe2c739303b9a4c066'
         owner_id: 9919
         repo_id: 259445878
-    'leanprover/lean-action@v1.7.0':
-        ref: 'v1.7.0'
-        commit: 'sha1-fe408643ea7367d8c0404a8be3975bb145f5fb64'
+    'leanprover/lean-action@v1.7.1':
+        ref: 'v1.7.1'
+        commit: 'sha1-ba3fdfe5c4476c925da13bf11a005ddb47e47aee'
         owner_id: 7233018
         repo_id: 795738301
         uses:
