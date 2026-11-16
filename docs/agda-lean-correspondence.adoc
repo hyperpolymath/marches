@@ -1,0 +1,141 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Agda–Lean statement correspondence
+:revdate: 2026-11-16
+
+The record that `hyperpolymath/standards` `3-practice/PROOF-POLICY.adoc` §2.2
+asks for, group by group. It covers each theorem whose Agda source is in
+`proofs/agda` and whose Lean leg is in `Marches/`. For each pair it gives the
+exact propositions, their assumptions, their type and universe discipline and
+how they were compared. Revisions, checkers, invocations and results are in
+`PROOF-STATUS.adoc`. A successful check in each prover does not on its own
+show that both proved the same proposition. This page is that separate
+argument.
+
+*Method.* The comparison was made by reading. Definitions were compared field
+by field and theorems binder by binder, against the Lean files at the commit
+named in `PROOF-STATUS.adoc`. No mechanical bridge links the two: there is no
+Dedukti round trip, and the Lean leg was not transported. Lean's names are in
+snake case and Agda's in kebab case, because an underscore in an Agda name
+marks a mixfix argument.
+
+*Route of the Lean leg:* `re-proved`. The Lean development was written by hand
+from 2026-07, before the Agda source existed. It was not transported from the
+Agda proof.
+
+== Kernel group (`Basic`, `Kernel`)
+
+State: `RECONCILED`, 2026-11-16, with the residual assumptions listed below.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/`) |Lean (`Marches/`) |Comparison
+
+|`Basic.PathAlgebra : Set₁`, a record with fields `Carrier Label : Set`,
+`better : Carrier → Carrier → Set`, `ext : Label → Carrier → Carrier`,
+`trans : ∀ {a b c} → better a b → better b c → better a c`,
+`irrefl : ∀ a → ¬ better a a`
+|`Basic.PathAlgebra`, a structure with fields `Carrier Label : Type`,
+`better : Carrier → Carrier → Prop`, `ext`, `trans`, `irrefl` of the same
+shapes
+|Same fields in the same order, with the same arities and the same
+implicit and explicit binders. Carriers sit at the lowest universe in both
+(`Set` = `Set₀`, `Type` = `Type 0`), so the record is in `Set₁` and the
+structure in `Type 1`. *Difference:* `better` is `Set`-valued in Agda and
+`Prop`-valued in Lean (residual R1).
+
+|`Basic.StrictlyInflationary A`
+|`Marches.StrictlyInflationary A`
+|Both are `∀ l a, better A a (ext A l a)`.
+
+|`Basic.Inflationary A`
+|`Marches.Inflationary A`
+|Both are `∀ l a, ¬ better A (ext A l a) a`.
+
+|`Basic.run A`
+|`Marches.run A`
+|The same two equations: `run A [] a = a` and
+`run A (l ∷ ls) a = run A ls (ext A l a)`. The word is read left to right.
+Agda uses `Agda.Builtin.List` and Lean uses core `List`.
+
+|`Prelude.¬_`, `Prelude.⊥`
+|`Not`, `False`
+|`¬ P = P → ⊥`, where `⊥` is a data type with no constructors. Lean's
+`¬ P` is `P → False`. They are the same.
+
+|`Prelude._⊎_`
+|`Or`
+|A sum with two injections. In Agda it is a type, so it is proof-relevant;
+Lean's `Or` is a `Prop`. Only `run-le` uses it (residual R1).
+
+|`_≡_` (`Agda.Builtin.Equality`)
+|`Eq`
+|The identity type. Agda uses it without K (§2.1) and these proofs use
+only `subst` and `sym`, which J gives. Lean's `Eq` is a `Prop`
+(residual R2).
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both), in the binder order of both
+
+|`Basic.strict-implies-inflationary`
+|`Marches.strict_implies_inflationary`
+|`∀ (A : PathAlgebra), StrictlyInflationary A → Inflationary A`
+
+|`Kernel.run-le`
+|`Marches.run_le`
+|`∀ A, StrictlyInflationary A → ∀ ls a,
+better A a (run A ls a) ∨ run A ls a = a`
+
+|`Kernel.run-worsens`
+|`Marches.run_worsens`
+|`∀ A, StrictlyInflationary A → ∀ l ls a, better A a (run A (l :: ls) a)`
+
+|`Kernel.no-return`
+|`Marches.no_return`
+|`∀ A, StrictlyInflationary A → ∀ l ls a, ¬ (run A (l :: ls) a = a)`. Lean
+writes `≠`, which unfolds to `a = b → False`.
+|===
+
+The hypotheses are the same in both: one path algebra and its strictness.
+Neither side adds an assumption, a typeclass or a section variable. Lean
+reports no axioms for any of the four theorems (`#print axioms`), and the Agda
+gate finds no postulate in the import cone outside the prover's own level
+primitives.
+
+=== Residual assumptions
+
+R1. *Propositions as types.* Agda's `better` and `_⊎_` are `Set`-valued and
+proof-relevant. Lean's are `Prop`-valued and proof-irrelevant. A Lean path
+algebra gives an Agda one when each proposition is read as a type, and read
+at that algebra each Agda statement is the Lean statement. So the Agda
+statements quantify over at least the Lean algebras. No statement here
+compares two proofs of `better`, or quantifies over `Prop`, so the
+difference cannot change the truth of a statement. This is an argument made
+by reading. It is not a checked bridge.
+
+R2. *Equality.* Lean's `Eq` has proof irrelevance by definition. Agda is run
+without K, so its `_≡_` does not. The statements use equality only in
+`run-le` (as a disjunct) and in `no-return` (under a negation), and never
+compare two equality proofs, so K is not needed to state them. The Agda
+proofs use only J. Neither side needs the other's equality principles.
+
+R3. *Kernels.* The legs are independent kernel results: Agda 2.7.0.1 checked
+the Agda source and Lean 4.35.0 checked the Lean source. Each prover's own
+kernel is trusted. Agda's trusted base in this cone is `Agda.Primitive`'s
+`Level`, `lzero`, `lsuc` and `_⊔_`, each bound by its `BUILTIN` pragma.
+
+=== Negative controls
+
+`tests/reject-agda/FreewheelReturns.agda` gives the free-wheeling algebra:
+one signature, extension the identity, no preference. It claims `no-return`
+for that algebra, and the gate requires Agda to refuse it. So the strictness
+hypothesis of `no-return` is load-bearing, as falsifier F2 is on the Lean side
+(`Marches/Freewheel.lean`). `tests/reject-agda/UsesK.agda` has no `OPTIONS`
+pragma and proves K. Its refusal shows that the gate's own command line runs
+with `--without-K`.
