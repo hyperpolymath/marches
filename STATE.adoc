@@ -1,5 +1,35 @@
 = STATE — cross-session log
 
+== 2026-11-16 — Agda source, Kernel group (Agda-source session)
+
+* `proofs/agda` holds the Agda source for the Kernel group: `PathAlgebra`,
+  `StrictlyInflationary`, `Inflationary`, `run`, `strict-implies-inflationary`,
+  `run-le`, `run-worsens` and `no-return`. A small local `Prelude` replaces
+  the standard library, so the import cone is four files here plus
+  `Agda.Primitive`, `Agda.Builtin.Equality` and `Agda.Builtin.List`. This
+  matches the Lean side (core only, no Mathlib), and later groups will prove
+  the lemmas they need by hand, as the Lean side does.
+* `scripts/check-agda.sh` checks `proofs/agda/All.agda` cold under the §2.1
+  invocation. It scans the import cone with januskey's reference postulate
+  scanner, ported verbatim (`b503488`): no postulate here, and in the
+  prover's modules only `Agda.Primitive`'s four level primitives. It
+  requires refusals: a `--safe` control, `FreewheelReturns` (strictness is
+  load-bearing, as with F2) and `UsesK` (`--without-K` is in force on the
+  command line). It then prints the receipt fields and the §8.5.1 inputs
+  digest. `scripts/setup-agda.sh` installs Agda 2.7.0.1 at echo-types'
+  checksum. A new `agda` job in `ci.yml` runs both.
+* Receipt at `660e1c6`: PASS, inputs digest `4f589df…`, which the policy's
+  shell line reproduces. Lean leg re-checked at the same commit with v4.35.0
+  (archive checksum OK): `lake build` 19 jobs, no `sorry`, the orbit
+  unchanged, and no axioms for the four theorems.
+* `docs/agda-lean-correspondence.adoc` is the §2.2 comparison, made by
+  reading, with residuals: Agda `Set` against Lean `Prop`, equality without
+  K, and two trusted kernels. The Kernel group is `RECONCILED`, so its four
+  theorems are `PWG-2i`. The census is now `PWG-2i` 4 and `ungraded` 207 of
+  211.
+* Open: the Rocq leg; the machine-readable receipt (§8.5.1); the next
+  group, `Compose`.
+
 == 2026-11-16 — estate audit repointed after the suite rename (not a rung)
 
 * `hyperpolymath/cicd-suite` was renamed to

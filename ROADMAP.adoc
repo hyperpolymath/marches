@@ -102,6 +102,23 @@ it `PWG-2ii`.
 Gate per group: the Agda check passes under the canonical invocation and
 the statement comparison is written down. Takes precedence over rung 4.
 
+[cols="3,3,1",options="header"]
+|===
+|Group |Artefact |Status
+
+|Kernel (`Basic`, `Kernel`)
+|`proofs/agda/Marches/` (`Prelude`, `Basic`, `Kernel`); `scripts/check-agda.sh` in
+CI; `docs/agda-lean-correspondence.adoc`
+|met 2026-11-16 (`PWG-2i`)
+
+|Two-region composition (`Compose`)
+|—
+|next
+|===
+
+After all groups: the machine-readable proof receipt
+(`verification/receipts/*_praxis.deed`, PROOF-POLICY §8.5.1).
+
 == Rung 4 — attestation (A2ML bridge)
 
 * Announcements as attested claims: RPKI attests origin; this layer
