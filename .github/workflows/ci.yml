@@ -20,3 +20,20 @@ jobs:
       - uses: leanprover/lean-action@v1.7.0
       - name: No sorries
         run: "! grep -rn 'sorry' Marches/ Marches.lean"
+
+  agda:
+    # PROOF-POLICY §2.1: the Agda source of truth (proofs/agda), checked cold
+    # with the checksum-pinned compiler; the import cone scanned for
+    # postulates; the fixtures under tests/reject-agda refused. The last lines
+    # of the log are the receipt fields. Local run: scripts/setup-agda.sh,
+    # then scripts/check-agda.sh.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the checksum-pinned Agda
+        run: bash scripts/setup-agda.sh
+      - name: Agda gate
+        run: bash scripts/check-agda.sh
