@@ -1,5 +1,23 @@
 = STATE — cross-session log
 
+== 2026-11-16 — estate audit repointed after the suite rename (not a rung)
+
+* `hyperpolymath/cicd-suite` was renamed to
+  `hyperpolymath/proven-cicd-and-workflows` on 2026-11-09. Actions does not
+  follow a rename in `uses:`, so `main-estate-audit.yml` had failed at
+  startup with zero jobs since then (first seen on #59). The upstream fix,
+  proven-cicd-and-workflows#94, merged 2026-11-10 as `1fd5e63`.
+* `main-estate-audit.yml` now calls
+  `proven-cicd-and-workflows/.github/workflows/main-estate-audit.yml` at that
+  suite's HEAD, `9eb0bbf`. At that commit the reusable names no
+  `cicd-suite` reference. This PR's own estate-audit run is the check.
+* `track-estate-audit.yml` finds the pin under either name, reads HEAD from
+  the new name, refuses a non-SHA HEAD, and rewrites the name and SHA
+  together in the suite's own reference only. Checked on fixtures: an
+  old-name caller at `b17ec1a` moves to the new name at `9eb0bbf`, and a
+  caller already there is left alone. It still needs `AUTOMATION_TOKEN` to
+  open its PRs.
+
 == 2026-11-09 — proof status under the estate proof policy (not a rung)
 
 * New `PROOF-STATUS.adoc`, as `standards` `3-practice/PROOF-POLICY.adoc`
