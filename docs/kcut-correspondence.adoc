@@ -27,7 +27,7 @@ ground (`LIMITATIONS.adoc`).
 |Repository |Commit |Read for
 
 |hyperpolymath/choreographic-types
-|`f5a41772c2ca2345bd53579b73f064f4a3ab7ed7`
+|`233b07bc7d2ea2da9fff89e0c57570e84a550ef9`
 |`Cut`, `_↾_`, `Consistent`, `proj-cut`, `cut-projectable`, K-4 minimal laws, `Bound`, T-2
 
 |hyperpolymath/resource-algebra
