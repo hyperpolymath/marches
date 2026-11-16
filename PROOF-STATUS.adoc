@@ -22,15 +22,22 @@ marches was written in Lean 4 from 2026-07, before the 2026-10-26 ruling.
 By §3 its Lean files keep their value but are *target-only evidence*: they
 count as the Lean leg only once an Agda proof of the same statement is
 `PROVEN` and the two statements have been compared and the comparison
-recorded (`RECONCILED`). Until then every Agda row is `OPEN`.
+recorded (`RECONCILED`). The Agda source is in `proofs/agda`, ported group by
+group in ROADMAP order. A group with no Agda proof yet stays `OPEN`.
 
 == Grades
 
-Every theorem below is *`ungraded`*: no Agda witness exists, so not even
-`PWG-3` applies (§8.2). `foundation_diverse` is false throughout.
+The four theorems of the Kernel group are *`PWG-2i`*. The Agda leg is
+`PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg is `PROVEN`
+with no axioms, and its statements are `RECONCILED` with the Agda ones in
+`docs/agda-lean-correspondence.adoc`. Their Rocq leg is `OPEN`, so they still
+owe §2's second recheck (§8.4: a grade is not a discharge). Every other theorem
+is *`ungraded`*, because no Agda witness exists for it yet. `foundation_diverse`
+is false throughout.
 
 Grade census (§8.4), denominator 211 theorems in the `Marches` namespace:
-`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 0, `PWG-3` 0, `ungraded` 211. The 235
+`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 4, `PWG-3` 0, `ungraded` 207. None of the four
+rests on an axiom. The 235
 definitions in the same namespace are not proof obligations and are not
 counted; the axiom census below covers both kinds.
 
@@ -39,20 +46,65 @@ counted; the axiom census below covers both kinds.
 |Leg |Route |Status token |§2.2 state
 
 |Agda (source)
-|—
-|`OPEN` (no Agda development yet)
+|`source` (`proofs/agda`)
+|`PROVEN` for the Kernel group (receipt below); `OPEN` for every other group
 |—
 
 |Lean
-|`re-proved` (written directly in Lean; no Agda to transport from)
-|`PROVEN` or `PROVEN-WITH-AXIOMS`, per group below; target-only evidence (§3)
-|not `RECONCILED`: no Agda statement to compare against
+|`re-proved` (written by hand in Lean from 2026-07, before the Agda; not
+transported)
+|`PROVEN` or `PROVEN-WITH-AXIOMS`, per group below
+|`RECONCILED` for the Kernel group (`docs/agda-lean-correspondence.adoc`);
+for every other group, target-only evidence (§3) with no Agda statement to
+compare against
 
 |Rocq
 |—
 |`OPEN`
 |—
 |===
+
+== Agda leg receipt
+
+Taken 2026-11-16 at `660e1c61cfdc138452d9a9b4e9bd550cbfebe8fc`, the commit
+that added `proofs/agda`, with `scripts/check-agda.sh` (cold: no interface
+files are read). Checker: Agda `2.7.0.1`, the release archive accepted at
+SHA-256 `975b515a14877ab6bce5bfc641e16c4a3ee52ca5d7f846577dee80aa2145db8a`
+(`scripts/setup-agda.sh`). There is no standard library or other Agda
+library. The same script runs in CI as the `agda` job of `ci.yml`.
+
+----
+$ agda --safe --without-K --cubical-compatible --no-libraries --ignore-interfaces -i proofs/agda proofs/agda/All.agda
+import cone: Agda.Builtin.Equality Agda.Builtin.List Agda.Primitive All Marches.Basic Marches.Kernel Marches.Prelude
+postulate scan: 4 files, 0 postulate(s)
+prover-supplied: Agda.Primitive postulates exactly Level _⊔_ lsuc lzero, each bound by its BUILTIN pragma; no other postulate
+[PASS] postulate scan: cone clean, both controls behave
+[PASS] refused as expected: a postulate, by the command-line --safe
+[PASS] refused as expected: tests/reject-agda/FreewheelReturns.agda (should be empty)
+[PASS] refused as expected: tests/reject-agda/UsesK.agda (because K has been disabled)
+inputs-manifest:
+  6d72ba84f01be6ee0f1eb968c24211ef4ff6a2f9b709b5ac68f841362595c917  proofs/agda/All.agda
+  6d11fd6646fe9c4e974f2ad86a0c273f071f4a4502dead8535b31a7a2e57ce96  proofs/agda/Marches/Basic.agda
+  19980896daff2a787ef2b91f584e7d3568d80316f6bc31c2454de7b609bb663b  proofs/agda/Marches/Kernel.agda
+  ecfec1a4105f5f6cf36272fa278774ebfb6c88e11f9bf3c662d7326f0ab3039c  proofs/agda/Marches/Prelude.agda
+inputs-sha256: 4f589dfe6d2719a058dd182b52cf7cccfeb4817c542831df6a9b963348821567
+[check-agda] OK
+----
+
+The digest is the §8.5.1 one. The policy's shell line
+(`printf '%s\n' PATH… | LC_ALL=C sort | xargs -d '\n' sha256sum -- | sha256sum`)
+gives the same value. Axioms: none. The trusted base is the four
+`Agda.Primitive` primitives named above.
+
+*Scope of this receipt.* It is a local run at the commit named. CI runs the
+same gate on every commit and prints the same fields, but no job yet
+records them. The machine-readable proof receipt of §8.5.1
+(`verification/receipts/*_praxis.deed`, read by `deed_lint.js`) is `OPEN`.
+Until it exists, the grades here are derived by hand from these records,
+and none of them is `PWG-1`. A squash merge will replace `660e1c6` on `main`. The receipt still describes
+the merge commit while the four input files are unchanged there: an echo
+(§8.5.2) with an `inputs-sha256` witness, to be written into the
+machine-readable receipt when it exists.
 
 == Lean leg receipt
 
@@ -96,6 +148,15 @@ A CI job that emits a full §8.2 receipt per commit is `OPEN` (see the
 plan below). When the Lean inputs change, this receipt is superseded and
 must be retaken.
 
+The Kernel group's Lean leg was re-checked on 2026-11-16 at `660e1c6`, whose
+`Marches/` tree is the same `7ef83e4` as above. Lean `v4.35.0` (release
+archive accepted at SHA-256
+`7289597a44543246c9227b8cae501767e095ce17f6d448b95fc4a8dc97268f6d`):
+`lake build` completed (19 jobs), there is no `sorry`, the BadGadget `#eval`
+prints the same orbit, and `#print axioms` reports "does not depend on any
+axioms" for `strict_implies_inflationary`, `run_le`, `run_worsens` and
+`no_return`.
+
 == Theorem groups
 
 `PROVEN` here means the Lean kernel accepted the term with no axioms.
@@ -112,9 +173,10 @@ are not headline theorems and no row below depends on them.
 |Group (module) |Headline theorems |Lean leg |Agda
 
 |Kernel: single-region loop-freedom (`Kernel`, `Basic`)
-|`run_worsens`, `no_return`, `strict_implies_inflationary`
-|`PROVEN`
-|`OPEN`
+|`run_worsens`, `no_return`, `strict_implies_inflationary`, `run_le`
+|`PROVEN`, `RECONCILED`
+|`PROVEN` (`run-worsens`, `no-return`, `strict-implies-inflationary`,
+`run-le`): `PWG-2i`
 
 |Two-region composition (`Compose`)
 |`trace_worsens`, `wt_cycles_are_empty`, `no_back_cross`, `no_a_label_in_B`
@@ -191,7 +253,7 @@ import, checked by `lake build`, but it inherits the same `OPEN` Agda status.
 == Plan: closing the Agda gap
 
 Owner decision 2026-11-09: record the gap here now; the Agda port is the
-next body of work.
+next body of work. Progress: Kernel group done 2026-11-16 (steps 1 and 2).
 
 . *Agda source.* Port the groups above to Agda in this repository
 (`--safe --without-K`, no postulates, the §2.1 canonical invocation), group
@@ -213,7 +275,7 @@ recording the fields §8.2 lists (checker and version, invocation, input
 digest, result, axioms, full commit): `PWG-1`. For the Lean leg this is a
 CI job around `lake build` and the axiom census; it is `OPEN`.
 
-Until step 1 lands for a group, nothing in this repository may be called
+Until step 1 lands for a group, nothing in that group may be called
 graded. `PROVEN` and `PROVEN-WITH-AXIOMS` in `README.adoc` mean "accepted by
 the Lean kernel", without or with the named axioms, not "discharged under
 the estate policy".
