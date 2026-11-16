@@ -136,6 +136,7 @@ kernel is trusted. Agda's trusted base in this cone is `Agda.Primitive`'s
 one signature, extension the identity, no preference. It claims `no-return`
 for that algebra, and the gate requires Agda to refuse it. So the strictness
 hypothesis of `no-return` is load-bearing, as falsifier F2 is on the Lean side
-(`Marches/Freewheel.lean`). `tests/reject-agda/UsesK.agda` has no `OPTIONS`
-pragma and proves K. Its refusal shows that the gate's own command line runs
+(`Marches/Freewheel.lean`). `tests/reject-agda/UsesK.agda` proves K. Its pragma
+sets `--safe` alone, so the file checks under Agda's defaults, which have K.
+Its refusal by the gate therefore shows that the gate's own command line runs
 with `--without-K`.
