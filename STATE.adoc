@@ -1,5 +1,26 @@
 = STATE — cross-session log
 
+== 2026-11-16 — Agda source, Compose group (Agda-source session)
+
+* `proofs/agda/Marches/Compose.agda` ports `Marches/Compose.lean`: the same
+  constructors and eight theorems (`ctrans`, `cirrefl`, `no-back-cross`,
+  `no-a-label-in-B`, `step-worsens`, `trace-cbe`, `trace-worsens`,
+  `wt-cycles-are-empty`). Agda warns `UnsupportedIndexedMatch` for three of
+  them: they rely on constructor injectivity, which Cubical Agda cannot yet
+  compute along transports. This concerns computation, not the statements
+  (residual R4). The warnings stay visible.
+* New fixture `BackCross.agda`: a crossing from B into A is refused.
+  `UsesK.agda` now sets `--safe` alone, because the mathesis census counts
+  an Agda file without `--safe` as a policy break. It is still accepted
+  under Agda's defaults, so its refusal still tests the gate's command line.
+* Receipt at `2c4f9a2`: PASS, inputs digest `6e9394f…`. It supersedes
+  `660e1c6`'s, whose four files give the same `4f589df…` on `main` at
+  `08f6a79` (the echo). The Lean re-check reports no axioms for the eight
+  theorems. The census is `PWG-2i` 12 and `ungraded` 199 of 211.
+* Next group: `GaoRexford`. Its Lean leg uses `propext`, so `PWG-2i` waits
+  on that axiom's disposition (c), or on an Agda-side match that needs no
+  axiom.
+
 == 2026-11-16 — Agda source, Kernel group (Agda-source session)
 
 * `proofs/agda` holds the Agda source for the Kernel group: `PathAlgebra`,

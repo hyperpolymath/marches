@@ -140,3 +140,110 @@ hypothesis of `no-return` is load-bearing, as falsifier F2 is on the Lean side
 sets `--safe` alone, so the file checks under Agda's defaults, which have K.
 Its refusal by the gate therefore shows that the gate's own command line runs
 with `--without-K`.
+
+== Two-region composition group (`Compose`)
+
+State: `RECONCILED`, 2026-11-16. Residuals R1–R3 of the Kernel group apply,
+with R1 now also covering the judgments `CBetter`, `Step` and `Trace`. R4
+below is new.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/Compose.agda`) |Lean (`Marches/Compose.lean`) |Comparison
+
+|`Pos A B`: `inA`, `inB`
+|`Pos A B`: `inA`, `inB`
+|The same two constructors over `Carrier A` and `Carrier B`. Lowest
+universe on both sides.
+
+|`CLabel A B`: `la`, `lb`, `cross`
+|`CLabel A B`: `la`, `lb`, `cross`
+|The same three constructors.
+
+|`Interface A B`, a record with one field `τ : Carrier A → Carrier B`
+|`Interface A B`, a structure with one field `τ`
+|The same. Neither side requires `τ` to preserve order.
+
+|`CBetter A B : Pos A B → Pos A B → Set`: `aa`, `bb`, `ab`
+|`CBetter A B : Pos A B → Pos A B → Prop`: `aa`, `bb`, `ab`
+|The same constructors with the same indices and implicit arguments. `Set`
+against `Prop` (R1).
+
+|`Step A B I : CLabel A B → Pos A B → Pos A B → Set`: `la`, `lb`, `cross`
+|`Step A B I`, the same three constructors, in `Prop`
+|`la` from `inA x` to `inA (ext A l x)`; `lb` from `inB x` to
+`inB (ext B l x)`; `cross` from `inA x` to `inB (τ I x)`. There is no
+constructor that starts a crossing or an A-label in B (R1).
+
+|`Trace A B I : Pos A B → List (CLabel A B) → Pos A B → Set`: `nil`, `cons`
+|`Trace A B I`, the same two constructors, in `Prop`
+|`nil` at any position. `cons` puts a step in front of a trace. The indices
+are the same (R1).
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both), in the binder order of both
+
+|`ctrans`
+|`Marches.ctrans`
+|`∀ A B {p q r}, CBetter A B p q → CBetter A B q r → CBetter A B p r`
+
+|`cirrefl`
+|`Marches.cirrefl`
+|`∀ A B (p : Pos A B), ¬ CBetter A B p p`
+
+|`no-back-cross`
+|`Marches.no_back_cross`
+|`∀ A B I (x : Carrier B) (q : Pos A B), ¬ Step A B I cross (inB x) q`
+
+|`no-a-label-in-B`
+|`Marches.no_a_label_in_B`
+|`∀ A B I (l : Label A) (x : Carrier B) q, ¬ Step A B I (la l) (inB x) q`
+
+|`step-worsens`
+|`Marches.step_worsens`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {l p q}, Step A B I l p q → CBetter A B p q`
+
+|`trace-cbe`
+|`Marches.trace_cbe`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {p ls q}, Trace A B I p ls q → CBetter A B p q ∨ p = q`
+
+|`trace-worsens`
+|`Marches.trace_worsens`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {p q l ls}, Trace A B I p (l :: ls) q → CBetter A B p q`
+
+|`wt-cycles-are-empty`
+|`Marches.wt_cycles_are_empty`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {p ls}, Trace A B I p ls p → ls = []`
+|===
+
+The hypotheses are the same in both: two path algebras, one interface and
+the strictness of each region. Lean reports no axioms for any of the eight
+theorems (`#print axioms`).
+
+=== Residual assumption R4
+
+R4. *Index matching under `--cubical-compatible`.* For `ctrans`, `cirrefl`
+and `trace-worsens`, Agda warns `UnsupportedIndexedMatch`: the clauses rely
+on constructor injectivity (of `inA`, `inB` and `_∷_`), which Cubical Agda
+cannot yet compute along transports. The warning is about how these
+functions compute when applied to transports. It is not about whether their
+types are inhabited, and Agda accepts the terms under the canonical flags.
+The gate keeps the warnings visible rather than silencing them
+(januskey does the same).
+
+=== Negative control
+
+`tests/reject-agda/BackCross.agda` offers the `cross` constructor for a step
+that starts in B, and the gate requires Agda to refuse it
+(`inA _ != inB x of type Pos A B`). So `no-back-cross` states a fact about
+the judgment, not a vacuous negation.
