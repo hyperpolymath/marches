@@ -6,3 +6,4 @@ module All where
 import Marches.Prelude
 import Marches.Basic
 import Marches.Kernel
+import Marches.Compose
