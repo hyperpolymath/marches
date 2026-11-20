@@ -112,6 +112,10 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-16 (`PWG-2i`)
 
 |Two-region composition (`Compose`)
+|`proofs/agda/Marches/Compose.agda`; `tests/reject-agda/BackCross.agda`
+|met 2026-11-16 (`PWG-2i`)
+
+|Gao–Rexford table (`GaoRexford`)
 |—
 |next
 |===
