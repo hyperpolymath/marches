@@ -3,6 +3,7 @@
 # Docs: https://gh.io/actions-lockfile
 version: 'v0.0.3'
 workflows:
+    '.github/workflows/actions-lock.yml': []
     '.github/workflows/ci.yml':
         - 'actions/checkout@v7.0.1'
         - 'leanprover/lean-action@v1.7.0'
@@ -11,12 +12,16 @@ workflows:
         - 'github/codeql-action@v4.39.1'
     '.github/workflows/label-triage.yml': []
     '.github/workflows/labels.yml': []
+    '.github/workflows/main-estate-audit.yml': []
     '.github/workflows/pages.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/deploy-pages@v5.0.1'
         - 'actions/upload-pages-artifact@v5.0.0'
     '.github/workflows/secret-scanner.yml':
         - 'actions/checkout@v7.0.1'
+    '.github/workflows/track-estate-audit.yml': []
+    '.github/workflows/track-lean.yml': []
+    '.github/workflows/track-siblings.yml': []
 dependencies:
     'actions/cache@caa296126883cff596d87d8935842f9db880ef25':
         ref: 'v5.1.0'
