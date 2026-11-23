@@ -1,5 +1,23 @@
 = STATE — cross-session log
 
+== 2026-11-23 — Agda source, GRTrace group (Agda-source session)
+
+* `proofs/agda/Marches/GRTrace.agda` ports all 21 theorems of
+  `Marches/GRTrace.lean`, among them the headlines `gtrace-iff-valley-free`
+  and `valley-free-iff-gwalk`. `Prelude` gains `≢`, `Σ` with `∃`, and `↔`
+  with Lean's `mp` and `mpr`. New fixture `ValleyWord.agda` is refused
+  (`c != p`).
+* Lean, at source: `valley_free_iff_gwalk` rewrote with an `Iff`, which goes
+  through `propext`. It now chains the equivalences with `Iff.trans`.
+  `Marches.GR` now depends on no axioms (bar the generated
+  `Topo.mk.injEq`). The census has 14 theorems on `propext`, all
+  `injEq` lemmas or tropical adapter.
+* Receipts at `95341d0`. Agda: PASS, inputs `14138d5…`, five refusals.
+  Lean: tree `c3d34ce`, 19 jobs, gates clean. The census is `PWG-2i` 37
+  and `ungraded` 178 of 215.
+* Next group: `GRHierarchy` with `Digraph`. `gr_loop_free` is conditional
+  on `Acyclic`, which stays `ASSUMED`.
+
 == 2026-11-23 — Agda source, Gao–Rexford group (Agda-source session)
 
 * `proofs/agda/Marches/GaoRexford.agda` ports `Marches/GaoRexford.lean`:

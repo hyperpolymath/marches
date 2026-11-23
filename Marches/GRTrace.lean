@@ -240,11 +240,12 @@ theorem gtrace_iff_valley_free (ls : List Rel) :
     | intro t ht => exact gtrace_valley_free ht
   · exact valley_free_gtrace
 
-/-- Corollary: grammar ⟺ non-⊥ evaluation of the rung-0 table. -/
+/-- Corollary: grammar ⟺ non-⊥ evaluation of the rung-0 table. The two
+    equivalences are chained with `Iff.trans`: rewriting with an `Iff`
+    (`rw [← gtrace_iff_valley_free]`) would go through `propext`. -/
 theorem valley_free_iff_gwalk (ls : List Rel) :
-    ValleyFree ls ↔ gwalk ls .c ≠ .bot := by
-  rw [← gtrace_iff_valley_free]
-  exact gtrace_exists_iff (by decide) ls
+    ValleyFree ls ↔ gwalk ls .c ≠ .bot :=
+  (gtrace_iff_valley_free ls).symm.trans (gtrace_exists_iff (by decide) ls)
 
 end GR
 end Marches
