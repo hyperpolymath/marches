@@ -1,5 +1,28 @@
 = STATE — cross-session log
 
+== 2026-11-23 — Agda source, Gao–Rexford group (Agda-source session)
+
+* `proofs/agda/Marches/GaoRexford.agda` ports `Marches/GaoRexford.lean`:
+  signatures, relations, ranks, the twelve-case `gext`, and `gr-inflationary`,
+  `gr-not-strict`, `valley-dies` and `peer-route-not-upward`. `Prelude` gains
+  ℕ and an order with Lean's own `Nat.le` constructors, so `<` matches
+  exactly. New fixture `ValleySurvives.agda` is refused (`bot != p`).
+* Solved at source on the Lean side: `GR.gext` had two wildcard arms
+  overlapping its `.c` arms, and Lean compiled that overlap through
+  `propext`. Written out in full, it has the same table and no axiom
+  dependency. The census goes from 37 theorems and 4 definitions on
+  `propext` to 15 and 1. Only `valley_free_iff_gwalk` keeps it in GR. The
+  denominator rises from 211 to 215 theorems with Lean's generated
+  `gext.eq_9` to `gext.eq_12`.
+* Receipts at `ddf94c3`. Agda: PASS, inputs `bf08cf7…`, four refusals.
+  Lean: tree `d8f44e9`, `lake build` 19 jobs, no `sorry`, banned grep
+  empty, orbit unchanged, 450 declarations audited. The census is
+  `PWG-2i` 16 and `ungraded` 199 of 215.
+* Also merged since the last entry, in #64: the `CI/gate` job that the
+  Branch-Floor ruleset (2026-11-16) requires.
+* Next group: `GRTrace`. `valley_free_iff_gwalk` still rests on `propext`;
+  find its source before porting.
+
 == 2026-11-16 — Agda source, Compose group (Agda-source session)
 
 * `proofs/agda/Marches/Compose.agda` ports `Marches/Compose.lean`: the same

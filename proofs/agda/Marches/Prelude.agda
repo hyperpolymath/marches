@@ -34,3 +34,17 @@ subst P refl px = px
 
 ⊥-elim : {X : Set} → ⊥ → X
 ⊥-elim ()
+
+-- Natural numbers and their order, defined as Lean's core library defines
+-- them: `Nat.le` has the constructors `refl : n ≤ n` and
+-- `step : n ≤ m → n ≤ m + 1`, and `n < m` is `n + 1 ≤ m`.
+open import Agda.Builtin.Nat public using (zero; suc) renaming (Nat to ℕ)
+
+infix 4 _≤_ _<_
+
+data _≤_ (n : ℕ) : ℕ → Set where
+  refl : n ≤ n
+  step : ∀ {m} → n ≤ m → n ≤ suc m
+
+_<_ : ℕ → ℕ → Set
+n < m = suc n ≤ m

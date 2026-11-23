@@ -247,3 +247,79 @@ The gate keeps the warnings visible rather than silencing them
 that starts in B, and the gate requires Agda to refuse it
 (`inA _ != inB x of type Pos A B`). So `no-back-cross` states a fact about
 the judgment, not a vacuous negation.
+
+== Gao–Rexford group (`GaoRexford`, Lean namespace `GR`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R2 and R3 apply. R4 applies to
+`gr-inflationary`. R1 does not arise, because no `Prop`-valued field or
+judgment is introduced here.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/GaoRexford.agda`) |Lean (`Marches/GaoRexford.lean`) |Comparison
+
+|`Sig`: `c`, `r`, `p`, `bot`
+|`GR.Sig`: `c`, `r`, `p`, `bot`
+|The same four constructors. Lean also derives `DecidableEq` and `Repr`,
+which no statement uses.
+
+|`Rel`: `fromCust`, `fromPeer`, `fromProv`
+|`GR.Rel`, the same three
+|The same.
+
+|`rank : Sig → ℕ` (0, 1, 2, 3)
+|`GR.rank : Sig → Nat` (0, 1, 2, 3)
+|The same values. `ℕ` is `Agda.Builtin.Nat`, the unary naturals that Lean's
+`Nat` also is.
+
+|`gext : Rel → Sig → Sig`, twelve clauses
+|`GR.gext`, twelve arms
+|The same table, arm for arm. The Lean table was written out in full on
+2026-11-23; before then two wildcard arms covered the same cases with the
+same values.
+
+|`_≤_` with `refl : n ≤ n` and `step : n ≤ m → n ≤ suc m`; `n < m` is
+`suc n ≤ m` (`Prelude`)
+|`Nat.le` with `refl` and `step`; `n < m` is `Nat.lt n m := Nat.le (n+1) m`
+|The same inductive definition, constructor for constructor, so `<` means
+the same relation on both sides. Agda's `≤` is a type and Lean's is a
+`Prop`. That is R1's difference again, and here it cannot matter: no
+statement compares two proofs of `≤`.
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both)
+
+|`gr-inflationary`
+|`GR.gr_inflationary`
+|`∀ (l : Rel) (s : Sig), ¬ (rank (gext l s) < rank s)`
+
+|`gr-not-strict`
+|`GR.gr_not_strict`
+|`¬ ∀ (l : Rel) (s : Sig), rank s < rank (gext l s)`
+
+|`valley-dies`
+|`GR.valley_dies`
+|`gext fromCust (gext fromProv c) = bot`
+
+|`peer-route-not-upward`
+|`GR.peer_route_not_upward`
+|`gext fromCust (gext fromPeer c) = bot`
+|===
+
+Neither side adds a hypothesis. The Lean proofs use `decide` over the
+finite tables. The Agda proofs use case analysis and absurd patterns. Since
+`gext` was written out in full, Lean reports no axioms for any of the four
+theorems (`#print axioms` at `ddf94c3`).
+
+=== Negative control
+
+`tests/reject-agda/ValleySurvives.agda` claims that the valley route
+survives as a provider route `p`, and the gate requires Agda to refuse it
+(`bot != p`). So `valley-dies` is decided by the table, not true by
+accident.
