@@ -39,7 +39,7 @@ ground (`LIMITATIONS.adoc`).
 |`TropicalAdapterPath.lean` (also IMPORTED: the lake `require` in `lakefile.toml` is at this same commit), `TropicalSessionTypes.lean` (the Lean side of M-2)
 
 |hyperpolymath/echo-types
-|`b0982c44f36133acd2d0e1d4e03cf031fff7a470`
+|`140002f1079a2527301735a3621b169b75df4622`
 |`Echo`, `echo-intro` (the fibre); `Provenance`, `provenance-collapses-at`,
 `echoes-distinguish-tag` (the audience-facing provenance theorems)
 |===
