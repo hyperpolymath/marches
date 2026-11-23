@@ -116,6 +116,11 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-16 (`PWG-2i`)
 
 |Gao–Rexford table (`GaoRexford`)
+|`proofs/agda/Marches/GaoRexford.agda`; `tests/reject-agda/ValleySurvives.agda`;
+`GR.gext` written out in full (no `propext`)
+|met 2026-11-23 (`PWG-2i`)
+
+|Gao–Rexford typing judgment (`GRTrace`)
 |—
 |next
 |===

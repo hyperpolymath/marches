@@ -27,17 +27,19 @@ group in ROADMAP order. A group with no Agda proof yet stays `OPEN`.
 
 == Grades
 
-The twelve theorems of the Kernel and Compose groups are *`PWG-2i`*. The
-Agda leg is `PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg
+The sixteen theorems of the Kernel, Compose and Gao–Rexford groups are
+*`PWG-2i`*. The Agda leg is `PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg
 is `PROVEN` with no axioms, and its statements are `RECONCILED` with the Agda ones in
 `docs/agda-lean-correspondence.adoc`. Their Rocq leg is `OPEN`, so they still
 owe §2's second recheck (§8.4: a grade is not a discharge). Every other theorem
 is *`ungraded`*, because no Agda witness exists for it yet. `foundation_diverse`
 is false throughout.
 
-Grade census (§8.4), denominator 211 theorems in the `Marches` namespace:
-`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 12, `PWG-3` 0, `ungraded` 199. None of the
-twelve rests on an axiom. The 235 definitions in the same namespace are not proof obligations and are not
+Grade census (§8.4), denominator 215 theorems in the `Marches` namespace:
+`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 16, `PWG-3` 0, `ungraded` 199. None of the
+sixteen rests on an axiom. The denominator was 211 until 2026-11-23. Writing
+`GR.gext` out in full added four equation lemmas that Lean generates
+(`gext.eq_9` to `gext.eq_12`), and nothing else changed. The 235 definitions in the same namespace are not proof obligations and are not
 counted; the axiom census below covers both kinds.
 
 [cols="1,1,1,1",options="header"]
@@ -46,15 +48,15 @@ counted; the axiom census below covers both kinds.
 
 |Agda (source)
 |`source` (`proofs/agda`)
-|`PROVEN` for the Kernel and Compose groups (receipt below); `OPEN` for
-every other group
+|`PROVEN` for the Kernel, Compose and Gao–Rexford groups (receipt below);
+`OPEN` for every other group
 |—
 
 |Lean
 |`re-proved` (written by hand in Lean from 2026-07, before the Agda; not
 transported)
 |`PROVEN` or `PROVEN-WITH-AXIOMS`, per group below
-|`RECONCILED` for the Kernel and Compose groups
+|`RECONCILED` for the Kernel, Compose and Gao–Rexford groups
 (`docs/agda-lean-correspondence.adoc`);
 for every other group, target-only evidence (§3) with no Agda statement to
 compare against
@@ -67,8 +69,8 @@ compare against
 
 == Agda leg receipt
 
-Taken 2026-11-16 at `2c4f9a24cf6ad2b1460dd327d77488fb1cf84300`, the commit
-that added the Compose group, with `scripts/check-agda.sh` (cold: no interface
+Taken 2026-11-23 at `ddf94c3c7749f0b805d80df7f7c84a6dfdefa924`, after the
+Gao–Rexford group was added, with `scripts/check-agda.sh` (cold: no interface
 files are read). Checker: Agda `2.7.0.1`, the release archive accepted at
 SHA-256 `975b515a14877ab6bce5bfc641e16c4a3ee52ca5d7f846577dee80aa2145db8a`
 (`scripts/setup-agda.sh`). There is no standard library or other Agda
@@ -76,21 +78,23 @@ library. The same script runs in CI as the `agda` job of `ci.yml`.
 
 ----
 $ agda --safe --without-K --cubical-compatible --no-libraries --ignore-interfaces -i proofs/agda proofs/agda/All.agda
-import cone: Agda.Builtin.Equality Agda.Builtin.List Agda.Primitive All Marches.Basic Marches.Compose Marches.Kernel Marches.Prelude
-postulate scan: 5 files, 0 postulate(s)
+import cone: Agda.Builtin.Bool Agda.Builtin.Equality Agda.Builtin.List Agda.Builtin.Nat Agda.Primitive All Marches.Basic Marches.Compose Marches.GaoRexford Marches.Kernel Marches.Prelude
+postulate scan: 6 files, 0 postulate(s)
 prover-supplied: Agda.Primitive postulates exactly Level _⊔_ lsuc lzero, each bound by its BUILTIN pragma; no other postulate
 [PASS] postulate scan: cone clean, both controls behave
 [PASS] refused as expected: a postulate, by the command-line --safe
 [PASS] refused as expected: tests/reject-agda/BackCross.agda (!= inB x of type Pos A B)
 [PASS] refused as expected: tests/reject-agda/FreewheelReturns.agda (should be empty)
 [PASS] refused as expected: tests/reject-agda/UsesK.agda (because K has been disabled)
+[PASS] refused as expected: tests/reject-agda/ValleySurvives.agda (bot != p)
 inputs-manifest:
-  38de6553ed30a7336981a5fb13f53cbb2efbaed5a5ff6b477865ae6b8d612f44  proofs/agda/All.agda
+  a6b55d664ce7c2afb4119fd21581d3679ab18b5e2d96e33ce3f4842b8a4d5dae  proofs/agda/All.agda
   6d11fd6646fe9c4e974f2ad86a0c273f071f4a4502dead8535b31a7a2e57ce96  proofs/agda/Marches/Basic.agda
   dcd484ce3576e629028b64cd1ce00cc0fe8c11080a9154b5e8f7a2eb07225184  proofs/agda/Marches/Compose.agda
+  cf50cf0a880e5679bcdfe27e7644ac7988c6e58f94d1685ab26fdaa892f737e5  proofs/agda/Marches/GaoRexford.agda
   19980896daff2a787ef2b91f584e7d3568d80316f6bc31c2454de7b609bb663b  proofs/agda/Marches/Kernel.agda
-  62971d5bfc832c8c527f0c2d291efa847e483abe381c5c3897e7be4eb6146000  proofs/agda/Marches/Prelude.agda
-inputs-sha256: 6e9394f6bd195444d2869efcedd4203f577342c89763a7bd68ac9a77c8bc6f7d
+  89f61557c71054db02a7020eb97d9d96660dae64b6adafcb720407e7dc913f15  proofs/agda/Marches/Prelude.agda
+inputs-sha256: bf08cf7f711f5c4dd64eee24156cfd48fc04daa258041039836a06391eb3b6cd
 [check-agda] OK
 ----
 
@@ -98,21 +102,23 @@ The digest is the §8.5.1 one. The policy's shell line
 (`printf '%s\n' PATH… | LC_ALL=C sort | xargs -d '\n' sha256sum -- | sha256sum`)
 gives the same value. Axioms: none. The trusted base is the four
 `Agda.Primitive` primitives named above. The log also carries Agda's
-`UnsupportedIndexedMatch` warnings for `ctrans`, `cirrefl` and
-`trace-worsens`. They concern computation under Cubical transports, not the
+`UnsupportedIndexedMatch` warnings for `ctrans`, `cirrefl`,
+`trace-worsens` and `gr-inflationary`. They concern computation under Cubical transports, not the
 statements (residual R4 in `docs/agda-lean-correspondence.adoc`).
 
-*Lineage.* The receipt above supersedes the first one, taken at `660e1c6`
-for the Kernel group alone (inputs digest `4f589df…`), because the input
-set has grown. A squash merge replaced `660e1c6` on `main` with `08f6a79`,
-where the same four input files gave the same digest.
+*Lineage.* Each receipt below was superseded when the input set grew. Each
+squash merge replaced the receipt commit on `main`, where the same input
+files gave the same digest (an echo):
+
+* `660e1c6`, Kernel only, `4f589df…`; on `main` as `08f6a79`;
+* `2c4f9a2`, with Compose, `6e9394f…`; on `main` as `466e8bc`.
 
 *Scope of this receipt.* It is a local run at the commit named. CI runs the
 same gate on every commit and prints the same fields, but no job yet
 records them. The machine-readable proof receipt of §8.5.1
 (`verification/receipts/*_praxis.deed`, read by `deed_lint.js`) is `OPEN`.
 Until it exists, the grades here are derived by hand from these records,
-and none of them is `PWG-1`. A squash merge will replace `2c4f9a2` on
+and none of them is `PWG-1`. A squash merge will replace `ddf94c3` on
 `main`. The receipt still describes the merge commit while its input files
 are unchanged there: an echo
 (§8.5.2) with an `inputs-sha256` witness, to be written into the
@@ -120,14 +126,12 @@ machine-readable receipt when it exists.
 
 == Lean leg receipt
 
-Taken 2026-11-09 on `main` at `abe636aaba3f36eebee7f40b0707ef6bb090715e`,
-Lean `v4.35.0` (`lean-toolchain`), no Mathlib (the only dependency is
-tropical-types, core Lean, at the `lake-manifest.json` pin). Input digest:
-the git tree of `Marches/` at that commit is
-`7ef83e438a687872157fcb4187bd99f242641f8a`. The run was repeated on
-2026-11-09 at `6db6c0a`, whose Lean inputs (`Marches/`, `Marches.lean`,
-`lakefile.toml`, `lake-manifest.json`, `lean-toolchain`) are unchanged from
-`abe636a`, with the same result.
+Taken 2026-11-23 at `ddf94c3c7749f0b805d80df7f7c84a6dfdefa924`, Lean
+`v4.35.0` (`lean-toolchain`; release archive accepted at SHA-256
+`7289597a44543246c9227b8cae501767e095ce17f6d448b95fc4a8dc97268f6d`), no
+Mathlib. The only dependency is tropical-types, core Lean, at the
+`lake-manifest.json` pin. Input digest: the git tree of `Marches/` at that
+commit is `d8f44e9fc2fd259a711f25a0aab6b442fa862cbb`.
 
 ----
 $ lake build
@@ -142,9 +146,9 @@ Axiom census, `Lean.collectAxioms` over every theorem and definition in the
 `Marches` namespace:
 
 ----
-declarations audited: 446 (211 theorems, 235 definitions)
-  171 theorems,   231 definitions × axioms: none
-   37 theorems,     4 definitions × axioms: propext
+declarations audited: 450 (215 theorems, 235 definitions)
+  197 theorems,   234 definitions × axioms: none
+   15 theorems,     1 definition  × axioms: propext
     3 theorems,     0 definitions × axioms: Quot.sound, propext
 ----
 
@@ -160,17 +164,23 @@ A CI job that emits a full §8.2 receipt per commit is `OPEN` (see the
 plan below). When the Lean inputs change, this receipt is superseded and
 must be retaken.
 
-The Kernel group's Lean leg was re-checked on 2026-11-16 at `660e1c6`, and the
-Compose group's at `2c4f9a2`. Both commits have
-the same `Marches/` tree, `7ef83e4`, as above. Lean `v4.35.0` (release
-archive accepted at SHA-256
-`7289597a44543246c9227b8cae501767e095ce17f6d448b95fc4a8dc97268f6d`):
-`lake build` completed (19 jobs), there is no `sorry`, the BadGadget `#eval`
-prints the same orbit, and `#print axioms` reports "does not depend on any
-axioms" for `strict_implies_inflationary`, `run_le`, `run_worsens` and
-`no_return`, and for Compose's `ctrans`, `cirrefl`, `no_back_cross`,
-`no_a_label_in_B`, `step_worsens`, `trace_cbe`, `trace_worsens` and
-`wt_cycles_are_empty`.
+For the reconciled groups, `#print axioms` at `ddf94c3` reports "does not
+depend on any axioms" for each of the following:
+
+* Kernel: `strict_implies_inflationary`, `run_le`, `run_worsens`, `no_return`.
+* Compose: `ctrans`, `cirrefl`, `no_back_cross`, `no_a_label_in_B`,
+  `step_worsens`, `trace_cbe`, `trace_worsens`, `wt_cycles_are_empty`.
+* Gao–Rexford: `gr_inflationary`, `gr_not_strict`, `valley_dies`,
+  `peer_route_not_upward`.
+
+*Lineage.* The previous Lean receipt, taken 2026-11-09 at `abe636a` (tree
+`7ef83e4`), is superseded. It counted 446 declarations: 211 theorems and
+235 definitions. 171 theorems and 231 definitions used no axioms, 37 and 4
+used `propext`, and 3 and 0 used `propext, Quot.sound`. The change since
+then is one definition: `GR.gext` is written out in full. Its two wildcard
+arms overlapped the `.c` arms, and Lean compiled that overlap through
+`propext`. Every GR declaration except `valley_free_iff_gwalk` lost
+`propext` as a result.
 
 == Theorem groups
 
@@ -201,8 +211,8 @@ with `ctrans`, `cirrefl`, `step_worsens`, `trace_cbe`
 
 |Gao–Rexford table (`GaoRexford`, namespace `GR`)
 |`gr_inflationary`, `gr_not_strict`, `valley_dies`, `peer_route_not_upward`
-|`PROVEN-WITH-AXIOMS` (`propext`, from the `gext` match)
-|`OPEN`
+|`PROVEN`, `RECONCILED` (no axioms since `gext` is written out in full)
+|`PROVEN`: `PWG-2i`
 
 |Gao–Rexford as a typing judgment (`GRTrace`, namespace `GR`)
 |`gtrace_iff_valley_free` (`PROVEN`); `valley_free_iff_gwalk`
@@ -269,7 +279,8 @@ import, checked by `lake build`, but it inherits the same `OPEN` Agda status.
 == Plan: closing the Agda gap
 
 Owner decision 2026-11-09: record the gap here now; the Agda port is the
-next body of work. Progress: Kernel and Compose groups done 2026-11-16 (steps 1 and 2).
+next body of work. Progress: Kernel and Compose groups done 2026-11-16, Gao–Rexford
+2026-11-23 (steps 1 and 2).
 
 . *Agda source.* Port the groups above to Agda in this repository
 (`--safe --without-K`, no postulates, the §2.1 canonical invocation), group
