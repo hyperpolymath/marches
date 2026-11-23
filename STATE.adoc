@@ -1,5 +1,17 @@
 = STATE — cross-session log
 
+== 2026-11-23 — toolchain v4.35.0 → v4.36.0 (weekly track-lean bot)
+
+* Gates on v4.36.0, verbatim:
++
+----
+$ lake build
+Build completed successfully (35 jobs).
+$ grep -rnw sorry Marches/ Marches.lean  # empty
+$ lake env lean Marches/BadGadget.lean
+[(false, false), (true, true), (false, false), (true, true)]
+----
+
 == 2026-11-16 — Agda source, Kernel group (Agda-source session)
 
 * `proofs/agda` holds the Agda source for the Kernel group: `PathAlgebra`,
