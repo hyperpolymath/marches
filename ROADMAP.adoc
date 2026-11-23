@@ -121,6 +121,11 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-23 (`PWG-2i`)
 
 |Gao–Rexford typing judgment (`GRTrace`)
+|`proofs/agda/Marches/GRTrace.agda`; `tests/reject-agda/ValleyWord.agda`;
+`valley_free_iff_gwalk` chained with `Iff.trans` (no `propext`)
+|met 2026-11-23 (`PWG-2i`)
+
+|Hierarchy loop-freedom (`GRHierarchy`, `Digraph`)
 |—
 |next
 |===

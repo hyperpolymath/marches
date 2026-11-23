@@ -323,3 +323,79 @@ theorems (`#print axioms` at `ddf94c3`).
 survives as a provider route `p`, and the gate requires Agda to refuse it
 (`bot != p`). So `valley-dies` is decided by the table, not true by
 accident.
+
+== Gao–Rexford typing judgment group (`GRTrace`, Lean namespace `GR`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R1–R4 apply. R1 carries the most
+weight here, because four judgments and `∃` and `↔` all appear in the
+statements.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/GRTrace.agda`, `Prelude`) |Lean (`Marches/GRTrace.lean`, core) |Comparison
+
+|`GStep : Rel → Sig → Sig → Set`: `custCust`, `peerCust`, `provCust`,
+`provPeer`, `provProv`
+|`GR.GStep`, the same five constructors, in `Prop`
+|The same constructors with the same indices (R1).
+
+|`GTrace : Sig → List Rel → Sig → Set`: `nil`, `cons`
+|`GR.GTrace`, the same two, in `Prop`
+|The same (R1).
+
+|`gwalk : List Rel → Sig → Sig`
+|`GR.gwalk`
+|The same two equations.
+
+|`Downhill`, `ValleyFree : List Rel → Set`
+|`GR.Downhill`, `GR.ValleyFree`, in `Prop`
+|The same constructors: `nil` and `cons` for `Prov*`; `down`, `peer` and
+`cust` for `Cust* Peer? Prov*` (R1).
+
+|`∃ (λ t → P t)` is `Σ Sig (λ t → P t)` (`Prelude`)
+|`∃ t, P t`
+|In Lean `∃` is a `Prop` and only eliminates into `Prop`. Agda's `Σ` carries
+its witness. An Agda proof that produces a `Σ` therefore yields the Lean
+`∃`, and an Agda proof that consumes one uses no more than the Lean
+eliminator allows, since every consumer here proves a proposition (R1).
+
+|`P ↔ Q`, a record with fields `mp` and `mpr` (`Prelude`)
+|`Iff P Q`, a structure with fields `mp` and `mpr`
+|The same two fields, under Lean's own names. `↔-sym` and `↔-trans` are
+Lean's `Iff.symm` and `Iff.trans`.
+
+|`x ≢ y` is `¬ (x ≡ y)`
+|`x ≠ y` is `x = y → False`
+|The same (R2).
+|===
+
+=== Theorems
+
+All 21 theorems of `Marches/GRTrace.lean` have an Agda counterpart with
+the same name in kebab case, the same hypotheses and the same binder order:
+
+* negative theorems: `no_valley_step`, `no_peer_reexport_up`,
+`no_second_peer`, `no_step_from_bot`;
+* agreement with the table: `gstep_gext`, `gstep_target_ne_bot`,
+`gstep_complete`, `gext_bot`, `gwalk_bot`, `gtrace_gwalk`,
+`gtrace_target_ne_bot`, `gwalk_gtrace`, `gtrace_exists_iff`;
+* the grammar: `gtrace_p_downhill`, `gtrace_r_downhill`,
+`gtrace_valley_free`, `downhill_gtrace_p`, `downhill_gtrace_r`,
+`valley_free_gtrace`;
+* the headlines:
+** `gtrace_iff_valley_free`: `∀ ls, (∃ t, GTrace c ls t) ↔ ValleyFree ls`;
+** `valley_free_iff_gwalk`: `∀ ls, ValleyFree ls ↔ gwalk ls c ≠ bot`.
+
+`gtrace_exists_iff` keeps Lean's binder pattern: the live signature `s` is
+implicit, and its non-⊥ hypothesis comes before the word `ls`. Lean reports
+no axioms for any of the 21 (`#print axioms` at `95341d0`). The last one to
+lose `propext` was `valley_free_iff_gwalk`, which had rewritten with an
+`Iff` before its proof was changed to `Iff.trans`.
+
+=== Negative control
+
+`tests/reject-agda/ValleyWord.agda` tries to derive the valley word
+provider-then-customer from `c`, and the gate requires Agda to refuse it
+(`c != p`). So the grammar excludes the valley by construction.
