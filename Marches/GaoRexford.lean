@@ -38,12 +38,19 @@ inductive Rel where
 def rank : Sig → Nat
   | .c => 0 | .r => 1 | .p => 2 | .bot => 3
 
-/-- Extension table encoding Gao–Rexford export rules. -/
+/-- Extension table encoding Gao–Rexford export rules. All twelve cases are
+    written out: a wildcard arm (`| .fromCust, _ => .bot`) overlaps the
+    `.c` arm, and Lean compiles that overlap through `propext`. The full
+    table has the same value on every input and rests on no axiom. -/
 def gext : Rel → Sig → Sig
   | .fromCust, .c => .c
-  | .fromCust, _  => .bot
+  | .fromCust, .r => .bot
+  | .fromCust, .p => .bot
+  | .fromCust, .bot => .bot
   | .fromPeer, .c => .r
-  | .fromPeer, _  => .bot
+  | .fromPeer, .r => .bot
+  | .fromPeer, .p => .bot
+  | .fromPeer, .bot => .bot
   | .fromProv, .c => .p
   | .fromProv, .r => .p
   | .fromProv, .p => .p
