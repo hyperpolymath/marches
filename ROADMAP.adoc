@@ -131,6 +131,11 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-23 (`PWG-2i`; `Acyclic` stays `ASSUMED`)
 
 |DISAGREE exhibit (`BadGadget`) and falsifier F2 (`Freewheel`)
+|`proofs/agda/Marches/BadGadget.agda`, `Freewheel.agda`;
+`tests/reject-agda/DisagreeAccepted.agda`
+|met 2026-11-23 (`PWG-2i`)
+
+|Tropical instance and grade laws (`Tropical`)
 |—
 |next
 |===

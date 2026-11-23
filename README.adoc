@@ -55,7 +55,8 @@ no axioms. `PROVEN-WITH-AXIOMS` means the kernel accepted it and it rests on
 the Lean built-in axioms named in the row. Under the estate proof policy
 marches is theory, so Agda is the source of truth (`proofs/agda`). The port
 goes group by group. So far the Kernel, Compose, Gao–Rexford, GRTrace,
-Digraph and GRHierarchy groups are graded: their 49 theorems are `PWG-2i` (Agda `PROVEN`, Lean leg reconciled, Rocq leg `OPEN`).
+Digraph, GRHierarchy, BadGadget and Freewheel groups are graded: their 57
+theorems are `PWG-2i` (Agda `PROVEN`, Lean leg reconciled, Rocq leg `OPEN`).
 Every other theorem is ungraded. `PROOF-STATUS.adoc` records each witness
 leg, the receipts, the axiom census and the plan for the rest of the port.
 
