@@ -31,3 +31,6 @@ sym refl = refl
 
 subst : {X : Set} (P : X → Set) {x y : X} → x ≡ y → P x → P y
 subst P refl px = px
+
+⊥-elim : {X : Set} → ⊥ → X
+⊥-elim ()
