@@ -95,3 +95,14 @@ A × B = Σ A (λ _ → B)
 ≤-trans : ∀ {a b c} → a ≤ b → b ≤ c → a ≤ c
 ≤-trans p refl     = p
 ≤-trans p (step q) = step (≤-trans p q)
+
+-- The unit type (Lean's `Unit`, a structure with one constructor).
+record ⊤ : Set where
+  constructor tt
+
+-- Booleans (Lean's `Bool`) and negation (Lean's `!`, which is `not`).
+open import Agda.Builtin.Bool public using (Bool; true; false)
+
+not : Bool → Bool
+not true  = false
+not false = true

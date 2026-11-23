@@ -465,3 +465,95 @@ node is its own customer. It then claims that no customer-arc step can
 start a trace that returns to `(tt , c)`, and the gate requires Agda to
 refuse that: `custCust` is a valid step. So the acyclicity hypothesis of
 `gr-loop-free` is load-bearing, as falsifier F5 says.
+
+== Negative artefacts (`BadGadget`, `Freewheel`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R1–R3 apply. R1 covers
+`Freewheel`'s empty `better` (`⊥` in Agda, `False` in Lean) and the `∃`/`∧`
+of `f2_discharged`.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/`) |Lean (`Marches/`) |Comparison
+
+|`BadGadget.step : Bool × Bool → Bool × Bool`,
+`step s = not (proj₂ s) , not (proj₁ s)`
+|`Disagree.step s := (!s.2, !s.1)`
+|The same: Lean's `!` is `not`, and `.1`/`.2` are `proj₁`/`proj₂`. `Bool` is
+`Agda.Builtin.Bool` on the Agda side.
+
+|`orbit`, a four-element list
+|`Disagree.orbit`
+|The same four elements.
+
+|`DRoute`, `drank`, `dext`
+|`Disagree.DRoute`, `drank`, `dext`
+|The same constructors, ranks and table.
+
+|`Freewheel.Freewheel : PathAlgebra`: carrier and label `⊤`, `better` the
+empty relation, `ext` the identity
+|`F2.Freewheel`: `Unit`, `False`, `fun _ a => a`
+|The same algebra. `⊤` is a one-constructor record, as Lean's `Unit` is a
+one-constructor structure.
+
+|`FreewheelInterface`, `τ = λ x → x`
+|`F2.FreewheelInterface`, `τ := id`
+|The same.
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both)
+
+|`disagree-two-cycle`
+|`Disagree.disagree_two_cycle`
+|`∀ s, step (step s) = s`
+
+|`disagree-moves`
+|`Disagree.disagree_moves`
+|`step (false, false) ≠ (false, false)`
+
+|`disagree-improves`
+|`Disagree.disagree_improves`
+|`drank (dext direct) < drank direct`
+
+|`disagree-not-inflationary`
+|`Disagree.disagree_not_inflationary`
+|`¬ ∀ r, ¬ drank (dext r) < drank r`
+
+|`freewheel-inflationary`
+|`F2.freewheel_inflationary`
+|`Inflationary Freewheel`
+
+|`freewheel-not-strict`
+|`F2.freewheel_not_strict`
+|`¬ StrictlyInflationary Freewheel`
+
+|`returning-trace`
+|`F2.returning_trace`
+|`Trace Freewheel Freewheel FreewheelInterface (inA ()) [la ()] (inA ())`
+
+|`f2-discharged`
+|`F2.f2_discharged`
+|`∃ ls, ls ≠ [] ∧ Trace … (inA ()) ls (inA ())`. Agda writes `Σ` and `×`,
+which carry their witnesses (R1).
+|===
+
+Lean reports no axioms for any of the eight (`#print axioms` at `f601be6`).
+
+*Agda-only.* `orbit-value` proves by `refl` that `orbit` is the list that
+Lean's `#eval orbit` prints. On the Lean side that fact is `TESTED`, an
+evaluation, not a theorem. So it has no Lean leg and is not counted in the
+census.
+
+=== Negative control
+
+`tests/reject-agda/DisagreeAccepted.agda` claims that DISAGREE's
+extension never improves, refuting the witness at `direct` with an absurd
+pattern. The gate requires Agda to refuse it, because `refl` inhabits
+`drank (dext direct) < drank direct`. Falsifier F2 already has a control:
+`FreewheelReturns.agda` (Kernel section).

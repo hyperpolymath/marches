@@ -1,5 +1,21 @@
 = STATE — cross-session log
 
+== 2026-11-23 — Agda source, BadGadget and Freewheel groups (Agda-source session)
+
+* `proofs/agda/Marches/BadGadget.agda` ports DISAGREE: `step`, the four
+  theorems, `orbit`, and the Agda-only `orbit-value`, which proves by `refl`
+  the list Lean's `#eval` prints. `Freewheel.agda` ports F2: the
+  algebra, the interface and the four theorems. `Prelude` gains `⊤`, `Bool`
+  and `not`. New fixture `DisagreeAccepted.agda` is refused (`refl`).
+* The gate caught a regression of mine: two fixtures declared their own `⊤`,
+  which then clashed with Prelude's, so `FreewheelReturns` was refused for
+  the wrong reason. Both now use Prelude's `⊤`.
+* Lean unchanged: all eight theorems already reported no axioms. Agda
+  receipt at `f601be6`: PASS, inputs `b297166…`, eleven modules, eight
+  fixture refusals. The `c328566` echo on `main` (`eeca7a3`) is checked.
+  The census is `PWG-2i` 57 and `ungraded` 158 of 215.
+* Next group: `Tropical`.
+
 == 2026-11-23 — Agda source, Digraph and GRHierarchy groups (Agda-source session)
 
 * `proofs/agda/Marches/Digraph.agda`: `RPath`, `rpath-snoc`,
