@@ -11,3 +11,5 @@ import Marches.GaoRexford
 import Marches.GRTrace
 import Marches.Digraph
 import Marches.GRHierarchy
+import Marches.BadGadget
+import Marches.Freewheel
