@@ -1,5 +1,21 @@
 = STATE — cross-session log
 
+== 2026-11-23 — Agda source, Digraph and GRHierarchy groups (Agda-source session)
+
+* `proofs/agda/Marches/Digraph.agda`: `RPath`, `rpath-snoc`,
+  `rpath-trans`, `rpath-flip`, and `Acyclic`. `GRHierarchy.agda`: `Topo`,
+  `NStep`, `NTrace`, eight lemmas, and the headline `gr-loop-free`
+  under `Acyclic`. `Prelude` gains `_×_` and `≤-trans`. New fixture
+  `SelfLoopReturns.agda` is refused (`custCust`), which shows `Acyclic` is
+  load-bearing (F5).
+* No Lean change was needed: all twelve Lean theorems already reported no
+  axioms. Agda receipt at `c328566`: PASS, inputs `3b2fa04…`, six
+  refusals, nine modules. The echo of the `95341d0` receipt on `main`
+  (`c810a3d`) is checked. The census is `PWG-2i` 49 and `ungraded` 166 of
+  215.
+* Next groups: `BadGadget` (DISAGREE, with its `#eval` orbit, which is
+  `TESTED`) and `Freewheel` (F2).
+
 == 2026-11-23 — Agda source, GRTrace group (Agda-source session)
 
 * `proofs/agda/Marches/GRTrace.agda` ports all 21 theorems of
