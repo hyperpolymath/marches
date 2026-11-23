@@ -41,7 +41,7 @@ def rank : Sig → Nat
 /-- Extension table encoding Gao–Rexford export rules. All twelve cases are
     written out: a wildcard arm (`| .fromCust, _ => .bot`) overlaps the
     `.c` arm, and Lean compiles that overlap through `propext`. The full
-    table has the same value on every input and rests on no axiom. -/
+    table has the same value on every input and depends on no axioms. -/
 def gext : Rel → Sig → Sig
   | .fromCust, .c => .c
   | .fromCust, .r => .bot
