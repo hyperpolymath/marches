@@ -48,3 +48,38 @@ data _≤_ (n : ℕ) : ℕ → Set where
 
 _<_ : ℕ → ℕ → Set
 n < m = suc n ≤ m
+
+-- Inequality (Lean's `≠`: `a ≠ b` is `a = b → False`).
+infix 4 _≢_
+_≢_ : {X : Set} → X → X → Set
+x ≢ y = ¬ (x ≡ y)
+
+-- Dependent pairs, the counterpart of Lean's `∃` (residual R1: Lean's `∃`
+-- is a `Prop`, this is a type with its witness inside).
+infixr 4 _,_
+record Σ (A : Set) (B : A → Set) : Set where
+  constructor _,_
+  field
+    proj₁ : A
+    proj₂ : B proj₁
+
+open Σ public
+
+∃ : {A : Set} → (A → Set) → Set
+∃ {A} B = Σ A B
+
+-- Logical equivalence, with Lean's field names for `Iff`.
+infix 3 _↔_
+record _↔_ (P Q : Set) : Set where
+  constructor mk↔
+  field
+    mp  : P → Q
+    mpr : Q → P
+
+open _↔_ public
+
+↔-sym : {P Q : Set} → P ↔ Q → Q ↔ P
+↔-sym e = mk↔ (mpr e) (mp e)
+
+↔-trans : {P Q R : Set} → P ↔ Q → Q ↔ R → P ↔ R
+↔-trans e f = mk↔ (λ x → mp f (mp e x)) (λ z → mpr e (mpr f z))
