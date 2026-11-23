@@ -83,3 +83,15 @@ open _↔_ public
 
 ↔-trans : {P Q R : Set} → P ↔ Q → Q ↔ R → P ↔ R
 ↔-trans e f = mk↔ (λ x → mp f (mp e x)) (λ z → mpr e (mpr f z))
+
+-- Non-dependent pairs (Lean's `Prod`, with `.1` and `.2` as `proj₁` and
+-- `proj₂`).
+infixr 2 _×_
+_×_ : Set → Set → Set
+A × B = Σ A (λ _ → B)
+
+-- The order is transitive (Lean's `Nat.le_trans`), by induction on the
+-- second proof, as `Nat.le` is defined.
+≤-trans : ∀ {a b c} → a ≤ b → b ≤ c → a ≤ c
+≤-trans p refl     = p
+≤-trans p (step q) = step (≤-trans p q)
