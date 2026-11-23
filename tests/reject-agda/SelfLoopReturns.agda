@@ -13,9 +13,6 @@ open import Marches.GaoRexford
 open import Marches.GRTrace
 open import Marches.GRHierarchy
 
-data ⊤ : Set where
-  tt : ⊤
-
 self : Topo ⊤
 self = record { custOf = λ _ _ → ⊤ ; peerOf = λ _ _ → ⊥ }
 
