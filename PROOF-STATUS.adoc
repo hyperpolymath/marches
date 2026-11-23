@@ -27,8 +27,8 @@ group in ROADMAP order. A group with no Agda proof yet stays `OPEN`.
 
 == Grades
 
-The 57 theorems of the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget and Freewheel groups are *`PWG-2i`*. The Agda leg is `PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg
+The 67 theorems of the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
+GRHierarchy, BadGadget, Freewheel and Tropical groups are *`PWG-2i`*. The Agda leg is `PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg
 is `PROVEN` with no axioms, and its statements are `RECONCILED` with the Agda ones in
 `docs/agda-lean-correspondence.adoc`. Their Rocq leg is `OPEN`, so they still
 owe §2's second recheck (§8.4: a grade is not a discharge). Every other theorem
@@ -36,8 +36,8 @@ is *`ungraded`*, because no Agda witness exists for it yet. `foundation_diverse`
 is false throughout.
 
 Grade census (§8.4), denominator 215 theorems in the `Marches` namespace:
-`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 57, `PWG-3` 0, `ungraded` 158. None of the
-57 rests on an axiom. The denominator was 211 until 2026-11-23. Writing
+`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 67, `PWG-3` 0, `ungraded` 148. None of the
+67 rests on an axiom. The denominator was 211 until 2026-11-23. Writing
 `GR.gext` out in full added four equation lemmas that Lean generates
 (`gext.eq_9` to `gext.eq_12`), and nothing else changed. The 235 definitions in the same namespace are not proof obligations and are not
 counted; the axiom census below covers both kinds.
@@ -49,7 +49,7 @@ counted; the axiom census below covers both kinds.
 |Agda (source)
 |`source` (`proofs/agda`)
 |`PROVEN` for the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget and Freewheel groups (receipt below);
+GRHierarchy, BadGadget, Freewheel and Tropical groups (receipt below);
 `OPEN` for every other group
 |—
 
@@ -58,7 +58,7 @@ GRHierarchy, BadGadget and Freewheel groups (receipt below);
 transported)
 |`PROVEN` or `PROVEN-WITH-AXIOMS`, per group below
 |`RECONCILED` for the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget and Freewheel groups
+GRHierarchy, BadGadget, Freewheel and Tropical groups
 (`docs/agda-lean-correspondence.adoc`);
 for every other group, target-only evidence (§3) with no Agda statement to
 compare against
@@ -71,8 +71,8 @@ compare against
 
 == Agda leg receipt
 
-Taken 2026-11-23 at `f601be6ab9628e043d4a0e86d9c278f1da5eaaff`, after the
-BadGadget and Freewheel groups were added, with `scripts/check-agda.sh` (cold: no interface
+Taken 2026-11-23 at `66486722eabebb14f984ebb7329b3d0e9286eb66`, after the
+Tropical group was added, with `scripts/check-agda.sh` (cold: no interface
 files are read). Checker: Agda `2.7.0.1`, the release archive accepted at
 SHA-256 `975b515a14877ab6bce5bfc641e16c4a3ee52ca5d7f846577dee80aa2145db8a`
 (`scripts/setup-agda.sh`). There is no standard library or other Agda
@@ -80,8 +80,8 @@ library. The same script runs in CI as the `agda` job of `ci.yml`.
 
 ----
 $ agda --safe --without-K --cubical-compatible --no-libraries --ignore-interfaces -i proofs/agda proofs/agda/All.agda
-import cone: Agda.Builtin.Bool Agda.Builtin.Equality Agda.Builtin.List Agda.Builtin.Nat Agda.Primitive All Marches.BadGadget Marches.Basic Marches.Compose Marches.Digraph Marches.Freewheel Marches.GRHierarchy Marches.GRTrace Marches.GaoRexford Marches.Kernel Marches.Prelude
-postulate scan: 11 files, 0 postulate(s)
+import cone: Agda.Builtin.Bool Agda.Builtin.Equality Agda.Builtin.List Agda.Builtin.Nat Agda.Primitive All Marches.BadGadget Marches.Basic Marches.Compose Marches.Digraph Marches.Freewheel Marches.GRHierarchy Marches.GRTrace Marches.GaoRexford Marches.Kernel Marches.Prelude Marches.Tropical
+postulate scan: 12 files, 0 postulate(s)
 prover-supplied: Agda.Primitive postulates exactly Level _⊔_ lsuc lzero, each bound by its BUILTIN pragma; no other postulate
 [PASS] postulate scan: cone clean, both controls behave
 [PASS] refused as expected: a postulate, by the command-line --safe
@@ -92,8 +92,9 @@ prover-supplied: Agda.Primitive postulates exactly Level _⊔_ lsuc lzero, each 
 [PASS] refused as expected: tests/reject-agda/UsesK.agda (because K has been disabled)
 [PASS] refused as expected: tests/reject-agda/ValleySurvives.agda (bot != p)
 [PASS] refused as expected: tests/reject-agda/ValleyWord.agda (c != p)
+[PASS] refused as expected: tests/reject-agda/ZeroWeight.agda (1 != 0 of type ℕ)
 inputs-manifest:
-  91957649d837f41d61beabb0f9d7fa7100a68719779acbc1ba7c3c84ccd37fbb  proofs/agda/All.agda
+  2dedd47bf1b61e0c9afe1e63b034bb8c4235127f472b28f52940a4084243661a  proofs/agda/All.agda
   057d855b0c65d7ae0bb029f7189634468536d6a9630c2c2e6c26a16ee74dac86  proofs/agda/Marches/BadGadget.agda
   6d11fd6646fe9c4e974f2ad86a0c273f071f4a4502dead8535b31a7a2e57ce96  proofs/agda/Marches/Basic.agda
   dcd484ce3576e629028b64cd1ce00cc0fe8c11080a9154b5e8f7a2eb07225184  proofs/agda/Marches/Compose.agda
@@ -103,8 +104,9 @@ inputs-manifest:
   eb876dfa0ef8fb87eb8d351bab7b59c7fd266d9524311337f5ac5ce9901758a6  proofs/agda/Marches/GRTrace.agda
   cf50cf0a880e5679bcdfe27e7644ac7988c6e58f94d1685ab26fdaa892f737e5  proofs/agda/Marches/GaoRexford.agda
   19980896daff2a787ef2b91f584e7d3568d80316f6bc31c2454de7b609bb663b  proofs/agda/Marches/Kernel.agda
-  035f7cab824c63a28b8d40a5ab818b5cc7b1c53f37cd19816f4c0cc32882677a  proofs/agda/Marches/Prelude.agda
-inputs-sha256: b29716669203239f9aff817d5f01a266210f77d1d583a9ddb4101a7f95c3d2a4
+  f17903abec92f438094097f54e581fc1aa8d8a6178ac9783fa8da82899f70680  proofs/agda/Marches/Prelude.agda
+  ea5f26fa511efc40642ec7a4c0b7fd61e438d13675c6c93615df054cf19ba2ca  proofs/agda/Marches/Tropical.agda
+inputs-sha256: 98c3d4e9b7f5a256b588b0677a3ec5a557b47ecdd586afe04d65fe543d8cbd90
 [check-agda] OK
 ----
 
@@ -127,13 +129,14 @@ files gave the same digest (an echo):
 * `ddf94c3`, with Gao–Rexford, `bf08cf7…`; on `main` as `4a05d3c`.
 * `95341d0`, with GRTrace, `14138d5…`; on `main` as `c810a3d`.
 * `c328566`, with Digraph and GRHierarchy, `3b2fa04…`; on `main` as `eeca7a3`.
+* `f601be6`, with BadGadget and Freewheel, `b297166…`; on `main` as `214e177`.
 
 *Scope of this receipt.* It is a local run at the commit named. CI runs the
 same gate on every commit and prints the same fields, but no job yet
 records them. The machine-readable proof receipt of §8.5.1
 (`verification/receipts/*_praxis.deed`, read by `deed_lint.js`) is `OPEN`.
 Until it exists, the grades here are derived by hand from these records,
-and none of them is `PWG-1`. A squash merge will replace `f601be6` on
+and none of them is `PWG-1`. A squash merge will replace `6648672` on
 `main`. The receipt still describes the merge commit while its input files
 are unchanged there: an echo
 (§8.5.2) with an `inputs-sha256` witness, to be written into the
@@ -204,6 +207,12 @@ At `f601be6` (the same tree) it also reports none for:
   `disagree_improves`, `disagree_not_inflationary`.
 * Freewheel (`F2`): `freewheel_inflationary`, `freewheel_not_strict`,
   `returning_trace`, `f2_discharged`.
+
+At `6648672` (the same tree) it also reports none for:
+
+* Tropical: `tropical_strict`, `tropical_no_return`, and in `TropicalGrade`
+  `seq_unitl`, `alt_idem`, `ext_eq_seq`, `label_cost_ne_one`,
+  `alt_of_better`, `better_reverses_altLe`, `altLe_one`, `s3_witness`.
 
 *Lineage.* Two earlier Lean receipts are superseded. The one taken
 2026-11-23 at `ddf94c3` (tree `d8f44e9`) had 15 theorems on `propext`.
@@ -277,10 +286,11 @@ eight GRHierarchy lemmas and Digraph's `RPath.snoc`, `RPath.trans`,
 |`PROVEN`: `PWG-2i`
 
 |Tropical instance and grade laws (`Tropical`)
-|`tropical_strict`, `seq_unitl`, `alt_idem`, `better_reverses_altLe`,
-`altLe_one`, `s3_witness`
-|`PROVEN`
-|`OPEN`
+|`tropical_strict`, `tropical_no_return`, `seq_unitl`, `alt_idem`,
+`ext_eq_seq`, `label_cost_ne_one`, `alt_of_better`,
+`better_reverses_altLe`, `altLe_one`, `s3_witness` (10 theorems)
+|`PROVEN`, `RECONCILED`
+|`PROVEN`: `PWG-2i`
 
 |Reassembly (`Reassembly`)
 |`Discipline.no_loop`, `PathAlgebra.toDiscipline`, `DiscSys.compose`,
@@ -320,7 +330,7 @@ import, checked by `lake build`, but it inherits the same `OPEN` Agda status.
 
 Owner decision 2026-11-09: record the gap here now; the Agda port is the
 next body of work. Progress: Kernel and Compose groups done 2026-11-16, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget and Freewheel 2026-11-23 (steps 1 and 2).
+GRHierarchy, BadGadget, Freewheel and Tropical 2026-11-23 (steps 1 and 2).
 
 . *Agda source.* Port the groups above to Agda in this repository
 (`--safe --without-K`, no postulates, the §2.1 canonical invocation), group
