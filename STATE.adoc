@@ -10,8 +10,8 @@
   `minOfLe`. It also gains the order lemmas and the `≤`/`≤ᵇ` reflection. New
   fixture `ZeroWeight.agda` is refused (`1 != 0`).
 * Lean unchanged: all ten theorems already reported no axioms. Agda receipt
-  at `6648672`: PASS, inputs `98c3d4e…`, twelve modules, nine fixture
-  refusals. The `f601be6` echo on `main` (`214e177`) is checked. The census
+  at `2fb9a27` (retaken after the review fix to `ZeroWeight`): PASS, inputs
+  `98c3d4e…`, twelve modules, nine fixture refusals. The `f601be6` echo on `main` (`214e177`) is checked. The census
   is `PWG-2i` 67 and `ungraded` 148 of 215.
 * Next group: `Reassembly`.
 
