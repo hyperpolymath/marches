@@ -136,6 +136,10 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-23 (`PWG-2i`)
 
 |Tropical instance and grade laws (`Tropical`)
+|`proofs/agda/Marches/Tropical.agda`; `tests/reject-agda/ZeroWeight.agda`
+|met 2026-11-23 (`PWG-2i`)
+
+|Reassembly (`Reassembly`)
 |—
 |next
 |===

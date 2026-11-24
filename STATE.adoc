@@ -1,5 +1,20 @@
 = STATE — cross-session log
 
+== 2026-11-23 — Agda source, Tropical group (Agda-source session)
+
+* `proofs/agda/Marches/Tropical.agda` ports `TropicalNat`, `tropical-strict`,
+  `tropical-no-return`, and the `TropicalGrade` module: the K-4 laws, S-3,
+  `altLe-one` and `s3-witness`, ten theorems in all. `Prelude` gains ℕ
+  arithmetic defined as core Lean v4.35.0 defines it: `+` recurses on
+  the second argument, `≤ᵇ` has `Nat.ble`'s equations, and `min` is
+  `minOfLe`. It also gains the order lemmas and the `≤`/`≤ᵇ` reflection. New
+  fixture `ZeroWeight.agda` is refused (`1 != 0`).
+* Lean unchanged: all ten theorems already reported no axioms. Agda receipt
+  at `2fb9a27` (retaken after the review fix to `ZeroWeight`): PASS, inputs
+  `98c3d4e…`, twelve modules, nine fixture refusals. The `f601be6` echo on `main` (`214e177`) is checked. The census
+  is `PWG-2i` 67 and `ungraded` 148 of 215.
+* Next group: `Reassembly`.
+
 == 2026-11-23 — Agda source, BadGadget and Freewheel groups (Agda-source session)
 
 * `proofs/agda/Marches/BadGadget.agda` ports DISAGREE: `step`, the four

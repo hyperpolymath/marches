@@ -557,3 +557,100 @@ extension never improves, refuting the witness at `direct` with an absurd
 pattern. The gate requires Agda to refuse it, because `refl` inhabits
 `drank (dext direct) < drank direct`. Falsifier F2 already has a control:
 `FreewheelReturns.agda` (Kernel section).
+
+== Tropical group (`Tropical`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R2 and R3 apply. R1 applies only
+to `better` (`Set` against `Prop`) and to `∧`, which is `×` in Agda.
+
+=== Arithmetic: defined as core Lean defines it
+
+The Agda `Prelude` gives ℕ the operations that Lean's statements use,
+defined as core Lean v4.35.0 defines them. They were compared with
+`src/lean/Init/Prelude.lean` in the pinned release archive:
+
+* `_+_` recurses on its second argument, as `Nat.add` does (`a + 0 = a`,
+  `a + (b + 1) = (a + b) + 1`). So `a + (w + 1)` reduces to the successor
+  of `a + w` on both sides.
+* `_≤ᵇ_` has the three equations of `Nat.ble`.
+* `min x y = if x ≤ᵇ y then x else y`. Lean's `min` on `Nat` is
+  `minOfLe`, `ite (x ≤ y) x y`, decided by `Nat.decLe`, whose `decide` is
+  `Nat.ble x y`.
+* `_≤_` and `_<_` are as in the Gao–Rexford section (`Nat.le` with `refl`
+  and `step`; `n < m` is `n + 1 ≤ m`).
+
+Numerals are `Agda.Builtin.Nat` literals on both sides.
+
+=== Definitions and theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition or definition (both)
+
+|`TropicalNat`
+|`TropicalNat`
+|Carrier and label ℕ, `better` is `<`, `ext w a = a + (w + 1)`
+
+|`tropical-strict`
+|`tropical_strict`
+|`StrictlyInflationary TropicalNat`
+
+|`tropical-no-return`
+|`tropical_no_return`
+|`∀ l ls a, run TropicalNat (l :: ls) a ≠ a`
+
+|`TropicalGrade.alt`, `seq`, `one`
+|`TropicalGrade.alt`, `seq`, `one`
+|`min`, `+` and `0`
+
+|`seq-unitl`
+|`seq_unitl`
+|`∀ x, seq one x = x`
+
+|`alt-idem`
+|`alt_idem`
+|`∀ x, alt x x = x`
+
+|`ext-eq-seq`
+|`ext_eq_seq`
+|`∀ w a, TropicalNat.ext w a = seq a (w + 1)`
+
+|`label-cost-ne-one`
+|`label_cost_ne_one`
+|`∀ w, w + 1 ≠ one`
+
+|`alt-of-better`
+|`alt_of_better`
+|`TropicalNat.better a b → alt a b = a`
+
+|`altLe`
+|`altLe`
+|`altLe a b = (alt a b = b)`, an equation: Lean's `Eq` is a `Prop`, Agda's `_≡_`
+a type, which is the equality residual R2
+
+|`better-reverses-altLe`
+|`better_reverses_altLe`
+|`TropicalNat.better a b → altLe b a`
+
+|`altLe-one`
+|`altLe_one`
+|`∀ x, altLe x one`
+
+|`s3-witness`
+|`s3_witness`
+|`TropicalNat.better 1 2 ∧ altLe 2 1`
+|===
+
+Lean reports no axioms for any of the ten (`#print axioms` at `6648672`).
+Neither side links `TropicalNat` to tropical-types or to resource-algebra's
+`MaxPlus` (KC-7, KC-8). Agda's `altLe` is not resource-algebra's `_≼_`.
+
+=== Negative control
+
+`tests/reject-agda/ZeroWeight.agda` claims `ext TropicalNat 0 0 ≡ 0`: that a
+zero-weight label leaves a cost unchanged. The gate requires Agda to refuse
+it (`1 != 0 of type ℕ`). The claim is stated through `TropicalNat.ext`
+itself, so if the `+ 1` were removed from the definition, the fixture would
+stop being refused for that reason and the gate would fail. (Checked
+2026-11-24: with the `+ 1` removed the gate fails; it fails first because
+`tropical-strict` no longer checks.)
