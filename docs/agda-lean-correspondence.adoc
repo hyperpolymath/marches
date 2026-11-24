@@ -625,7 +625,8 @@ Numerals are `Agda.Builtin.Nat` literals on both sides.
 
 |`altLe`
 |`altLe`
-|`altLe a b = (alt a b = b)`; Lean's is a `Prop`, Agda's a type (R1)
+|`altLe a b = (alt a b = b)`, an equation: Lean's `Eq` is a `Prop`, Agda's `_≡_`
+a type, which is the equality residual R2
 
 |`better-reverses-altLe`
 |`better_reverses_altLe`
@@ -646,7 +647,10 @@ Neither side links `TropicalNat` to tropical-types or to resource-algebra's
 
 === Negative control
 
-`tests/reject-agda/ZeroWeight.agda` claims `0 < 0 + 0`, a strict step under
-a zero-weight extension. The gate requires Agda to refuse it
-(`1 != 0 of type ℕ`). So the `+ 1` in `TropicalNat.ext` is what makes it
-strict.
+`tests/reject-agda/ZeroWeight.agda` claims `ext TropicalNat 0 0 ≡ 0`: that a
+zero-weight label leaves a cost unchanged. The gate requires Agda to refuse
+it (`1 != 0 of type ℕ`). The claim is stated through `TropicalNat.ext`
+itself, so if the `+ 1` were removed from the definition, the fixture would
+stop being refused for that reason and the gate would fail. (Checked
+2026-11-24: with the `+ 1` removed the gate fails; it fails first because
+`tropical-strict` no longer checks.)
