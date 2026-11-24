@@ -1,5 +1,29 @@
 = STATE — cross-session log
 
+== 2026-11-24 — Agda source, Reassembly group (Agda-source session)
+
+* `proofs/agda/Marches/Reassembly.agda` ports `Discipline`, `Trace`,
+  `trace-ge`, `trace-worsens`, `no-loop`, `toDiscipline`, `DiscSys`, the
+  composite order, labels and steps (module `Composite`), `compose`,
+  `compose-no-loop`, `no-foreign-local`, `no-self-cross`, and the `boolUp`
+  exhibits with the nested composite: twelve theorems in all.
+* Finding: without K, composite irreflexivity needs the region index to be a
+  set. Lean's `birrefl` matches `Better ⟨r, x⟩ ⟨r, x⟩`, which eliminates
+  `r = r`. So `c-birrefl`, `compose` and `compose-no-loop` take `IsSet R`,
+  and `bool-set` discharges it for the exhibits. Lean's `uip` holds by `rfl`
+  with no axiom. Owner ruling 2026-11-24: reconcile under a new residual R5.
+  `Prelude` gains `IsSet` and `≡-trans`.
+* New fixtures: `CyclicRegions.agda` is refused at the cycle (acyclicity is
+  load-bearing), and `ReflexiveRegion.agda`, Lean's direct route, is refused
+  for needing K (`IsSet` is load-bearing).
+* Lean unchanged: the twelve theorems and `toDiscipline`, `compose` and the
+  composed exhibits report no axioms (at `ef61a32`). `lake build` is green,
+  `sorry` grep empty, BadGadget `#eval` prints the period-2 orbit. Agda
+  receipt at `ef61a32`: PASS, inputs `8d81732…`, thirteen modules, eleven
+  fixture refusals. The `2fb9a27` echo on `main` (`6dabb73`) is checked. The
+  census is `PWG-2i` 79 and `ungraded` 136 of 215.
+* Next group: `Cut`.
+
 == 2026-11-23 — Agda source, Tropical group (Agda-source session)
 
 * `proofs/agda/Marches/Tropical.agda` ports `TropicalNat`, `tropical-strict`,

@@ -74,9 +74,9 @@ compare against
 
 == Agda leg receipt
 
-Taken 2026-11-24 at `2fb9a274fced339b7767bf27d2dca518c467864a`, after the
-Tropical group was added and its `ZeroWeight` fixture was tied to
-`TropicalNat.ext` (the run at `6648672` predates that fixture), with `scripts/check-agda.sh` (cold: no interface
+Taken 2026-11-24 at `ef61a320c69d94f7d3388b69d6b29f6f71a0371b`, after the
+Reassembly group and its `CyclicRegions` and `ReflexiveRegion` fixtures
+were added, with `scripts/check-agda.sh` (cold: no interface
 files are read). Checker: Agda `2.7.0.1`, the release archive accepted at
 SHA-256 `975b515a14877ab6bce5bfc641e16c4a3ee52ca5d7f846577dee80aa2145db8a`
 (`scripts/setup-agda.sh`). There is no standard library or other Agda
@@ -84,21 +84,23 @@ library. The same script runs in CI as the `agda` job of `ci.yml`.
 
 ----
 $ agda --safe --without-K --cubical-compatible --no-libraries --ignore-interfaces -i proofs/agda proofs/agda/All.agda
-import cone: Agda.Builtin.Bool Agda.Builtin.Equality Agda.Builtin.List Agda.Builtin.Nat Agda.Primitive All Marches.BadGadget Marches.Basic Marches.Compose Marches.Digraph Marches.Freewheel Marches.GRHierarchy Marches.GRTrace Marches.GaoRexford Marches.Kernel Marches.Prelude Marches.Tropical
-postulate scan: 12 files, 0 postulate(s)
+import cone: Agda.Builtin.Bool Agda.Builtin.Equality Agda.Builtin.List Agda.Builtin.Nat Agda.Primitive All Marches.BadGadget Marches.Basic Marches.Compose Marches.Digraph Marches.Freewheel Marches.GRHierarchy Marches.GRTrace Marches.GaoRexford Marches.Kernel Marches.Prelude Marches.Reassembly Marches.Tropical
+postulate scan: 13 files, 0 postulate(s)
 prover-supplied: Agda.Primitive postulates exactly Level _⊔_ lsuc lzero, each bound by its BUILTIN pragma; no other postulate
 [PASS] postulate scan: cone clean, both controls behave
 [PASS] refused as expected: a postulate, by the command-line --safe
 [PASS] refused as expected: tests/reject-agda/BackCross.agda (!= inB x of type Pos A B)
+[PASS] refused as expected: tests/reject-agda/CyclicRegions.agda (true ≡ not false should be empty)
 [PASS] refused as expected: tests/reject-agda/DisagreeAccepted.agda (are valid: refl)
 [PASS] refused as expected: tests/reject-agda/FreewheelReturns.agda (should be empty)
+[PASS] refused as expected: tests/reject-agda/ReflexiveRegion.agda (Cannot eliminate reflexive equation r = r of type DiscSys.R S because K has been disabled)
 [PASS] refused as expected: tests/reject-agda/SelfLoopReturns.agda (custCust)
 [PASS] refused as expected: tests/reject-agda/UsesK.agda (because K has been disabled)
 [PASS] refused as expected: tests/reject-agda/ValleySurvives.agda (bot != p)
 [PASS] refused as expected: tests/reject-agda/ValleyWord.agda (c != p)
 [PASS] refused as expected: tests/reject-agda/ZeroWeight.agda (1 != 0 of type ℕ)
 inputs-manifest:
-  2dedd47bf1b61e0c9afe1e63b034bb8c4235127f472b28f52940a4084243661a  proofs/agda/All.agda
+  87aa0414b40b174c0691103f8a9ff5739542850b5fff4b9274d6f4801b714427  proofs/agda/All.agda
   057d855b0c65d7ae0bb029f7189634468536d6a9630c2c2e6c26a16ee74dac86  proofs/agda/Marches/BadGadget.agda
   6d11fd6646fe9c4e974f2ad86a0c273f071f4a4502dead8535b31a7a2e57ce96  proofs/agda/Marches/Basic.agda
   dcd484ce3576e629028b64cd1ce00cc0fe8c11080a9154b5e8f7a2eb07225184  proofs/agda/Marches/Compose.agda
@@ -108,9 +110,10 @@ inputs-manifest:
   eb876dfa0ef8fb87eb8d351bab7b59c7fd266d9524311337f5ac5ce9901758a6  proofs/agda/Marches/GRTrace.agda
   cf50cf0a880e5679bcdfe27e7644ac7988c6e58f94d1685ab26fdaa892f737e5  proofs/agda/Marches/GaoRexford.agda
   19980896daff2a787ef2b91f584e7d3568d80316f6bc31c2454de7b609bb663b  proofs/agda/Marches/Kernel.agda
-  f17903abec92f438094097f54e581fc1aa8d8a6178ac9783fa8da82899f70680  proofs/agda/Marches/Prelude.agda
+  57fc27d145bea717f169769579d3615b59c0dc7ea13744287051da5343e147fd  proofs/agda/Marches/Prelude.agda
+  80ba55c5417826391c7d82e6cc139e1389ddc656078ff3eeccc227598a95d07b  proofs/agda/Marches/Reassembly.agda
   ea5f26fa511efc40642ec7a4c0b7fd61e438d13675c6c93615df054cf19ba2ca  proofs/agda/Marches/Tropical.agda
-inputs-sha256: 98c3d4e9b7f5a256b588b0677a3ec5a557b47ecdd586afe04d65fe543d8cbd90
+inputs-sha256: 8d8173211fcb1eefecb9a9c4706f4031f0fbc24d3e333c26921ff8b835cc10df
 [check-agda] OK
 ----
 
@@ -119,7 +122,8 @@ The digest is the §8.5.1 one. The policy's shell line
 gives the same value. Axioms: none. The trusted base is the four
 `Agda.Primitive` primitives named above. The log also carries Agda's
 `UnsupportedIndexedMatch` warnings for `ctrans`, `cirrefl`,
-`trace-worsens`, `gr-inflationary`, `gtrace-p-downhill`,
+`trace-worsens` (in Compose and in Reassembly), `c-btrans`, `c-birrefl-≡`,
+`no-foreign-local`, `bool-set`, `gr-inflationary`, `gtrace-p-downhill`,
 `gtrace-r-downhill`, `gtrace-valley-free` and several GRHierarchy
 lemmas (`trace-c-path`, `trace-p-path` and others). They concern computation under Cubical transports, not the
 statements (residual R4 in `docs/agda-lean-correspondence.adoc`).
@@ -134,13 +138,14 @@ files gave the same digest (an echo):
 * `95341d0`, with GRTrace, `14138d5…`; on `main` as `c810a3d`.
 * `c328566`, with Digraph and GRHierarchy, `3b2fa04…`; on `main` as `eeca7a3`.
 * `f601be6`, with BadGadget and Freewheel, `b297166…`; on `main` as `214e177`.
+* `2fb9a27`, with Tropical, `98c3d4e…`; on `main` as `6dabb73`.
 
 *Scope of this receipt.* It is a local run at the commit named. CI runs the
 same gate on every commit and prints the same fields, but no job yet
 records them. The machine-readable proof receipt of §8.5.1
 (`verification/receipts/*_praxis.deed`, read by `deed_lint.js`) is `OPEN`.
 Until it exists, the grades here are derived by hand from these records,
-and none of them is `PWG-1`. A squash merge will replace `2fb9a27` on
+and none of them is `PWG-1`. A squash merge will replace `ef61a32` on
 `main`. The receipt still describes the merge commit while its input files
 are unchanged there: an echo
 (§8.5.2) with an `inputs-sha256` witness, to be written into the
@@ -218,7 +223,7 @@ At `6648672` (the same tree) it also reports none for:
   `seq_unitl`, `alt_idem`, `ext_eq_seq`, `label_cost_ne_one`,
   `alt_of_better`, `better_reverses_altLe`, `altLe_one`, `s3_witness`.
 
-On 2026-11-24 at `0c5ae52` (the same tree) it also reports none for:
+On 2026-11-24 at `ef61a32` (the same tree) it also reports none for:
 
 * Reassembly: `Discipline.trace_ge`, `Discipline.trace_worsens`,
   `Discipline.no_loop`, `toDiscipline_no_loop`, `DiscSys.btrans`,

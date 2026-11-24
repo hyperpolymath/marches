@@ -794,7 +794,7 @@ eliminated), `bool-set`, and in `Prelude` `≡-trans` and `IsSet`.
 
 Lean reports no axioms for any of the twelve, nor for the definitions
 `toDiscipline`, `compose`, `twoTropicalComposed` and `nestedComposed`
-(`#print axioms`, 2026-11-24, Lean inputs unchanged since `95341d0`).
+(`#print axioms` at `ef61a32`, 2026-11-24; the Lean inputs are unchanged since `95341d0`).
 `Discipline.birrefl`, `btrans` and `step_worsens` are structure fields,
 which Lean registers as theorems. They are counted in the census
 denominator like the other generated declarations, and they stay
