@@ -27,17 +27,19 @@ group in ROADMAP order. A group with no Agda proof yet stays `OPEN`.
 
 == Grades
 
-The 67 theorems of the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget, Freewheel and Tropical groups are *`PWG-2i`*. The Agda leg is `PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg
+The 79 theorems of the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
+GRHierarchy, BadGadget, Freewheel, Tropical and Reassembly groups are *`PWG-2i`*. The Agda leg is `PROVEN` under the §2.1 invocation, which is `PWG-3`. The Lean leg
 is `PROVEN` with no axioms, and its statements are `RECONCILED` with the Agda ones in
 `docs/agda-lean-correspondence.adoc`. Their Rocq leg is `OPEN`, so they still
 owe §2's second recheck (§8.4: a grade is not a discharge). Every other theorem
 is *`ungraded`*, because no Agda witness exists for it yet. `foundation_diverse`
-is false throughout.
+is false throughout. Reassembly's `birrefl` and `compose_no_loop` are graded on
+the Agda statement, which also takes `IsSet` of the region index; the Lean
+theorem implies it (residual R5, owner ruling 2026-11-24).
 
 Grade census (§8.4), denominator 215 theorems in the `Marches` namespace:
-`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 67, `PWG-3` 0, `ungraded` 148. None of the
-67 rests on an axiom. The denominator was 211 until 2026-11-23. Writing
+`PWG-1` 0, `PWG-2ii` 0, `PWG-2i` 79, `PWG-3` 0, `ungraded` 136. None of the
+79 rests on an axiom. The denominator was 211 until 2026-11-23. Writing
 `GR.gext` out in full added four equation lemmas that Lean generates
 (`gext.eq_9` to `gext.eq_12`), and nothing else changed. The 235 definitions in the same namespace are not proof obligations and are not
 counted; the axiom census below covers both kinds.
@@ -49,7 +51,8 @@ counted; the axiom census below covers both kinds.
 |Agda (source)
 |`source` (`proofs/agda`)
 |`PROVEN` for the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget, Freewheel and Tropical groups (receipt below);
+GRHierarchy, BadGadget, Freewheel, Tropical and Reassembly groups (receipt
+below);
 `OPEN` for every other group
 |—
 
@@ -58,7 +61,7 @@ GRHierarchy, BadGadget, Freewheel and Tropical groups (receipt below);
 transported)
 |`PROVEN` or `PROVEN-WITH-AXIOMS`, per group below
 |`RECONCILED` for the Kernel, Compose, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget, Freewheel and Tropical groups
+GRHierarchy, BadGadget, Freewheel, Tropical and Reassembly groups
 (`docs/agda-lean-correspondence.adoc`);
 for every other group, target-only evidence (§3) with no Agda statement to
 compare against
@@ -215,6 +218,14 @@ At `6648672` (the same tree) it also reports none for:
   `seq_unitl`, `alt_idem`, `ext_eq_seq`, `label_cost_ne_one`,
   `alt_of_better`, `better_reverses_altLe`, `altLe_one`, `s3_witness`.
 
+On 2026-11-24 at `0c5ae52` (the same tree) it also reports none for:
+
+* Reassembly: `Discipline.trace_ge`, `Discipline.trace_worsens`,
+  `Discipline.no_loop`, `toDiscipline_no_loop`, `DiscSys.btrans`,
+  `DiscSys.birrefl`, `DiscSys.cstep_worsens`, `DiscSys.no_foreign_local`,
+  `DiscSys.no_self_cross`, `DiscSys.compose_no_loop`, and in `Reassembly`
+  `boolUp_path` and `boolUp_acyclic`.
+
 *Lineage.* Two earlier Lean receipts are superseded. The one taken
 2026-11-23 at `ddf94c3` (tree `d8f44e9`) had 15 theorems on `propext`.
 `GRTrace.valley_free_iff_gwalk` then rewrote with an `Iff`, which goes
@@ -294,11 +305,14 @@ eight GRHierarchy lemmas and Digraph's `RPath.snoc`, `RPath.trans`,
 |`PROVEN`: `PWG-2i`
 
 |Reassembly (`Reassembly`)
-|`Discipline.no_loop`, `PathAlgebra.toDiscipline`, `DiscSys.compose`,
-`compose_no_loop` (conditional on `Acyclic`), `no_foreign_local`,
-`no_self_cross`
-|`PROVEN`
-|`OPEN`
+|`Discipline.no_loop`, `DiscSys.compose_no_loop` (conditional on `Acyclic`),
+`DiscSys.birrefl`, `no_foreign_local`, `no_self_cross`, with `trace_ge`,
+`trace_worsens`, `toDiscipline_no_loop`, `DiscSys.btrans`, `cstep_worsens`,
+`boolUp_path`, `boolUp_acyclic` (12 theorems); the definitions
+`PathAlgebra.toDiscipline` and `DiscSys.compose`
+|`PROVEN`, `RECONCILED` (R5: Agda also takes `IsSet` of the region index
+for `birrefl` and `compose_no_loop`)
+|`PROVEN`: `PWG-2i`
 
 |Cuts (`Cut`)
 |`edge_crosses_past`, `path_back_crosses_no_cut`, `trace_cross_crosses_cut`,
@@ -331,7 +345,8 @@ import, checked by `lake build`, but it inherits the same `OPEN` Agda status.
 
 Owner decision 2026-11-09: record the gap here now; the Agda port is the
 next body of work. Progress: Kernel and Compose groups done 2026-11-16, Gao–Rexford, GRTrace, Digraph,
-GRHierarchy, BadGadget, Freewheel and Tropical 2026-11-23 (steps 1 and 2).
+GRHierarchy, BadGadget, Freewheel and Tropical 2026-11-23, Reassembly
+2026-11-24 (steps 1 and 2).
 
 . *Agda source.* Port the groups above to Agda in this repository
 (`--safe --without-K`, no postulates, the §2.1 canonical invocation), group
