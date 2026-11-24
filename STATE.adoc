@@ -13,8 +13,9 @@
   and `bool-set` discharges it for the exhibits. Lean's `uip` holds by `rfl`
   with no axiom. Owner ruling 2026-11-24: reconcile under a new residual R5.
   `Prelude` gains `IsSet` and `≡-trans`.
-* New fixtures: `CyclicRegions.agda` is refused at the cycle (acyclicity is
-  load-bearing), and `ReflexiveRegion.agda`, Lean's direct route, is refused
+* New fixtures: `CyclicRegions.agda` builds a cyclic system whose composite
+  would prove `⊥`, and is refused where `compose` asks for an acyclicity
+  proof (acyclicity is load-bearing; after Codex review), and `ReflexiveRegion.agda`, Lean's direct route, is refused
   for needing K (`IsSet` is load-bearing).
 * Lean unchanged: the twelve theorems and `toDiscipline`, `compose` and the
   composed exhibits report no axioms (at `ef61a32`). `lake build` is green,

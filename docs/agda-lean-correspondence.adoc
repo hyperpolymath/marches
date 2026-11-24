@@ -832,12 +832,16 @@ carries the hypothesis.
 
 === Negative controls
 
-`tests/reject-agda/CyclicRegions.agda` takes two regions with an edge each
-way (`a ≡ not b`) and claims that no path returns to `false`. The gate
-requires Agda to refuse the clause for the cycle false → true → false
-(`true ≡ not false should be empty`). With `boolUp` the matching clauses are
-accepted (checked 2026-11-24). So the acyclicity hypothesis of `compose` is
-load-bearing.
+`tests/reject-agda/CyclicRegions.agda` takes two tropical regions with an
+edge each way (`a ≡ not b`). Its composite judgment derives a non-empty
+trace from `(false , 0)` back to itself, so composing the system and
+applying `compose-no-loop` to that trace would prove `⊥`. The gate requires
+Agda to refuse the file where `compose` is used as a discipline without an
+acyclicity proof (`→ Discipline !=< Discipline`). With an acyclicity proof
+assumed as a module parameter, the rest of the file checks and proves `⊥`
+(checked 2026-11-24). So if `compose` or `compose-no-loop` stopped asking
+for `Acyclic`, the fixture would be accepted and the gate would fail: the
+acyclicity hypothesis of `compose` is load-bearing.
 
 `tests/reject-agda/ReflexiveRegion.agda` proves composite irreflexivity as
 Lean does, from acyclicity alone, by matching `loc` against
