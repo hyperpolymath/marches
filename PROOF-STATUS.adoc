@@ -74,9 +74,10 @@ compare against
 
 == Agda leg receipt
 
-Taken 2026-11-24 at `ef61a320c69d94f7d3388b69d6b29f6f71a0371b`, after the
+Taken 2026-11-24 at `9b82d4bda5fe33229ff05915c7fe9df7cdca90ae`, after the
 Reassembly group and its `CyclicRegions` and `ReflexiveRegion` fixtures
-were added, with `scripts/check-agda.sh` (cold: no interface
+were added and `CyclicRegions` was made to exercise `compose` (the run at
+`ef61a32` predates that; the inputs are the same), with `scripts/check-agda.sh` (cold: no interface
 files are read). Checker: Agda `2.7.0.1`, the release archive accepted at
 SHA-256 `975b515a14877ab6bce5bfc641e16c4a3ee52ca5d7f846577dee80aa2145db8a`
 (`scripts/setup-agda.sh`). There is no standard library or other Agda
@@ -90,7 +91,7 @@ prover-supplied: Agda.Primitive postulates exactly Level _⊔_ lsuc lzero, each 
 [PASS] postulate scan: cone clean, both controls behave
 [PASS] refused as expected: a postulate, by the command-line --safe
 [PASS] refused as expected: tests/reject-agda/BackCross.agda (!= inB x of type Pos A B)
-[PASS] refused as expected: tests/reject-agda/CyclicRegions.agda (true ≡ not false should be empty)
+[PASS] refused as expected: tests/reject-agda/CyclicRegions.agda (→ Discipline !=< Discipline)
 [PASS] refused as expected: tests/reject-agda/DisagreeAccepted.agda (are valid: refl)
 [PASS] refused as expected: tests/reject-agda/FreewheelReturns.agda (should be empty)
 [PASS] refused as expected: tests/reject-agda/ReflexiveRegion.agda (Cannot eliminate reflexive equation r = r of type DiscSys.R S because K has been disabled)
@@ -145,7 +146,7 @@ same gate on every commit and prints the same fields, but no job yet
 records them. The machine-readable proof receipt of §8.5.1
 (`verification/receipts/*_praxis.deed`, read by `deed_lint.js`) is `OPEN`.
 Until it exists, the grades here are derived by hand from these records,
-and none of them is `PWG-1`. A squash merge will replace `ef61a32` on
+and none of them is `PWG-1`. A squash merge will replace `9b82d4b` on
 `main`. The receipt still describes the merge commit while its input files
 are unchanged there: an echo
 (§8.5.2) with an `inputs-sha256` witness, to be written into the

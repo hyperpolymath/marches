@@ -15,12 +15,13 @@
   `Prelude` gains `IsSet` and `≡-trans`.
 * New fixtures: `CyclicRegions.agda` builds a cyclic system whose composite
   would prove `⊥`, and is refused where `compose` asks for an acyclicity
-  proof (acyclicity is load-bearing; after Codex review), and `ReflexiveRegion.agda`, Lean's direct route, is refused
-  for needing K (`IsSet` is load-bearing).
+  proof (acyclicity is load-bearing; reworked after Codex review).
+  `ReflexiveRegion.agda`, Lean's direct route, is refused for needing K
+  (`IsSet` is load-bearing).
 * Lean unchanged: the twelve theorems and `toDiscipline`, `compose` and the
   composed exhibits report no axioms (at `ef61a32`). `lake build` is green,
   `sorry` grep empty, BadGadget `#eval` prints the period-2 orbit. Agda
-  receipt at `ef61a32`: PASS, inputs `8d81732…`, thirteen modules, eleven
+  receipt at `9b82d4b`: PASS, inputs `8d81732…`, thirteen modules, eleven
   fixture refusals. The `2fb9a27` echo on `main` (`6dabb73`) is checked. The
   census is `PWG-2i` 79 and `ungraded` 136 of 215.
 * Next group: `Cut`.
