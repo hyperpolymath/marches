@@ -11,9 +11,6 @@ module FreewheelReturns where
 open import Marches.Prelude
 open import Marches.Basic
 
-data ⊤ : Set where
-  tt : ⊤
-
 freewheel : PathAlgebra
 freewheel = record
   { Carrier = ⊤ ; Label = ⊤ ; better = λ _ _ → ⊥ ; ext = λ _ a → a

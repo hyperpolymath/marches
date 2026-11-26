@@ -54,8 +54,9 @@ graded machinery (see `ROADMAP.adoc`).
 no axioms. `PROVEN-WITH-AXIOMS` means the kernel accepted it and it rests on
 the Lean built-in axioms named in the row. Under the estate proof policy
 marches is theory, so Agda is the source of truth (`proofs/agda`). The port
-goes group by group. So far only the Kernel group is graded: its four
-theorems are `PWG-2i` (Agda `PROVEN`, Lean leg reconciled, Rocq leg `OPEN`).
+goes group by group. So far the Kernel, Compose, Gao–Rexford, GRTrace,
+Digraph, GRHierarchy, BadGadget, Freewheel and Tropical groups are graded:
+their 67 theorems are `PWG-2i` (Agda `PROVEN`, Lean leg reconciled, Rocq leg `OPEN`).
 Every other theorem is ungraded. `PROOF-STATUS.adoc` records each witness
 leg, the receipts, the axiom census and the plan for the rest of the port.
 
@@ -80,7 +81,7 @@ leg, the receipts, the axiom census and the plan for the rest of the port.
 |`Kernel.no_return`
 
 |GR table inflationary; strictness gap at `(fromCust, c)`; valley → ⊥
-|PROVEN-WITH-AXIOMS (finite; `propext`)
+|PROVEN (finite; no axioms since 2026-11-23)
 |`GaoRexford.gr_inflationary`, `gr_not_strict`, `valley_dies`
 
 |DISAGREE rejected by discipline ∧ oscillates
@@ -88,7 +89,7 @@ leg, the receipts, the axiom census and the plan for the rest of the port.
 |`BadGadget.disagree_not_inflationary`, `disagree_two_cycle`, `#eval orbit`
 
 |GR crossings as typing judgment ≡ valley-freedom grammar ≡ non-⊥ table
-|PROVEN; PROVEN-WITH-AXIOMS (`propext`) for `valley_free_iff_gwalk`
+|PROVEN (no axioms since 2026-11-23)
 |`GRTrace.gtrace_iff_valley_free`, `GRTrace.valley_free_iff_gwalk`
 
 |GR ill-typed moves (valley, second peer hop, from-⊥) underivable

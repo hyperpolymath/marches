@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: leanprover/lean-action@v1.7.0
+      - uses: leanprover/lean-action@v1.7.1
       - name: No sorries
         run: "! grep -rn 'sorry' Marches/ Marches.lean"
 
@@ -37,3 +37,47 @@ jobs:
         run: bash scripts/setup-agda.sh
       - name: Agda gate
         run: bash scripts/check-agda.sh
+
+  # ==========================================================================
+  # Required status check "CI/gate" (Branch-Floor ruleset on main).
+  # The check context is this job's name. It waits for every other job in this
+  # workflow and runs even when one fails, is cancelled or is skipped; it exits
+  # 0 only when every required job succeeded. Ported from
+  # hyperpolymath/mathesis proven-tests.yml at 3756a6d (pattern:
+  # hyperpolymath/hypatia ci.yml); the designed-skip branch is dropped because
+  # no job here is skipped by design.
+  # ==========================================================================
+  gate:
+    name: CI/gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    needs: [build, agda]
+    if: always()
+    steps:
+      - name: Require every needed job to have succeeded
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          REQUIRED_JOBS: "build agda"
+        run: |
+          set -euo pipefail
+          summary="${GITHUB_STEP_SUMMARY:-/dev/null}"
+          result_of() { jq -r --arg j "$1" '.[$j].result // "missing"' <<< "$NEEDS_JSON"; }
+          row() { printf '| %s | %s | %s |\n' "$@" | tee -a "$summary"; }
+          { echo "### CI/gate"; echo; echo "| job | result | verdict |"; echo "|---|---|---|"; } | tee -a "$summary"
+          fail=0; total=0; passed=0
+          for j in $REQUIRED_JOBS; do
+            total=$((total + 1)); r=$(result_of "$j")
+            if [ "$r" = success ]; then v=ok; passed=$((passed + 1)); else v="FAIL (result must be success)"; fail=1; fi
+            row "$j" "$r" "$v"
+          done
+          # A job added to `needs` but not to REQUIRED_JOBS fails the gate, so
+          # the two lists cannot drift apart silently.
+          for j in $(jq -r 'keys[]' <<< "$NEEDS_JSON"); do
+            case " $REQUIRED_JOBS " in *" $j "*) ;; *) row "$j" "$(result_of "$j")" "FAIL (in needs but not required)"; fail=1 ;; esac
+          done
+          [ "$total" -gt 0 ] || { echo "::error::no required jobs configured"; fail=1; }
+          msg="required jobs: $total; satisfied: $passed"
+          echo "$msg" | tee -a "$summary"
+          if [ "$fail" -ne 0 ]; then echo "::error::CI/gate failed ($msg)"; exit 1; fi
+          echo "CI/gate passed ($msg)"

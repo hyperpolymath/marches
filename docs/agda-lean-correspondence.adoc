@@ -136,6 +136,521 @@ kernel is trusted. Agda's trusted base in this cone is `Agda.Primitive`'s
 one signature, extension the identity, no preference. It claims `no-return`
 for that algebra, and the gate requires Agda to refuse it. So the strictness
 hypothesis of `no-return` is load-bearing, as falsifier F2 is on the Lean side
-(`Marches/Freewheel.lean`). `tests/reject-agda/UsesK.agda` has no `OPTIONS`
-pragma and proves K. Its refusal shows that the gate's own command line runs
+(`Marches/Freewheel.lean`). `tests/reject-agda/UsesK.agda` proves K. Its pragma
+sets `--safe` alone, so the file checks under Agda's defaults, which have K.
+Its refusal by the gate therefore shows that the gate's own command line runs
 with `--without-K`.
+
+== Two-region composition group (`Compose`)
+
+State: `RECONCILED`, 2026-11-16. Residuals R1–R3 of the Kernel group apply,
+with R1 now also covering the judgments `CBetter`, `Step` and `Trace`. R4
+below is new.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/Compose.agda`) |Lean (`Marches/Compose.lean`) |Comparison
+
+|`Pos A B`: `inA`, `inB`
+|`Pos A B`: `inA`, `inB`
+|The same two constructors over `Carrier A` and `Carrier B`. Lowest
+universe on both sides.
+
+|`CLabel A B`: `la`, `lb`, `cross`
+|`CLabel A B`: `la`, `lb`, `cross`
+|The same three constructors.
+
+|`Interface A B`, a record with one field `τ : Carrier A → Carrier B`
+|`Interface A B`, a structure with one field `τ`
+|The same. Neither side requires `τ` to preserve order.
+
+|`CBetter A B : Pos A B → Pos A B → Set`: `aa`, `bb`, `ab`
+|`CBetter A B : Pos A B → Pos A B → Prop`: `aa`, `bb`, `ab`
+|The same constructors with the same indices and implicit arguments. `Set`
+against `Prop` (R1).
+
+|`Step A B I : CLabel A B → Pos A B → Pos A B → Set`: `la`, `lb`, `cross`
+|`Step A B I`, the same three constructors, in `Prop`
+|`la` from `inA x` to `inA (ext A l x)`; `lb` from `inB x` to
+`inB (ext B l x)`; `cross` from `inA x` to `inB (τ I x)`. There is no
+constructor that starts a crossing or an A-label in B (R1).
+
+|`Trace A B I : Pos A B → List (CLabel A B) → Pos A B → Set`: `nil`, `cons`
+|`Trace A B I`, the same two constructors, in `Prop`
+|`nil` at any position. `cons` puts a step in front of a trace. The indices
+are the same (R1).
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both), in the binder order of both
+
+|`ctrans`
+|`Marches.ctrans`
+|`∀ A B {p q r}, CBetter A B p q → CBetter A B q r → CBetter A B p r`
+
+|`cirrefl`
+|`Marches.cirrefl`
+|`∀ A B (p : Pos A B), ¬ CBetter A B p p`
+
+|`no-back-cross`
+|`Marches.no_back_cross`
+|`∀ A B I (x : Carrier B) (q : Pos A B), ¬ Step A B I cross (inB x) q`
+
+|`no-a-label-in-B`
+|`Marches.no_a_label_in_B`
+|`∀ A B I (l : Label A) (x : Carrier B) q, ¬ Step A B I (la l) (inB x) q`
+
+|`step-worsens`
+|`Marches.step_worsens`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {l p q}, Step A B I l p q → CBetter A B p q`
+
+|`trace-cbe`
+|`Marches.trace_cbe`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {p ls q}, Trace A B I p ls q → CBetter A B p q ∨ p = q`
+
+|`trace-worsens`
+|`Marches.trace_worsens`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {p q l ls}, Trace A B I p (l :: ls) q → CBetter A B p q`
+
+|`wt-cycles-are-empty`
+|`Marches.wt_cycles_are_empty`
+|`∀ A B I, StrictlyInflationary A → StrictlyInflationary B →
+∀ {p ls}, Trace A B I p ls p → ls = []`
+|===
+
+The hypotheses are the same in both: two path algebras, one interface and
+the strictness of each region. Lean reports no axioms for any of the eight
+theorems (`#print axioms`).
+
+=== Residual assumption R4
+
+R4. *Index matching under `--cubical-compatible`.* For `ctrans`, `cirrefl`
+and `trace-worsens`, Agda warns `UnsupportedIndexedMatch`: the clauses rely
+on constructor injectivity (of `inA`, `inB` and `_∷_`), which Cubical Agda
+cannot yet compute along transports. The warning is about how these
+functions compute when applied to transports. It is not about whether their
+types are inhabited, and Agda accepts the terms under the canonical flags.
+The gate keeps the warnings visible rather than silencing them
+(januskey does the same).
+
+=== Negative control
+
+`tests/reject-agda/BackCross.agda` offers the `cross` constructor for a step
+that starts in B, and the gate requires Agda to refuse it
+(`inA _ != inB x of type Pos A B`). So `no-back-cross` states a fact about
+the judgment, not a vacuous negation.
+
+== Gao–Rexford group (`GaoRexford`, Lean namespace `GR`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R2 and R3 apply. R4 applies to
+`gr-inflationary`. R1 does not arise, because no `Prop`-valued field or
+judgment is introduced here.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/GaoRexford.agda`) |Lean (`Marches/GaoRexford.lean`) |Comparison
+
+|`Sig`: `c`, `r`, `p`, `bot`
+|`GR.Sig`: `c`, `r`, `p`, `bot`
+|The same four constructors. Lean also derives `DecidableEq` and `Repr`,
+which no statement uses.
+
+|`Rel`: `fromCust`, `fromPeer`, `fromProv`
+|`GR.Rel`, the same three
+|The same.
+
+|`rank : Sig → ℕ` (0, 1, 2, 3)
+|`GR.rank : Sig → Nat` (0, 1, 2, 3)
+|The same values. `ℕ` is `Agda.Builtin.Nat`, the unary naturals that Lean's
+`Nat` also is.
+
+|`gext : Rel → Sig → Sig`, twelve clauses
+|`GR.gext`, twelve arms
+|The same table, arm for arm. The Lean table was written out in full on
+2026-11-23; before then two wildcard arms covered the same cases with the
+same values.
+
+|`_≤_` with `refl : n ≤ n` and `step : n ≤ m → n ≤ suc m`; `n < m` is
+`suc n ≤ m` (`Prelude`)
+|`Nat.le` with `refl` and `step`; `n < m` is `Nat.lt n m := Nat.le (n+1) m`
+|The same inductive definition, constructor for constructor, so `<` means
+the same relation on both sides. Agda's `≤` is a type and Lean's is a
+`Prop`. That is R1's difference again, and here it cannot matter: no
+statement compares two proofs of `≤`.
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both)
+
+|`gr-inflationary`
+|`GR.gr_inflationary`
+|`∀ (l : Rel) (s : Sig), ¬ (rank (gext l s) < rank s)`
+
+|`gr-not-strict`
+|`GR.gr_not_strict`
+|`¬ ∀ (l : Rel) (s : Sig), rank s < rank (gext l s)`
+
+|`valley-dies`
+|`GR.valley_dies`
+|`gext fromCust (gext fromProv c) = bot`
+
+|`peer-route-not-upward`
+|`GR.peer_route_not_upward`
+|`gext fromCust (gext fromPeer c) = bot`
+|===
+
+Neither side adds a hypothesis. The Lean proofs use `decide` over the
+finite tables. The Agda proofs use case analysis and absurd patterns. Since
+`gext` was written out in full, Lean reports no axioms for any of the four
+theorems (`#print axioms` at `ddf94c3`).
+
+=== Negative control
+
+`tests/reject-agda/ValleySurvives.agda` claims that the valley route
+survives as a provider route `p`, and the gate requires Agda to refuse it
+(`bot != p`). So `valley-dies` is decided by the table, not true by
+accident.
+
+== Gao–Rexford typing judgment group (`GRTrace`, Lean namespace `GR`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R1–R4 apply. R1 carries the most
+weight here, because four judgments and `∃` and `↔` all appear in the
+statements.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/GRTrace.agda`, `Prelude`) |Lean (`Marches/GRTrace.lean`, core) |Comparison
+
+|`GStep : Rel → Sig → Sig → Set`: `custCust`, `peerCust`, `provCust`,
+`provPeer`, `provProv`
+|`GR.GStep`, the same five constructors, in `Prop`
+|The same constructors with the same indices (R1).
+
+|`GTrace : Sig → List Rel → Sig → Set`: `nil`, `cons`
+|`GR.GTrace`, the same two, in `Prop`
+|The same (R1).
+
+|`gwalk : List Rel → Sig → Sig`
+|`GR.gwalk`
+|The same two equations.
+
+|`Downhill`, `ValleyFree : List Rel → Set`
+|`GR.Downhill`, `GR.ValleyFree`, in `Prop`
+|The same constructors: `nil` and `cons` for `Prov*`; `down`, `peer` and
+`cust` for `Cust* Peer? Prov*` (R1).
+
+|`∃ (λ t → P t)` is `Σ Sig (λ t → P t)` (`Prelude`)
+|`∃ t, P t`
+|In Lean `∃` is a `Prop` and only eliminates into `Prop`. Agda's `Σ` carries
+its witness. An Agda proof that produces a `Σ` therefore yields the Lean
+`∃`, and an Agda proof that consumes one uses no more than the Lean
+eliminator allows, since every consumer here proves a proposition (R1).
+
+|`P ↔ Q`, a record with fields `mp` and `mpr` (`Prelude`)
+|`Iff P Q`, a structure with fields `mp` and `mpr`
+|The same two fields, under Lean's own names. `↔-sym` and `↔-trans` are
+Lean's `Iff.symm` and `Iff.trans`.
+
+|`x ≢ y` is `¬ (x ≡ y)`
+|`x ≠ y` is `x = y → False`
+|The same (R2).
+|===
+
+=== Theorems
+
+All 21 theorems of `Marches/GRTrace.lean` have an Agda counterpart with
+the same name in kebab case, the same hypotheses and the same binder order:
+
+* negative theorems: `no_valley_step`, `no_peer_reexport_up`,
+`no_second_peer`, `no_step_from_bot`;
+* agreement with the table: `gstep_gext`, `gstep_target_ne_bot`,
+`gstep_complete`, `gext_bot`, `gwalk_bot`, `gtrace_gwalk`,
+`gtrace_target_ne_bot`, `gwalk_gtrace`, `gtrace_exists_iff`;
+* the grammar: `gtrace_p_downhill`, `gtrace_r_downhill`,
+`gtrace_valley_free`, `downhill_gtrace_p`, `downhill_gtrace_r`,
+`valley_free_gtrace`;
+* the headlines:
+** `gtrace_iff_valley_free`: `∀ ls, (∃ t, GTrace c ls t) ↔ ValleyFree ls`;
+** `valley_free_iff_gwalk`: `∀ ls, ValleyFree ls ↔ gwalk ls c ≠ bot`.
+
+`gtrace_exists_iff` keeps Lean's binder pattern: the live signature `s` is
+implicit, and its non-⊥ hypothesis comes before the word `ls`. Lean reports
+no axioms for any of the 21 (`#print axioms` at `95341d0`). The last one to
+lose `propext` was `valley_free_iff_gwalk`, which had rewritten with an
+`Iff` before its proof was changed to `Iff.trans`.
+
+=== Negative control
+
+`tests/reject-agda/ValleyWord.agda` tries to derive the valley word
+provider-then-customer from `c`, and the gate requires Agda to refuse it
+(`c != p`). So the grammar excludes the valley by construction.
+
+== Digraph and hierarchy groups (`Digraph`, `GRHierarchy`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R1–R4 apply. The relations are
+`Set`-valued in Agda and `Prop`-valued in Lean (R1), including the
+topology's `custOf` and `peerOf`. `Acyclic` is a hypothesis in both and
+stays `ASSUMED` about every real topology and region DAG.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/`) |Lean (`Marches/`) |Comparison
+
+|`Digraph.RPath R : V → V → Set`: `single`, `cons`
+|`RPath R : V → V → Prop`: `single`, `cons`
+|The same constructors with the same implicit arguments. `R` is a `Set`-
+or `Prop`-valued relation on a carrier in the lowest universe (R1).
+
+|`Digraph.Acyclic R = ∀ v → ¬ RPath R v v`
+|`Acyclic R := ∀ v, ¬ RPath R v v`
+|The same.
+
+|`GRHierarchy.Topo V`, a record with `custOf` and `peerOf : V → V → Set`
+|`GR.Topo V`, a structure with the same two fields in `Prop`
+|The same fields (R1).
+
+|`NStep T : Rel → V × Sig → V × Sig → Set`: `cust`, `peer`, `prov`
+|`GR.NStep T`, the same three, in `Prop`
+|The same constructors. `prov` takes `custOf T v u` (the receiver is the
+customer) on both sides. `V × Sig` is a pair type on both sides (Agda's `_×_`
+is `Σ` with a constant family), and `ps.2` is `proj₂ ps`.
+
+|`NTrace T`: `nil`, `cons`
+|`GR.NTrace T`, the same, in `Prop`
+|The same (R1).
+
+|`≤-trans` (`Prelude`)
+|`Nat.le_trans`
+|The same statement over the same `≤`.
+|===
+
+=== Theorems
+
+Each Lean theorem has an Agda counterpart with the same hypotheses and the
+same binder order. Names are in kebab case. Lean's `RPath.snoc`,
+`RPath.trans` and `RPath.flip` are `rpath-snoc`, `rpath-trans` and
+`rpath-flip`, because Agda keeps a data type's module for its constructors.
+
+* Digraph: `RPath.snoc`, `RPath.trans`, `RPath.flip`.
+* GRHierarchy: `nstep_gstep`, `ntrace_gtrace`, `ntrace_valley_free`,
+`gstep_rank_le`, `nstep_rank_le`, `ntrace_rank_le`, `trace_c_path`,
+`trace_p_path`, and the headline
+`gr_loop_free : Acyclic T.custOf → NTrace T (v, s) ls (v, s) → ls = []`.
+
+Lean reports no axioms for any of the twelve (`#print axioms` at
+`c328566`). Lean's generated `RPath.brecOn` is counted in the census
+denominator; it has no Agda counterpart and stays ungraded.
+
+=== Negative control
+
+`tests/reject-agda/SelfLoopReturns.agda` builds a one-node topology whose
+node is its own customer. It then claims that no customer-arc step can
+start a trace that returns to `(tt , c)`, and the gate requires Agda to
+refuse that: `custCust` is a valid step. So the acyclicity hypothesis of
+`gr-loop-free` is load-bearing, as falsifier F5 says.
+
+== Negative artefacts (`BadGadget`, `Freewheel`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R1–R3 apply. R1 covers
+`Freewheel`'s empty `better` (`⊥` in Agda, `False` in Lean) and the `∃`/`∧`
+of `f2_discharged`.
+
+=== Definitions
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/`) |Lean (`Marches/`) |Comparison
+
+|`BadGadget.step : Bool × Bool → Bool × Bool`,
+`step s = not (proj₂ s) , not (proj₁ s)`
+|`Disagree.step s := (!s.2, !s.1)`
+|The same: Lean's `!` is `not`, and `.1`/`.2` are `proj₁`/`proj₂`. `Bool` is
+`Agda.Builtin.Bool` on the Agda side.
+
+|`orbit`, a four-element list
+|`Disagree.orbit`
+|The same four elements.
+
+|`DRoute`, `drank`, `dext`
+|`Disagree.DRoute`, `drank`, `dext`
+|The same constructors, ranks and table.
+
+|`Freewheel.Freewheel : PathAlgebra`: carrier and label `⊤`, `better` the
+empty relation, `ext` the identity
+|`F2.Freewheel`: `Unit`, `False`, `fun _ a => a`
+|The same algebra. `⊤` is a one-constructor record, as Lean's `Unit` is a
+one-constructor structure.
+
+|`FreewheelInterface`, `τ = λ x → x`
+|`F2.FreewheelInterface`, `τ := id`
+|The same.
+|===
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both)
+
+|`disagree-two-cycle`
+|`Disagree.disagree_two_cycle`
+|`∀ s, step (step s) = s`
+
+|`disagree-moves`
+|`Disagree.disagree_moves`
+|`step (false, false) ≠ (false, false)`
+
+|`disagree-improves`
+|`Disagree.disagree_improves`
+|`drank (dext direct) < drank direct`
+
+|`disagree-not-inflationary`
+|`Disagree.disagree_not_inflationary`
+|`¬ ∀ r, ¬ drank (dext r) < drank r`
+
+|`freewheel-inflationary`
+|`F2.freewheel_inflationary`
+|`Inflationary Freewheel`
+
+|`freewheel-not-strict`
+|`F2.freewheel_not_strict`
+|`¬ StrictlyInflationary Freewheel`
+
+|`returning-trace`
+|`F2.returning_trace`
+|`Trace Freewheel Freewheel FreewheelInterface (inA ()) [la ()] (inA ())`
+
+|`f2-discharged`
+|`F2.f2_discharged`
+|`∃ ls, ls ≠ [] ∧ Trace … (inA ()) ls (inA ())`. Agda writes `Σ` and `×`,
+which carry their witnesses (R1).
+|===
+
+Lean reports no axioms for any of the eight (`#print axioms` at `f601be6`).
+
+*Agda-only.* `orbit-value` proves by `refl` that `orbit` is the list that
+Lean's `#eval orbit` prints. On the Lean side that fact is `TESTED`, an
+evaluation, not a theorem. So it has no Lean leg and is not counted in the
+census.
+
+=== Negative control
+
+`tests/reject-agda/DisagreeAccepted.agda` claims that DISAGREE's
+extension never improves, refuting the witness at `direct` with an absurd
+pattern. The gate requires Agda to refuse it, because `refl` inhabits
+`drank (dext direct) < drank direct`. Falsifier F2 already has a control:
+`FreewheelReturns.agda` (Kernel section).
+
+== Tropical group (`Tropical`)
+
+State: `RECONCILED`, 2026-11-23. Residuals R2 and R3 apply. R1 applies only
+to `better` (`Set` against `Prop`) and to `∧`, which is `×` in Agda.
+
+=== Arithmetic: defined as core Lean defines it
+
+The Agda `Prelude` gives ℕ the operations that Lean's statements use,
+defined as core Lean v4.35.0 defines them. They were compared with
+`src/lean/Init/Prelude.lean` in the pinned release archive:
+
+* `_+_` recurses on its second argument, as `Nat.add` does (`a + 0 = a`,
+  `a + (b + 1) = (a + b) + 1`). So `a + (w + 1)` reduces to the successor
+  of `a + w` on both sides.
+* `_≤ᵇ_` has the three equations of `Nat.ble`.
+* `min x y = if x ≤ᵇ y then x else y`. Lean's `min` on `Nat` is
+  `minOfLe`, `ite (x ≤ y) x y`, decided by `Nat.decLe`, whose `decide` is
+  `Nat.ble x y`.
+* `_≤_` and `_<_` are as in the Gao–Rexford section (`Nat.le` with `refl`
+  and `step`; `n < m` is `n + 1 ≤ m`).
+
+Numerals are `Agda.Builtin.Nat` literals on both sides.
+
+=== Definitions and theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition or definition (both)
+
+|`TropicalNat`
+|`TropicalNat`
+|Carrier and label ℕ, `better` is `<`, `ext w a = a + (w + 1)`
+
+|`tropical-strict`
+|`tropical_strict`
+|`StrictlyInflationary TropicalNat`
+
+|`tropical-no-return`
+|`tropical_no_return`
+|`∀ l ls a, run TropicalNat (l :: ls) a ≠ a`
+
+|`TropicalGrade.alt`, `seq`, `one`
+|`TropicalGrade.alt`, `seq`, `one`
+|`min`, `+` and `0`
+
+|`seq-unitl`
+|`seq_unitl`
+|`∀ x, seq one x = x`
+
+|`alt-idem`
+|`alt_idem`
+|`∀ x, alt x x = x`
+
+|`ext-eq-seq`
+|`ext_eq_seq`
+|`∀ w a, TropicalNat.ext w a = seq a (w + 1)`
+
+|`label-cost-ne-one`
+|`label_cost_ne_one`
+|`∀ w, w + 1 ≠ one`
+
+|`alt-of-better`
+|`alt_of_better`
+|`TropicalNat.better a b → alt a b = a`
+
+|`altLe`
+|`altLe`
+|`altLe a b = (alt a b = b)`, an equation: Lean's `Eq` is a `Prop`, Agda's `_≡_`
+a type, which is the equality residual R2
+
+|`better-reverses-altLe`
+|`better_reverses_altLe`
+|`TropicalNat.better a b → altLe b a`
+
+|`altLe-one`
+|`altLe_one`
+|`∀ x, altLe x one`
+
+|`s3-witness`
+|`s3_witness`
+|`TropicalNat.better 1 2 ∧ altLe 2 1`
+|===
+
+Lean reports no axioms for any of the ten (`#print axioms` at `6648672`).
+Neither side links `TropicalNat` to tropical-types or to resource-algebra's
+`MaxPlus` (KC-7, KC-8). Agda's `altLe` is not resource-algebra's `_≼_`.
+
+=== Negative control
+
+`tests/reject-agda/ZeroWeight.agda` claims `ext TropicalNat 0 0 ≡ 0`: that a
+zero-weight label leaves a cost unchanged. The gate requires Agda to refuse
+it (`1 != 0 of type ℕ`). The claim is stated through `TropicalNat.ext`
+itself, so if the `+ 1` were removed from the definition, the fixture would
+stop being refused for that reason and the gate would fail. (Checked
+2026-11-24: with the `+ 1` removed the gate fails; it fails first because
+`tropical-strict` no longer checks.)
