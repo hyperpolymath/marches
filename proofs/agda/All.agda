@@ -6,3 +6,11 @@ module All where
 import Marches.Prelude
 import Marches.Basic
 import Marches.Kernel
+import Marches.Compose
+import Marches.GaoRexford
+import Marches.GRTrace
+import Marches.Digraph
+import Marches.GRHierarchy
+import Marches.BadGadget
+import Marches.Freewheel
+import Marches.Tropical

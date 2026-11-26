@@ -12,6 +12,115 @@ $ lake env lean Marches/BadGadget.lean
 [(false, false), (true, true), (false, false), (true, true)]
 ----
 
+== 2026-11-23 — Agda source, Tropical group (Agda-source session)
+
+* `proofs/agda/Marches/Tropical.agda` ports `TropicalNat`, `tropical-strict`,
+  `tropical-no-return`, and the `TropicalGrade` module: the K-4 laws, S-3,
+  `altLe-one` and `s3-witness`, ten theorems in all. `Prelude` gains ℕ
+  arithmetic defined as core Lean v4.35.0 defines it: `+` recurses on
+  the second argument, `≤ᵇ` has `Nat.ble`'s equations, and `min` is
+  `minOfLe`. It also gains the order lemmas and the `≤`/`≤ᵇ` reflection. New
+  fixture `ZeroWeight.agda` is refused (`1 != 0`).
+* Lean unchanged: all ten theorems already reported no axioms. Agda receipt
+  at `2fb9a27` (retaken after the review fix to `ZeroWeight`): PASS, inputs
+  `98c3d4e…`, twelve modules, nine fixture refusals. The `f601be6` echo on `main` (`214e177`) is checked. The census
+  is `PWG-2i` 67 and `ungraded` 148 of 215.
+* Next group: `Reassembly`.
+
+== 2026-11-23 — Agda source, BadGadget and Freewheel groups (Agda-source session)
+
+* `proofs/agda/Marches/BadGadget.agda` ports DISAGREE: `step`, the four
+  theorems, `orbit`, and the Agda-only `orbit-value`, which proves by `refl`
+  the list Lean's `#eval` prints. `Freewheel.agda` ports F2: the
+  algebra, the interface and the four theorems. `Prelude` gains `⊤`, `Bool`
+  and `not`. New fixture `DisagreeAccepted.agda` is refused (`refl`).
+* The gate caught a regression of mine: two fixtures declared their own `⊤`,
+  which then clashed with Prelude's, so `FreewheelReturns` was refused for
+  the wrong reason. Both now use Prelude's `⊤`.
+* Lean unchanged: all eight theorems already reported no axioms. Agda
+  receipt at `f601be6`: PASS, inputs `b297166…`, eleven modules, eight
+  fixture refusals. The `c328566` echo on `main` (`eeca7a3`) is checked.
+  The census is `PWG-2i` 57 and `ungraded` 158 of 215.
+* Next group: `Tropical`.
+
+== 2026-11-23 — Agda source, Digraph and GRHierarchy groups (Agda-source session)
+
+* `proofs/agda/Marches/Digraph.agda`: `RPath`, `rpath-snoc`,
+  `rpath-trans`, `rpath-flip`, and `Acyclic`. `GRHierarchy.agda`: `Topo`,
+  `NStep`, `NTrace`, eight lemmas, and the headline `gr-loop-free`
+  under `Acyclic`. `Prelude` gains `_×_` and `≤-trans`. New fixture
+  `SelfLoopReturns.agda` is refused (`custCust`), which shows `Acyclic` is
+  load-bearing (F5).
+* No Lean change was needed: all twelve Lean theorems already reported no
+  axioms. Agda receipt at `c328566`: PASS, inputs `3b2fa04…`, six
+  refusals, nine modules. The echo of the `95341d0` receipt on `main`
+  (`c810a3d`) is checked. The census is `PWG-2i` 49 and `ungraded` 166 of
+  215.
+* Next groups: `BadGadget` (DISAGREE, with its `#eval` orbit, which is
+  `TESTED`) and `Freewheel` (F2).
+
+== 2026-11-23 — Agda source, GRTrace group (Agda-source session)
+
+* `proofs/agda/Marches/GRTrace.agda` ports all 21 theorems of
+  `Marches/GRTrace.lean`, among them the headlines `gtrace-iff-valley-free`
+  and `valley-free-iff-gwalk`. `Prelude` gains `≢`, `Σ` with `∃`, and `↔`
+  with Lean's `mp` and `mpr`. New fixture `ValleyWord.agda` is refused
+  (`c != p`).
+* Lean, at source: `valley_free_iff_gwalk` rewrote with an `Iff`, which goes
+  through `propext`. It now chains the equivalences with `Iff.trans`.
+  `Marches.GR` now depends on no axioms (bar the generated
+  `Topo.mk.injEq`). The census has 14 theorems on `propext`, all
+  `injEq` lemmas or tropical adapter.
+* Receipts at `95341d0`. Agda: PASS, inputs `14138d5…`, five refusals.
+  Lean: tree `c3d34ce`, 19 jobs, gates clean. The census is `PWG-2i` 37
+  and `ungraded` 178 of 215.
+* Next group: `GRHierarchy` with `Digraph`. `gr_loop_free` is conditional
+  on `Acyclic`, which stays `ASSUMED`.
+
+== 2026-11-23 — Agda source, Gao–Rexford group (Agda-source session)
+
+* `proofs/agda/Marches/GaoRexford.agda` ports `Marches/GaoRexford.lean`:
+  signatures, relations, ranks, the twelve-case `gext`, and `gr-inflationary`,
+  `gr-not-strict`, `valley-dies` and `peer-route-not-upward`. `Prelude` gains
+  ℕ and an order with Lean's own `Nat.le` constructors, so `<` matches
+  exactly. New fixture `ValleySurvives.agda` is refused (`bot != p`).
+* Solved at source on the Lean side: `GR.gext` had two wildcard arms
+  overlapping its `.c` arms, and Lean compiled that overlap through
+  `propext`. Written out in full, it has the same table and no axiom
+  dependency. The census goes from 37 theorems and 4 definitions on
+  `propext` to 15 and 1. Only `valley_free_iff_gwalk` keeps it in GR. The
+  denominator rises from 211 to 215 theorems with Lean's generated
+  `gext.eq_9` to `gext.eq_12`.
+* Receipts at `ddf94c3`. Agda: PASS, inputs `bf08cf7…`, four refusals.
+  Lean: tree `d8f44e9`, `lake build` 19 jobs, no `sorry`, banned grep
+  empty, orbit unchanged, 450 declarations audited. The census is
+  `PWG-2i` 16 and `ungraded` 199 of 215.
+* Also merged since the last entry, in #64: the `CI/gate` job that the
+  Branch-Floor ruleset (2026-11-16) requires.
+* Next group: `GRTrace`. `valley_free_iff_gwalk` still rests on `propext`;
+  find its source before porting.
+
+== 2026-11-16 — Agda source, Compose group (Agda-source session)
+
+* `proofs/agda/Marches/Compose.agda` ports `Marches/Compose.lean`: the same
+  constructors and eight theorems (`ctrans`, `cirrefl`, `no-back-cross`,
+  `no-a-label-in-B`, `step-worsens`, `trace-cbe`, `trace-worsens`,
+  `wt-cycles-are-empty`). Agda warns `UnsupportedIndexedMatch` for three of
+  them: they rely on constructor injectivity, which Cubical Agda cannot yet
+  compute along transports. This concerns computation, not the statements
+  (residual R4). The warnings stay visible.
+* New fixture `BackCross.agda`: a crossing from B into A is refused.
+  `UsesK.agda` now sets `--safe` alone, because the mathesis census counts
+  an Agda file without `--safe` as a policy break. It is still accepted
+  under Agda's defaults, so its refusal still tests the gate's command line.
+* Receipt at `2c4f9a2`: PASS, inputs digest `6e9394f…`. It supersedes
+  `660e1c6`'s, whose four files give the same `4f589df…` on `main` at
+  `08f6a79` (the echo). The Lean re-check reports no axioms for the eight
+  theorems. The census is `PWG-2i` 12 and `ungraded` 199 of 211.
+* Next group: `GaoRexford`. Its Lean leg uses `propext`, so `PWG-2i` waits
+  on that axiom's disposition (c), or on an Agda-side match that needs no
+  axiom.
+
 == 2026-11-16 — Agda source, Kernel group (Agda-source session)
 
 * `proofs/agda` holds the Agda source for the Kernel group: `PathAlgebra`,
