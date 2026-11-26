@@ -112,6 +112,34 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-16 (`PWG-2i`)
 
 |Two-region composition (`Compose`)
+|`proofs/agda/Marches/Compose.agda`; `tests/reject-agda/BackCross.agda`
+|met 2026-11-16 (`PWG-2i`)
+
+|Gao–Rexford table (`GaoRexford`)
+|`proofs/agda/Marches/GaoRexford.agda`; `tests/reject-agda/ValleySurvives.agda`;
+`GR.gext` written out in full (no `propext`)
+|met 2026-11-23 (`PWG-2i`)
+
+|Gao–Rexford typing judgment (`GRTrace`)
+|`proofs/agda/Marches/GRTrace.agda`; `tests/reject-agda/ValleyWord.agda`;
+`valley_free_iff_gwalk` chained with `Iff.trans` (no `propext`)
+|met 2026-11-23 (`PWG-2i`)
+
+|Hierarchy loop-freedom (`GRHierarchy`, `Digraph`)
+|`proofs/agda/Marches/Digraph.agda`, `GRHierarchy.agda`;
+`tests/reject-agda/SelfLoopReturns.agda`
+|met 2026-11-23 (`PWG-2i`; `Acyclic` stays `ASSUMED`)
+
+|DISAGREE exhibit (`BadGadget`) and falsifier F2 (`Freewheel`)
+|`proofs/agda/Marches/BadGadget.agda`, `Freewheel.agda`;
+`tests/reject-agda/DisagreeAccepted.agda`
+|met 2026-11-23 (`PWG-2i`)
+
+|Tropical instance and grade laws (`Tropical`)
+|`proofs/agda/Marches/Tropical.agda`; `tests/reject-agda/ZeroWeight.agda`
+|met 2026-11-23 (`PWG-2i`)
+
+|Reassembly (`Reassembly`)
 |—
 |next
 |===
