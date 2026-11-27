@@ -32,6 +32,15 @@ sym refl = refl
 subst : {X : Set} (P : X → Set) {x y : X} → x ≡ y → P x → P y
 subst P refl px = px
 
+≡-trans : {X : Set} {x y z : X} → x ≡ y → y ≡ z → x ≡ z
+≡-trans refl q = q
+
+-- Uniqueness of identity proofs for one type: the type is a *set*. Agda is
+-- run without K, so this is a hypothesis where it is needed (residual R5 in
+-- `docs/agda-lean-correspondence.adoc`). In Lean every type is a set.
+IsSet : Set → Set
+IsSet X = ∀ {x y : X} (p q : x ≡ y) → p ≡ q
+
 ⊥-elim : {X : Set} → ⊥ → X
 ⊥-elim ()
 

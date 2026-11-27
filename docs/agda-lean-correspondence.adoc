@@ -654,3 +654,197 @@ itself, so if the `+ 1` were removed from the definition, the fixture would
 stop being refused for that reason and the gate would fail. (Checked
 2026-11-24: with the `+ 1` removed the gate fails; it fails first because
 `tropical-strict` no longer checks.)
+
+== Reassembly group (`Reassembly`)
+
+State: `RECONCILED`, 2026-11-24, owner ruling 2026-11-24 on R5. Residuals
+R1–R5 apply. `Better`, `Step`, the edge relation `E` and `Trace` are
+`Set`-valued in Agda and `Prop`-valued in Lean (R1). R4 applies to
+`trace-worsens`, `c-btrans`, `c-birrefl-≡`, `no-foreign-local` and
+`bool-set`. R5 is new with this group and applies to `c-birrefl`, `compose`
+and `compose-no-loop`, and through `compose` to the two composed exhibits.
+
+=== Definitions
+
+Lean's namespace `DiscSys` is the parameterised module `Composite S` in
+Agda, because a record's name is already its module. Inside it the
+composite position, order, label and step are `CPos`, `CBetter`, `CLab` and
+`CStep`, and `btrans` and `birrefl` are `c-btrans` and `c-birrefl`, so that
+they do not clash with the `Discipline` fields.
+
+[cols="2,2,3",options="header"]
+|===
+|Agda (`proofs/agda/Marches/Reassembly.agda`) |Lean (`Marches/Reassembly.lean`) |Comparison
+
+|`Discipline`, a record in `Set₁`: `Pos`, `Lab`, `Better`, `Step`,
+`btrans`, `birrefl`, `step-worsens`
+|`Discipline`, a structure in `Type 1` with the same seven fields
+|The same fields in the same order, with the same implicit arguments.
+`Better` and `Step` are `Set`-valued here and `Prop`-valued in Lean (R1).
+
+|`Trace D : Pos D → List (Lab D) → Pos D → Set`: `nil`, `cons`
+|`Discipline.Trace D`, the same, in `Prop`
+|The same constructors (R1).
+
+|`toDiscipline A h`
+|`PathAlgebra.toDiscipline A h`
+|The same fields. `Step l p q` is `q ≡ ext A l p` against
+`q = A.ext l p` (R2).
+
+|`DiscSys`, a record in `Set₁`: `R`, `E`, `D`, `τ`
+|`DiscSys`, a structure with the same four fields
+|The same (R1 for `E`). Neither side asks the crossing maps to preserve
+order.
+
+|`Composite.CPos = Σ R (λ r → Pos (D r))`
+|`DiscSys.Pos := Σ r : S.R, (S.D r).Pos`
+|A dependent pair type on both sides.
+
+|`Composite.CBetter`: `loc`, `cross`
+|`DiscSys.Better`: `loc`, `cross`
+|The same constructors: `loc` within one region, `cross` along an
+`RPath` of the DAG (R1).
+
+|`Composite.CLab`: `loc`, `cross`
+|`DiscSys.Lab`: `loc`, `cross`
+|The same; a type on both sides.
+
+|`Composite.CStep`: `sloc`, `scross`
+|`DiscSys.Step`: `sloc`, `scross`
+|The same constructors. `scross e` lands on `τ e x` on both sides (R1).
+
+|`Composite.compose hset hacyc`
+|`DiscSys.compose hacyc`
+|The same seven fields. Agda takes `IsSet R` before the acyclicity
+hypothesis (R5) and passes it to `c-birrefl` only.
+
+|`boolUp a b = (a ≡ false) × (b ≡ true)`
+|`boolUp a b := a = false ∧ b = true`
+|The same (`×` against `∧`, R1; equations, R2).
+
+|`twoTropical`, `twoTropicalComposed`, `nested`, `nestedComposed`
+|The same four in namespace `Reassembly`
+|The same systems. The two composed exhibits pass `bool-set` as well as
+`boolUp-acyclic` (R5).
+
+|`_ : (S : DiscSys) → IsSet (R S) → Acyclic (E S) → Discipline`
+|`example (S : DiscSys) (h : Acyclic S.E) : Discipline`
+|Closure at the type level, anonymous on both sides; Agda's carries R5.
+|===
+
+Agda-only helpers, not counted: `snd-transport` (second components of
+equal pairs agree after transport, by J), `c-birrefl-≡` (irreflexivity
+stated for two equal positions, so that no reflexive equation has to be
+eliminated), `bool-set`, and in `Prelude` `≡-trans` and `IsSet`.
+
+=== Theorems
+
+[cols="2,2,3",options="header"]
+|===
+|Agda |Lean |Proposition (both)
+
+|`trace-ge`
+|`Discipline.trace_ge`
+|`Trace D p ls q → Better p q ∨ p = q`
+
+|`trace-worsens`
+|`Discipline.trace_worsens`
+|`Trace D p (l :: ls) q → Better p q`
+
+|`no-loop`
+|`Discipline.no_loop`
+|`Trace D p ls p → ls = []`
+
+|`toDiscipline-no-loop`
+|`toDiscipline_no_loop`
+|`Trace (A.toDiscipline h) a ls a → ls = []`
+
+|`Composite.c-btrans`
+|`DiscSys.btrans`
+|`Better p q → Better q r → Better p r`, composite order
+
+|`Composite.c-birrefl`
+|`DiscSys.birrefl`
+|`Acyclic S.E → ∀ p, ¬ Better p p`; Agda first takes `IsSet R` (R5)
+
+|`Composite.cstep-worsens`
+|`DiscSys.cstep_worsens`
+|`Step l p q → Better p q`, composite judgment
+
+|`Composite.no-foreign-local`
+|`DiscSys.no_foreign_local`
+|`r ≠ r' → ¬ Step (loc r l) ⟨r', x⟩ q`
+
+|`Composite.no-self-cross`
+|`DiscSys.no_self_cross`
+|`Acyclic S.E → E r r → False`
+
+|`Composite.compose-no-loop`
+|`DiscSys.compose_no_loop`
+|`Trace (S.compose …) p ls p → ls = []`; Agda first takes `IsSet R` (R5)
+
+|`boolUp-path`
+|`Reassembly.boolUp_path`
+|`RPath boolUp a b → a = false ∧ b = true`
+
+|`boolUp-acyclic`
+|`Reassembly.boolUp_acyclic`
+|`Acyclic boolUp`
+|===
+
+Lean reports no axioms for any of the twelve, nor for the definitions
+`toDiscipline`, `compose`, `twoTropicalComposed` and `nestedComposed`
+(`#print axioms` at `ef61a32`, 2026-11-24; the Lean inputs are unchanged since `95341d0`).
+`Discipline.birrefl`, `btrans` and `step_worsens` are structure fields,
+which Lean registers as theorems. They are counted in the census
+denominator like the other generated declarations, and they stay
+ungraded.
+
+=== Residual assumption R5
+
+R5. *Sets.* Lean's `Eq` is proof-irrelevant by definition, so every Lean
+type is a set. `theorem uip {α : Sort u} {a b : α} (p q : a = b) : p = q :=
+rfl` checks in Lean 4.35.0, and `#print axioms uip` reports "does not
+depend on any axioms" (2026-11-24). Agda run without K has no such
+principle. Composite irreflexivity needs it for the region index. Lean
+proves `DiscSys.birrefl` by matching `Better ⟨r, x⟩ ⟨r, x⟩` with `loc`,
+and that match eliminates the reflexive equation `r = r`, which is K. So
+`c-birrefl`, `compose` and `compose-no-loop` take
+`IsSet R = ∀ {x y} (p q : x ≡ y) → p ≡ q` before the acyclicity
+hypothesis. `bool-set` discharges it for the exhibits, whose region index
+is `Bool`.
+
+The hypothesis is there for a reason; it is not an artefact of the proof.
+In a model without K, take a region index with a non-trivial loop (the
+circle) and a discipline whose transport around the loop is an
+order-automorphism that moves a position strictly (ℤ under `<`, shifted by
+one). Then `(r , x)` and `(r , x + 1)` are equal composite positions, and
+the composite order relates a position to itself. So the statement without
+the hypothesis is not provable without K. This is an argument made by
+reading; the fixture below checks only that the direct route is refused.
+
+The grade attaches to the Agda statement, the source of truth, hypothesis
+included. Read in Lean, the hypothesis is discharged by `uip` with no
+axiom, so the Lean theorem implies the Agda statement, and the Lean leg
+rechecks it. It also proves more, since it needs no hypothesis. Owner
+ruling 2026-11-24: reconcile under R5. No statement in an earlier group
+carries the hypothesis.
+
+=== Negative controls
+
+`tests/reject-agda/CyclicRegions.agda` takes two tropical regions with an
+edge each way (`a ≡ not b`). Its composite judgment derives a non-empty
+trace from `(false , 0)` back to itself, so composing the system and
+applying `compose-no-loop` to that trace would prove `⊥`. The gate requires
+Agda to refuse the file where `compose` is used as a discipline without an
+acyclicity proof (`→ Discipline !=< Discipline`). With an acyclicity proof
+assumed as a module parameter, the rest of the file checks and proves `⊥`
+(checked 2026-11-24). So if `compose` or `compose-no-loop` stopped asking
+for `Acyclic`, the fixture would be accepted and the gate would fail: the
+acyclicity hypothesis of `compose` is load-bearing.
+
+`tests/reject-agda/ReflexiveRegion.agda` proves composite irreflexivity as
+Lean does, from acyclicity alone, by matching `loc` against
+`CBetter S (r , x) (r , x)`. The gate requires Agda to refuse it
+(`Cannot eliminate reflexive equation r = r of type DiscSys.R S because K
+has been disabled`). So the `IsSet` hypothesis of R5 is not decoration.

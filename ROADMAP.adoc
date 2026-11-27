@@ -140,6 +140,12 @@ CI; `docs/agda-lean-correspondence.adoc`
 |met 2026-11-23 (`PWG-2i`)
 
 |Reassembly (`Reassembly`)
+|`proofs/agda/Marches/Reassembly.agda`; `tests/reject-agda/CyclicRegions.agda`,
+`ReflexiveRegion.agda`
+|met 2026-11-24 (`PWG-2i`; `birrefl` and `compose_no_loop` take `IsSet` of
+the region index in Agda, residual R5, owner ruling 2026-11-24)
+
+|Cuts (`Cut`)
 |—
 |next
 |===
